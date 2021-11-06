@@ -8,3 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "PM Kisan Yojana"
 include ':app'
+include ':pmkisanyojanaadmin'
