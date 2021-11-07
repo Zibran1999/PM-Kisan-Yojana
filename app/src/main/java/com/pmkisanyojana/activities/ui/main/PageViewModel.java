@@ -1,26 +1,23 @@
 package com.pmkisanyojana.activities.ui.main;
 
-import androidx.arch.core.util.Function;
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 
-public class PageViewModel extends ViewModel {
+import com.pmkisanyojana.models.YojanaModel;
+import com.pmkisanyojana.models.YojanaRepository;
 
-    private MutableLiveData<Integer> mIndex = new MutableLiveData<>();
-    private LiveData<String> mText = Transformations.map(mIndex, new Function<Integer, String>() {
-        @Override
-        public String apply(Integer input) {
-            return "Hello world from section: " + input;
-        }
-    });
+public class PageViewModel extends AndroidViewModel {
+    private final YojanaRepository yojanaRepository;
 
-    public void setIndex(int index) {
-        mIndex.setValue(index);
+    public PageViewModel(@NonNull Application application) {
+        super(application);
+        yojanaRepository = YojanaRepository.getInstance();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<YojanaModel> geYojanaList() {
+        return yojanaRepository.getYojanaModelLiveData();
     }
 }

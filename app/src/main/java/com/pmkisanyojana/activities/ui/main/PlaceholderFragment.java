@@ -4,15 +4,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.pmkisanyojana.R;
+import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
+import com.pmkisanyojana.models.YojanaModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -20,7 +25,10 @@ import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-
+    int pos = 1;
+    RecyclerView homeRV;
+    List<YojanaModel> yojnaModelList;
+    YojanaAdapter yojnaAdapter;
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -39,8 +47,8 @@ public class PlaceholderFragment extends Fragment {
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
+            pos = index;
         }
-        pageViewModel.setIndex(index);
     }
 
     @Override
@@ -50,14 +58,42 @@ public class PlaceholderFragment extends Fragment {
 
         binding = FragmentHomeScreenBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        homeRV = binding.HomeRV;
+        LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        homeRV.setLayoutManager(layoutManager);
 
-        final TextView textView = binding.sectionLabel;
-        pageViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
+
+        if (pos == 1) {
+            pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
+
+
+            });
+            yojnaModelList = new ArrayList<>();
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+
+            yojnaAdapter = new YojanaAdapter(yojnaModelList, root.getContext());
+            homeRV.setAdapter(yojnaAdapter);
+        } else if (pos == 2) {
+            yojnaModelList = new ArrayList<>();
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
+
+            yojnaAdapter = new YojanaAdapter(yojnaModelList, root.getContext());
+            homeRV.setAdapter(yojnaAdapter);
+
+        }
+
         return root;
     }
 

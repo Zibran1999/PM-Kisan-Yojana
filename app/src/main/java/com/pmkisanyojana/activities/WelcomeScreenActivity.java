@@ -1,16 +1,28 @@
 package com.pmkisanyojana.activities;
 
+import android.os.Bundle;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
-
-import com.pmkisanyojana.R;
+import com.pmkisanyojana.databinding.ActivityWelcomeScreenBinding;
 
 public class WelcomeScreenActivity extends AppCompatActivity {
+    ImageView startBtn, privacyBtn, shareBtn;
+    ActivityWelcomeScreenBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome_screen);
+        binding = ActivityWelcomeScreenBinding.inflate(getLayoutInflater());
+
+        startBtn = binding.startBtn;
+        privacyBtn = binding.privacyBtn;
+        shareBtn = binding.shareBtn;
+
+
+
     }
+
+
 }
