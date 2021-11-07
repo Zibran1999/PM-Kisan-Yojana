@@ -1,5 +1,6 @@
 package com.pmkisanyojana.activities.ui.main;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
 import com.pmkisanyojana.models.YojanaModel;
+import com.pmkisanyojana.utils.CommonMethod;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -26,6 +28,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     RecyclerView homeRV;
     YojanaAdapter yojanaAdapter;
     private PageViewModel pageViewModel;
+    Dialog dialog;
     private FragmentHomeScreenBinding binding;
 
     public static PlaceholderFragment newInstance(int index) {
@@ -45,6 +48,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             index = getArguments().getInt(ARG_SECTION_NUMBER);
             pos = index;
         }
+        dialog = CommonMethod.loadingDialog(getContext());
     }
 
     @Override
@@ -61,6 +65,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
 
         if (pos == 1) {
+            dialog.show();
             yojanaAdapter = new YojanaAdapter(root.getContext(), this);
             homeRV.setAdapter(yojanaAdapter);
             pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
@@ -70,7 +75,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
                     yojanaAdapter.updateYojanaList(yojanaModel.getData());
 
                 }
-
+                dialog.dismiss();
             });
 
 
