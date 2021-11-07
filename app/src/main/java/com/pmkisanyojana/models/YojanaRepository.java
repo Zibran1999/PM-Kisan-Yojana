@@ -14,7 +14,7 @@ public class YojanaRepository {
 
     private static ApiInterface apiInterface;
     private static YojanaRepository yojanaRepository;
-    private final MutableLiveData<YojanaModel> yojanaModelLiveData = new MutableLiveData<>();
+    private final MutableLiveData<YojanaModelList> yojanaModelLiveData = new MutableLiveData<>();
 
     public YojanaRepository() {
         apiInterface = ApiWebServices.getApiInterface();
@@ -27,11 +27,11 @@ public class YojanaRepository {
         return yojanaRepository;
     }
 
-    public LiveData<YojanaModel> getYojanaModelLiveData() {
-        Call<YojanaModel> call = apiInterface.getAllYojana();
-        call.enqueue(new Callback<YojanaModel>() {
+    public LiveData<YojanaModelList> getYojanaModelLiveData() {
+        Call<YojanaModelList> call = apiInterface.getAllYojana();
+        call.enqueue(new Callback<YojanaModelList>() {
             @Override
-            public void onResponse(@NonNull Call<YojanaModel> call, @NonNull Response<YojanaModel> response) {
+            public void onResponse(@NonNull Call<YojanaModelList> call, @NonNull Response<YojanaModelList> response) {
 
                 if (response.isSuccessful()) {
                     yojanaModelLiveData.setValue(response.body());
@@ -41,7 +41,7 @@ public class YojanaRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<YojanaModel> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<YojanaModelList> call, @NonNull Throwable t) {
                 Log.d("onResponse error",t.getMessage());
 
             }

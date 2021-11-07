@@ -6,6 +6,6 @@ import retrofit2.http.POST;
 public interface ApiInterface {
 
 
-    @POST("")
-    Call<YojanaModel> getAllYojana();
+    @POST("fetch_kisan_yojana_api.php")
+    Call<YojanaModelList> getAllYojana();
 }

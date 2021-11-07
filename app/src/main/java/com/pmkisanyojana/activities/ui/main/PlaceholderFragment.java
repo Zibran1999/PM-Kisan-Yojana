@@ -1,6 +1,7 @@
 package com.pmkisanyojana.activities.ui.main;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +12,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pmkisanyojana.R;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
 import com.pmkisanyojana.models.YojanaModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment {
+public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     int pos = 1;
     RecyclerView homeRV;
-    List<YojanaModel> yojnaModelList;
-    YojanaAdapter yojnaAdapter;
+    YojanaAdapter yojanaAdapter;
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -64,33 +60,22 @@ public class PlaceholderFragment extends Fragment {
         homeRV.setLayoutManager(layoutManager);
 
 
-
         if (pos == 1) {
+            yojanaAdapter = new YojanaAdapter(root.getContext(), this);
+            homeRV.setAdapter(yojanaAdapter);
             pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
 
+                if (yojanaModel != null) {
+                    Log.d("onResponse",yojanaModel.getData().get(0).getYojanaTitle());
+                    yojanaAdapter.updateYojanaList(yojanaModel.getData());
+
+                }
 
             });
-            yojnaModelList = new ArrayList<>();
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
 
-            yojnaAdapter = new YojanaAdapter(yojnaModelList, root.getContext());
-            homeRV.setAdapter(yojnaAdapter);
+
         } else if (pos == 2) {
-            yojnaModelList = new ArrayList<>();
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
-            yojnaModelList.add(new YojanaModel(R.drawable.ic_baseline_image_24, "PM Kisan Yojana", "1"));
 
-            yojnaAdapter = new YojanaAdapter(yojnaModelList, root.getContext());
-            homeRV.setAdapter(yojnaAdapter);
 
         }
 
@@ -101,5 +86,10 @@ public class PlaceholderFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onItemClicked(YojanaModel yojanaModel) {
+
     }
 }

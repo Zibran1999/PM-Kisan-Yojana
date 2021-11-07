@@ -14,6 +14,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new Handler().postDelayed(() -> startActivity(new Intent(getApplicationContext(), HomeScreenActivity.class)), 2000);
+        new Handler().postDelayed(() -> startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class)), 2000);
     }
 }

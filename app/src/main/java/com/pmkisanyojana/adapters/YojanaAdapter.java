@@ -10,19 +10,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.YojanaModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder> {
 
-    List<YojanaModel> yojnaModelList;
     Context context;
+    YojanaInterface yojanaInterface;
+    List<YojanaModel> yojanaModelList = new ArrayList<>();
 
-    public YojanaAdapter(List<YojanaModel> yojnaModelList, Context context) {
-        this.yojnaModelList = yojnaModelList;
+
+    public YojanaAdapter(Context context, YojanaInterface yojanaInterface) {
         this.context = context;
+        this.yojanaInterface = yojanaInterface;
     }
 
     @NonNull
@@ -35,14 +39,24 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.yojanaTitle.setText(yojnaModelList.get(position).getYojnaName());
-        holder.yojanaImage.setImageResource(yojnaModelList.get(position).getYojnaImage());
+        holder.yojanaTitle.setText(yojanaModelList.get(position).getYojanaTitle());
+        Glide.with(context).load(yojanaModelList.get(position).getYojanaImage()).into(holder.yojanaImage);
 
     }
 
     @Override
     public int getItemCount() {
-        return yojnaModelList.size();
+        return yojanaModelList.size();
+    }
+
+    public void updateYojanaList(List<YojanaModel> yojanaModels) {
+        yojanaModelList.clear();
+        yojanaModelList.addAll(yojanaModels);
+    }
+
+    public interface YojanaInterface {
+
+        void onItemClicked(YojanaModel yojanaModel);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,5 +69,4 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
             yojanaImage = itemView.findViewById(R.id.yojnaImage);
         }
     }
-
 }

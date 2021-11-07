@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.pmkisanyojana.models.YojanaModel;
+import com.pmkisanyojana.models.YojanaModelList;
 import com.pmkisanyojana.models.YojanaRepository;
 
 public class PageViewModel extends AndroidViewModel {
@@ -17,7 +18,7 @@ public class PageViewModel extends AndroidViewModel {
         yojanaRepository = YojanaRepository.getInstance();
     }
 
-    public LiveData<YojanaModel> geYojanaList() {
+    public LiveData<YojanaModelList> geYojanaList() {
         return yojanaRepository.getYojanaModelLiveData();
     }
 }
