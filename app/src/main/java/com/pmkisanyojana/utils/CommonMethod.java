@@ -1,10 +1,13 @@
 package com.pmkisanyojana.utils;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.pmkisanyojana.BuildConfig;
@@ -54,5 +57,16 @@ public class CommonMethod {
         } catch (ActivityNotFoundException e) {
             Toast.makeText(context, " unable to find market app", Toast.LENGTH_LONG).show();
         }
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public static Dialog loadingDialog(Context context){
+        Dialog loadingDialog;
+        loadingDialog = new Dialog(context);
+        loadingDialog.setContentView(R.layout.loading);
+        loadingDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        loadingDialog.getWindow().setBackgroundDrawable(context.getDrawable(R.drawable.item_bg));
+        loadingDialog.setCancelable(false);
+        return loadingDialog;
     }
 }

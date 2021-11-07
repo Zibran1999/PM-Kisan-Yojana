@@ -3,4 +3,12 @@
     <string name="title_activity_home_screen">HomeScreenActivity</string>
     <string name="tab_text_1">Yojana</string>
     <string name="tab_text_2">News</string>
+    <string name="home">Home</string>
+    <string name="rate_app">Rate Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="version_1_1">version</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
+    <string name="share_app">Share App</string>
 </resources>

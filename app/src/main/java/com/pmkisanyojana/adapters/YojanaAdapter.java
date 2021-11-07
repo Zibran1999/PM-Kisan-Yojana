@@ -1,5 +1,6 @@
 package com.pmkisanyojana.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,9 +50,11 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
         return yojanaModelList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateYojanaList(List<YojanaModel> yojanaModels) {
         yojanaModelList.clear();
         yojanaModelList.addAll(yojanaModels);
+        notifyDataSetChanged();
     }
 
     public interface YojanaInterface {
@@ -59,7 +62,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
         void onItemClicked(YojanaModel yojanaModel);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView yojanaTitle;
         ImageView yojanaImage;
 

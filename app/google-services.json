@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "298914281289",
+    "project_id": "pm-kissan-yojana",
+    "storage_bucket": "pm-kissan-yojana.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:298914281289:android:f7731df7c9c5fe71090c98",
+        "android_client_info": {
+          "package_name": "com.pmkisanyojana"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "298914281289-jh7lhrb5ceco3ijokce5ti7ugt9jpq7i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDev9koB7Viw-YKsSlvKriS1UHiWr0NY7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "298914281289-jh7lhrb5ceco3ijokce5ti7ugt9jpq7i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
