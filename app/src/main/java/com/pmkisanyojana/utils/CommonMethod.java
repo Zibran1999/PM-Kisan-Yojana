@@ -60,7 +60,7 @@ public class CommonMethod {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public static Dialog loadingDialog(Context context){
+    public static Dialog getDialog(Context context){
         Dialog loadingDialog;
         loadingDialog = new Dialog(context);
         loadingDialog.setContentView(R.layout.loading);

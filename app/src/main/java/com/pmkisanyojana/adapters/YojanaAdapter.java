@@ -15,8 +15,14 @@ import com.bumptech.glide.Glide;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.YojanaModel;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder> {
 
@@ -40,8 +46,9 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        holder.yojanaTitle.setText(yojanaModelList.get(position).getYojanaTitle());
-        Glide.with(context).load(yojanaModelList.get(position).getYojanaImage()).into(holder.yojanaImage);
+        holder.yojanaTitle.setText(yojanaModelList.get(position).getTitle());
+        Glide.with(context).load(yojanaModelList.get(position).getImage()).into(holder.yojanaImage);
+        holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
 
     }
 
@@ -54,6 +61,25 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
     public void updateYojanaList(List<YojanaModel> yojanaModels) {
         yojanaModelList.clear();
         yojanaModelList.addAll(yojanaModels);
+        Collections.sort(yojanaModelList, new Comparator<YojanaModel>() {
+            @SuppressLint("SimpleDateFormat")
+            final DateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+
+            @Override
+            public int compare(YojanaModel o1, YojanaModel o2) {
+                String date1, date2;
+
+                date1 = o1.getDate();
+                date2 = o2.getDate();
+                try {
+                    return Objects.requireNonNull(f.parse(date1)).compareTo(f.parse(date2));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+
+            }
+
+        });
         notifyDataSetChanged();
     }
 

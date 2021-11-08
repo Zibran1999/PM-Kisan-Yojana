@@ -126,7 +126,7 @@
             android:background="@color/black"
             android:gravity="center"
             android:text="No connection"
-            android:textColor="@color/purple_700"
+            android:textColor="@color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

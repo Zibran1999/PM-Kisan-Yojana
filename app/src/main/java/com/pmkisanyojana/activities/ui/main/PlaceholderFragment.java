@@ -1,6 +1,8 @@
 package com.pmkisanyojana.activities.ui.main;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,23 +14,30 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.pmkisanyojana.activities.DataActivity;
+import com.pmkisanyojana.activities.NewsDataActivity;
+import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
+import com.pmkisanyojana.models.NewsModel;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface {
+public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     int pos = 1;
     RecyclerView homeRV;
     YojanaAdapter yojanaAdapter;
-    private PageViewModel pageViewModel;
+    NewsAdapter newsAdapter;
     Dialog dialog;
+    SwipeRefreshLayout swipeRefreshLayout;
+    private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
     public static PlaceholderFragment newInstance(int index) {
@@ -48,7 +57,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             index = getArguments().getInt(ARG_SECTION_NUMBER);
             pos = index;
         }
-        dialog = CommonMethod.loadingDialog(getContext());
+        dialog = CommonMethod.getDialog(getContext());
     }
 
     @Override
@@ -59,6 +68,8 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         binding = FragmentHomeScreenBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
+        swipeRefreshLayout = binding.swipeRefresh;
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
@@ -66,25 +77,54 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
         if (pos == 1) {
             dialog.show();
-            yojanaAdapter = new YojanaAdapter(root.getContext(), this);
-            homeRV.setAdapter(yojanaAdapter);
-            pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
-
-                if (yojanaModel != null) {
-                    Log.d("onResponse",yojanaModel.getData().get(0).getYojanaTitle());
-                    yojanaAdapter.updateYojanaList(yojanaModel.getData());
-
-                }
-                dialog.dismiss();
+            setYojanaData(root.getContext());
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                setYojanaData(root.getContext());
+                swipeRefreshLayout.setRefreshing(false);
             });
 
-
         } else if (pos == 2) {
+            setNewsData(root.getContext());
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                setNewsData(root.getContext());
+                swipeRefreshLayout.setRefreshing(false);
 
+            });
 
         }
 
         return root;
+    }
+
+    private void setNewsData(Context context) {
+        newsAdapter = new NewsAdapter(context, this);
+        homeRV.setAdapter(newsAdapter);
+        pageViewModel.getNews().observe(requireActivity(), newsModelList -> {
+
+            if (newsModelList != null) {
+                Log.d("onResponse", newsModelList.getData().get(0).getTitle());
+
+                newsAdapter.updateNewsList(newsModelList.getData());
+
+            }
+            dialog.dismiss();
+        });
+
+    }
+
+    private void setYojanaData(Context context) {
+        yojanaAdapter = new YojanaAdapter(context, this);
+        homeRV.setAdapter(yojanaAdapter);
+        pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
+
+            if (yojanaModel != null) {
+                Log.d("onResponse", yojanaModel.getData().get(0).getTitle());
+                yojanaAdapter.updateYojanaList(yojanaModel.getData());
+
+            }
+            dialog.dismiss();
+        });
+
     }
 
     @Override
@@ -96,5 +136,19 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
 
+        Intent intent = new Intent(getContext(), DataActivity.class);
+        intent.putExtra("id", yojanaModel.getId());
+        intent.putExtra("title", yojanaModel.getTitle());
+        startActivity(intent);
+
+    }
+
+    @Override
+    public void onItemClicked(NewsModel newsModel) {
+        Intent intent = new Intent(getContext(), NewsDataActivity.class);
+        intent.putExtra("id", newsModel.getId());
+        intent.putExtra("title", newsModel.getTitle());
+        intent.putExtra("img", newsModel.getImage());
+        startActivity(intent);
     }
 }

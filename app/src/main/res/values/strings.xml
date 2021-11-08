@@ -11,4 +11,6 @@
     <string name="navigation_drawer_open">Open</string>
     <string name="navigation_drawer_close">Close</string>
     <string name="share_app">Share App</string>
+    <string name="eng">Eng</string>
+    <string name="hin">Hin</string>
 </resources>
