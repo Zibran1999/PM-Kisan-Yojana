@@ -5,7 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
@@ -29,6 +35,9 @@ import com.pmkisanyojanaadmin.model.ApiWebServices;
 import com.pmkisanyojanaadmin.model.YojanaModel;
 import com.pmkisanyojanaadmin.model.YojanaModelList;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -49,11 +58,14 @@ public class MainActivity extends AppCompatActivity {
     ImageView selectImage;
     EditText selectTitle,yojanaData,yojanaLink;
     AppCompatAutoCompleteTextView appCompatAutoCompleteTextView;
-    List<YojanaModel> yojanaModelList;
-    List<String> arrayList;
+    List<YojanaModel> yojanaModelList  = new ArrayList<>();
+    List<String> arrayList  = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
     String getYojanaName;
     ApiInterface apiInterface;
+    String encodedImage;
+    Uri uri;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +78,9 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radio_group);
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
-        yojanaModelList = new ArrayList<>();
-        arrayList = new ArrayList<>();
         apiInterface = ApiWebServices.getApiInterface();
-        fetchYojanaDetails();
         arrayAdapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,arrayList);
+        fetchYojanaDetails();
         yojnaBtn.setOnClickListener(v -> {
             showYojanaUploadDialog(this, "Upload Yojana");
         });
@@ -102,6 +112,9 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = uploadDialog.findViewById(R.id.radio_group);
         cancelBtn.setOnClickListener(v -> uploadDialog.dismiss());
         dialogTitle.setText(title);
+        selectImage.setOnClickListener(v -> {
+            FileChooser(100);
+        });
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             int buttonId = group.getCheckedRadioButtonId();
             switch (buttonId) {
@@ -127,15 +140,20 @@ public class MainActivity extends AppCompatActivity {
 
         int mHour = 0, mMinute = 0;
         setTime.setOnClickListener(v -> {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(
+            @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(
                     MainActivity.this, (TimePickerDialog.OnTimeSetListener) (view, hourOfDay, minute) -> {
                 setTime.setText(hourOfDay + ":" + minute);
             }, mHour, mMinute, false);
             timePickerDialog.show();
         });
+        uploadBtn.setOnClickListener(v -> {
+
+            uploadYojana();
+        });
     }
 
-    public void addYojanaData(Context context,String title){
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void addYojanaData(Context context, String title){
         adYojanaDialog = new Dialog(context);
         adYojanaDialog.setContentView(R.layout.yojna_item_layout);
         adYojanaDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -143,13 +161,16 @@ public class MainActivity extends AppCompatActivity {
         adYojanaDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
         adYojanaDialog.setCancelable(false);
         adYojanaDialog.show();
-        dialogTitle2 = findViewById(R.id.dialog_title2);
+        dialogTitle2 = adYojanaDialog.findViewById(R.id.dialog_title2);
         dialogTitle2.setText(title);
-        appCompatAutoCompleteTextView = findViewById(R.id.drop_down_text);
-        yojanaData = findViewById(R.id.yojana_data);
-        yojanaLink = findViewById(R.id.yojana_link);
-        cancelYoajanBtn = findViewById(R.id.cancel_yojana_btn);
-        uploadYojanaBtn = findViewById(R.id.upload_yojana_btn);
+        appCompatAutoCompleteTextView = adYojanaDialog.findViewById(R.id.drop_down_text);
+        yojanaData = adYojanaDialog.findViewById(R.id.yojana_data);
+        yojanaLink = adYojanaDialog.findViewById(R.id.yojana_link);
+        cancelYoajanBtn = adYojanaDialog.findViewById(R.id.cancel_yojana_btn);
+        uploadYojanaBtn = adYojanaDialog.findViewById(R.id.upload_yojana_btn);
+        cancelYoajanBtn.setOnClickListener(v -> {
+            adYojanaDialog.dismiss();
+        });
 
         appCompatAutoCompleteTextView.setInputType(0);
         appCompatAutoCompleteTextView.setAdapter(arrayAdapter);
@@ -158,6 +179,36 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, getYojanaName, Toast.LENGTH_SHORT).show();
         });
 
+    }
+
+    private void FileChooser(int i) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setType("image/*");
+        startActivityForResult(intent, i);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            uri = data.getData();
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(uri);
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                selectImage.setImageBitmap(bitmap);
+                encodedImage = imageStore(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public String imageStore(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] imageBytes = stream.toByteArray();
+        return android.util.Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
 
     public void fetchYojanaDetails(){
@@ -169,9 +220,9 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     assert response.body() != null;
                     yojanaModelList.addAll(response.body().getData());
-
-                    for(int i=0;i<yojanaModelList.size();i++){
-                        arrayList.add(yojanaModelList.get(i).getYojanaTitle());
+                    Log.d("ggggg",response.body().getData().toString());
+                    for (YojanaModel yjm: yojanaModelList) {
+                        arrayList.add(yjm.getTitle());
                     }
                 }else {
                     Log.d("onResponse",response.message());
@@ -184,5 +235,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void uploadYojana(){
+
     }
 }
