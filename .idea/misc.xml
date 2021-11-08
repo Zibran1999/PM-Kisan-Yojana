@@ -4,12 +4,19 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/fragment_home_screen.xml" value="0.19895833333333332" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.23958333333333334" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/drawable/item_bg.xml" value="0.2358974358974359" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/layout/activity_home_screen.xml" value="0.2234375" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/layout/activity_main.xml" value="0.2234375" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/layout/header.xml" value="0.2234375" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/layout/loading.xml" value="0.2234375" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/menu/menu.xml" value="0.2234375" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/drawable/ic_baseline_image_24.xml" value="0.23958333333333334" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/drawable/item_bg.xml" value="0.23958333333333334" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/layout/activity_main.xml" value="0.2234375" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/layout/item_layout.xml" value="0.2234375" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/layout/upload_dialog.xml" value="0.2234375" />
+        <entry key="..\:/Android Applications/PM-Kisan-Yojana/pmkisanyojanaadmin/src/main/res/layout/yojna_item_layout.xml" value="0.2234375" />
       </map>
     </option>
   </component>

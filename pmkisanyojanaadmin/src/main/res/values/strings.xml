@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PM Kisan Yojana Admin</string>
+    <string name="show_immediately">Show Immediately</string>
+    <string name="set_schedule">Set Schedule</string>
+    <string name="enter_yojana">Enter Yojana</string>
+    <string name="enter_link">Enter Link</string>
+    <string name="select_yojana">Select Yojana</string>
+    <string name="yajana">Yajana</string>
+    <string name="enter_title">Enter Name</string>
 </resources>
