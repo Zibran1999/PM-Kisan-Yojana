@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
@@ -47,6 +48,7 @@ public class DataActivity extends AppCompatActivity {
     String id;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
+    LottieAnimationView lottieAnimationView;
 
     MaterialButton visitSiteBtn;
     ActivityDataBinding binding;
@@ -68,6 +70,7 @@ public class DataActivity extends AppCompatActivity {
     private IntentFilter intentFilter;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint({"SetJavaScriptEnabled", "NonConstantResourceId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,13 @@ public class DataActivity extends AppCompatActivity {
         webView = binding.webView;
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
+        lottieAnimationView =binding.lottieHome;
+        visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
+        visitSiteBtn.setOnClickListener(v -> {
+            Intent intent =new Intent(getApplicationContext(),WebViewActivity.class);
+            intent.putExtra("url",getIntent().getStringExtra("url"));
+            startActivity(intent);
+        });
         backIcon.setOnClickListener(v -> onBackPressed());
         title.setText(getIntent().getStringExtra("title"));
         id = getIntent().getStringExtra("id");
@@ -100,11 +110,7 @@ public class DataActivity extends AppCompatActivity {
                     if (m.getYojanaId().equals(id)) {
                         hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
                         hindi.setTextColor(Color.WHITE);
-                        visitSiteBtn.setOnClickListener(v -> {
-                            Intent intent =new Intent(getApplicationContext(),WebViewActivity.class);
-                            intent.putExtra("url",m.getUrl());
-                            startActivity(intent);
-                        });
+
 
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
                         String removeNumeric = replaceString.replaceAll("[0-9]", "");
@@ -131,9 +137,14 @@ public class DataActivity extends AppCompatActivity {
                 }
                 String finalEnglishString = englishString;
                 String finalHindiString = hindiString;
-
                 webView.setVisibility(View.VISIBLE);
-                webView.loadData(finalHindiString, "text/html", "UTF-8");
+                if (finalHindiString != null) {
+                    webView.loadData(finalHindiString, "text/html", "UTF-8");
+
+                } else {
+                    webView.loadData(finalEnglishString, "text/html", "UTF-8");
+                    materialButtonToggleGroup.setVisibility(View.GONE);
+                }
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
@@ -161,12 +172,15 @@ public class DataActivity extends AppCompatActivity {
                 });
 
             } else {
-                Toast.makeText(getApplicationContext(), "data not found", Toast.LENGTH_SHORT).show();
+
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                    lottieAnimationView.setAnimation(R.raw.empty);
+                    lottieAnimationView.playAnimation();
+                    visitSiteBtn.setVisibility(View.GONE);
 
             }
         });
 
-        visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
         webView.getSettings().setSupportMultipleWindows(true);

@@ -1,28 +1,22 @@
 package com.pmkisanyojana.models;
 
-import java.util.Comparator;
-
 public class YojanaModel {
 
-    public static Comparator<YojanaModel> yojanaModelComparator = (o1, o2) -> {
-        Integer time1, time2;
 
-    return   o1.getDate().compareTo(o2.getDate());
-
-
-    };
     private final String id;
     private final String Image;
     private final String Title;
     private final String Date;
     private final String Time;
+    private final String url;
 
-    public YojanaModel(String id, String image, String title, String date, String time) {
+    public YojanaModel(String id, String image, String title, String date, String time, String url) {
         this.id = id;
         Image = image;
         Title = title;
         Date = date;
         Time = time;
+        this.url = url;
     }
 
     public String getId() {
@@ -43,5 +37,9 @@ public class YojanaModel {
 
     public String getTime() {
         return Time;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

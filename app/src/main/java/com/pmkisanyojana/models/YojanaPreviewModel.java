@@ -4,14 +4,12 @@ public class YojanaPreviewModel {
     private final String id;
     private final String yojanaId;
     private final String desc;
-    private final String url;
 
 
-    public YojanaPreviewModel(String id, String yojanaId, String desc, String url) {
+    public YojanaPreviewModel(String id, String yojanaId, String desc) {
         this.id = id;
         this.yojanaId = yojanaId;
         this.desc = desc;
-        this.url = url;
     }
 
     public String getId() {
@@ -24,9 +22,5 @@ public class YojanaPreviewModel {
 
     public String getDesc() {
         return desc;
-    }
-
-    public String getUrl() {
-        return url;
     }
 }

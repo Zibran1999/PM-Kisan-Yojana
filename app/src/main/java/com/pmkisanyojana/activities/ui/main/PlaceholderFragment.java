@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.DataActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.adapters.NewsAdapter;
@@ -37,6 +39,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     NewsAdapter newsAdapter;
     Dialog dialog;
     SwipeRefreshLayout swipeRefreshLayout;
+    LottieAnimationView lottieAnimationView;
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -69,6 +72,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
         swipeRefreshLayout = binding.swipeRefresh;
+        lottieAnimationView = binding.lottieAnimation;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -102,10 +106,10 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         pageViewModel.getNews().observe(requireActivity(), newsModelList -> {
 
             if (newsModelList != null) {
-                Log.d("onResponse", newsModelList.getData().get(0).getTitle());
-
                 newsAdapter.updateNewsList(newsModelList.getData());
-
+            } else {
+                homeRV.setVisibility(View.GONE);
+                lottieAnimationView.setVisibility(View.VISIBLE);
             }
             dialog.dismiss();
         });
@@ -118,9 +122,11 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
 
             if (yojanaModel != null) {
-                Log.d("onResponse", yojanaModel.getData().get(0).getTitle());
                 yojanaAdapter.updateYojanaList(yojanaModel.getData());
 
+            } else {
+                homeRV.setVisibility(View.GONE);
+                lottieAnimationView.setVisibility(View.VISIBLE);
             }
             dialog.dismiss();
         });
@@ -139,6 +145,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         Intent intent = new Intent(getContext(), DataActivity.class);
         intent.putExtra("id", yojanaModel.getId());
         intent.putExtra("title", yojanaModel.getTitle());
+        intent.putExtra("url", yojanaModel.getUrl());
         startActivity(intent);
 
     }

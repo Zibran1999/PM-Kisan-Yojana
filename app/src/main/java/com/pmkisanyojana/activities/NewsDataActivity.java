@@ -10,12 +10,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -33,6 +34,7 @@ public class NewsDataActivity extends AppCompatActivity {
     ActivityNewsDataBinding binding;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
+    LottieAnimationView lottieAnimationView;
 
     @SuppressLint("NonConstantResourceId")
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -47,9 +49,11 @@ public class NewsDataActivity extends AppCompatActivity {
         newsTitle = binding.newsTitle;
         newsDesc = binding.newsDesc;
         backIcon = binding.backIcon;
+        lottieAnimationView = binding.lottieHome;
         id = getIntent().getStringExtra("id");
         title = getIntent().getStringExtra("title");
         img = getIntent().getStringExtra("img");
+        Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
         newsTitle.setText(title);
         map.put("newsId", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
@@ -96,7 +100,12 @@ public class NewsDataActivity extends AppCompatActivity {
                 String finalHindiString = hindiString;
 
                 newsDesc.setVisibility(View.VISIBLE);
-                newsDesc.setText(finalHindiString);
+                if (finalHindiString != null) {
+                    newsDesc.setText(finalHindiString);
+                } else {
+                    newsDesc.setText(finalEnglishString);
+                    materialButtonToggleGroup.setVisibility(View.GONE);
+                }
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
@@ -123,8 +132,13 @@ public class NewsDataActivity extends AppCompatActivity {
                     }
                 });
 
-            } else
-                Toast.makeText(getApplicationContext(), "data not found", Toast.LENGTH_SHORT).show();
+            } else {
+                newsImg.setVisibility(View.GONE);
+                newsTitle.setVisibility(View.GONE);
+                newsDesc.setVisibility(View.GONE);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                lottieAnimationView.playAnimation();
+            }
         });
 
 

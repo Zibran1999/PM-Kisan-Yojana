@@ -1,4 +1,6 @@
-package com.pmkisanyojana.models;
+package com.pmkisanyojanaadmin.model;
+
+import java.util.Comparator;
 
 public class NewsModel {
 
@@ -36,5 +38,14 @@ public class NewsModel {
         return Time;
     }
 
+    public static Comparator<NewsModel> newsModelComparator = new Comparator<NewsModel>() {
+        @Override
+        public int compare(NewsModel o1, NewsModel o2) {
+            Integer id1, id2;
+            id1 = Integer.valueOf(o1.getId());
+            id2 = Integer.valueOf(o2.getId());
+            return id1.compareTo(id2);
+        }
+    };
 
 }

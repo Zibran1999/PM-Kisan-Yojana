@@ -40,7 +40,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.newsTitle.setText(newsModelList.get(position).getTitle());
-        Glide.with(context).load(newsModelList.get(position).getImage()).into(holder.newsImage);
+        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModelList.get(position).getImage()).into(holder.newsImage);
         holder.itemView.setOnClickListener(v -> newsInterface.onItemClicked(newsModelList.get(position)));
 
     }
@@ -54,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void updateNewsList(List<NewsModel> newsModels) {
         newsModelList.clear();
         newsModelList.addAll(newsModels);
-        Collections.sort(newsModelList,NewsModel.newsModelComparator);
+        Collections.reverse(newsModelList);
         notifyDataSetChanged();
     }
 
