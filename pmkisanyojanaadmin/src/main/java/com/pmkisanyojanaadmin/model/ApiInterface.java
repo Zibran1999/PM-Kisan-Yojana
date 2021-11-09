@@ -31,5 +31,12 @@ public interface ApiInterface {
     @POST("upload_news_preview_data.php")
     Call<MessageModel> uploadNewsPreviewData(@FieldMap Map<String, String> map);
 
+    @FormUrlEncoded
+    @POST("fetch_yojana_preview_data.php")
+    Call<YojanaPreviewModelList> getYojanaPreview(@FieldMap Map<String, String> map);
+
+    @FormUrlEncoded
+    @POST("fetch_news_preview_data.php")
+    Call<NewsPreviewModelList> getNewsPreview(@FieldMap Map<String, String> map);
 
 }
