@@ -1,4 +1,4 @@
-package com.pmkisanyojanaadmin;
+package com.pmkisanyojanaadmin.activities;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
 import com.google.android.material.textfield.TextInputLayout;
+import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.databinding.ActivityMainBinding;
 import com.pmkisanyojanaadmin.model.ApiInterface;
 import com.pmkisanyojanaadmin.model.ApiWebServices;
@@ -58,7 +59,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    Button yojnaBtn, newsBtn, cancelBtn, uploadBtn, addYojanaBtn, addNewsBtn, cancelYoajanBtn, uploadYojanaBtn;
+    Button yojnaBtn, newsBtn, cancelBtn, uploadBtn, addYojanaBtn, addNewsBtn, cancelYoajanBtn, uploadYojanaBtn,editAndDeleteBtn;
     Dialog uploadDialog, adYojanaDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radio_group);
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
+        editAndDeleteBtn = binding.editDeleteBtn;
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(this);
@@ -122,6 +124,9 @@ public class MainActivity extends AppCompatActivity {
             arrayList.clear();
             fetchNewsDetails();
             addYojanaData(this, "Add News Preview");
+        });
+        editAndDeleteBtn.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
         });
     }
 
