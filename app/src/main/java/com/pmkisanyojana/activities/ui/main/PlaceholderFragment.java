@@ -4,10 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.DataActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.adapters.NewsAdapter;
@@ -38,8 +37,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     YojanaAdapter yojanaAdapter;
     NewsAdapter newsAdapter;
     Dialog dialog;
-    SwipeRefreshLayout swipeRefreshLayout;
-    LottieAnimationView lottieAnimationView;
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -71,8 +68,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         binding = FragmentHomeScreenBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
-        swipeRefreshLayout = binding.swipeRefresh;
-        lottieAnimationView = binding.lottieAnimation;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -82,16 +77,16 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         if (pos == 1) {
             dialog.show();
             setYojanaData(root.getContext());
-            swipeRefreshLayout.setOnRefreshListener(() -> {
+            binding.swipeRefresh.setOnRefreshListener(() -> {
                 setYojanaData(root.getContext());
-                swipeRefreshLayout.setRefreshing(false);
+                binding.swipeRefresh.setRefreshing(false);
             });
 
         } else if (pos == 2) {
             setNewsData(root.getContext());
-            swipeRefreshLayout.setOnRefreshListener(() -> {
+            binding.swipeRefresh.setOnRefreshListener(() -> {
                 setNewsData(root.getContext());
-                swipeRefreshLayout.setRefreshing(false);
+                binding.swipeRefresh.setRefreshing(false);
 
             });
 
@@ -105,11 +100,10 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         homeRV.setAdapter(newsAdapter);
         pageViewModel.getNews().observe(requireActivity(), newsModelList -> {
 
-            if (newsModelList != null) {
+            if (newsModelList.getData() != null) {
                 newsAdapter.updateNewsList(newsModelList.getData());
             } else {
-                homeRV.setVisibility(View.GONE);
-                lottieAnimationView.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
             }
             dialog.dismiss();
         });
@@ -121,12 +115,13 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         homeRV.setAdapter(yojanaAdapter);
         pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
 
-            if (yojanaModel != null) {
+            if (yojanaModel.getData() != null) {
                 yojanaAdapter.updateYojanaList(yojanaModel.getData());
 
             } else {
-                homeRV.setVisibility(View.GONE);
-                lottieAnimationView.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
+
+
             }
             dialog.dismiss();
         });

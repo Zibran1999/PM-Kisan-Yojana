@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radio_group);
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
-        editAndDeleteBtn = binding.editDeleteBtn;
+//        editAndDeleteBtn = binding.editDeleteBtn;
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(this);
@@ -125,9 +125,9 @@ public class MainActivity extends AppCompatActivity {
             fetchNewsDetails();
             addYojanaData(this, "Add News Preview");
         });
-        editAndDeleteBtn.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
-        });
+//        editAndDeleteBtn.setOnClickListener(v -> {
+//            startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
+//        });
     }
 
 
@@ -617,7 +617,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     assert response.body() != null;
-
                     for (NewsModel yjm : response.body().getData()) {
                         arrayList.add(yjm.getTitle());
                         newsModelList.addAll(response.body().getData());

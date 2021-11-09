@@ -1,6 +1,7 @@
 package com.pmkisanyojana.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.NewsPreveiwModel;
+import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ public class NewsDataActivity extends AppCompatActivity {
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
+    Dialog dialog;
 
     @SuppressLint("NonConstantResourceId")
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -53,8 +56,8 @@ public class NewsDataActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         title = getIntent().getStringExtra("title");
         img = getIntent().getStringExtra("img");
-        Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
-        newsTitle.setText(title);
+        dialog = CommonMethod.getDialog(this);
+
         map.put("newsId", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
@@ -64,7 +67,7 @@ public class NewsDataActivity extends AppCompatActivity {
         backIcon.setOnClickListener(v -> onBackPressed());
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getNewsPreviewData().observe(this, newsPreviewModelList -> {
-
+            dialog.show();
             if (!newsPreviewModelList.getData().isEmpty()) {
                 String hindiString = null;
                 String englishString = null;
@@ -98,7 +101,9 @@ public class NewsDataActivity extends AppCompatActivity {
                 }
                 String finalEnglishString = englishString;
                 String finalHindiString = hindiString;
-
+                Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
+                newsImg.setVisibility(View.VISIBLE);
+                newsTitle.setText(title);
                 newsDesc.setVisibility(View.VISIBLE);
                 if (finalHindiString != null) {
                     newsDesc.setText(finalHindiString);
@@ -107,6 +112,7 @@ public class NewsDataActivity extends AppCompatActivity {
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
 
+                dialog.dismiss();
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
                 materialButtonToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -133,6 +139,7 @@ public class NewsDataActivity extends AppCompatActivity {
                 });
 
             } else {
+                dialog.dismiss();
                 newsImg.setVisibility(View.GONE);
                 newsTitle.setVisibility(View.GONE);
                 newsDesc.setVisibility(View.GONE);

@@ -3,6 +3,7 @@ package com.pmkisanyojana.activities;
 import static com.pmkisanyojana.activities.HomeScreenActivity.BroadCastStringForAction;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +21,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +34,7 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.YojanaPreviewModel;
+import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
 
 import java.util.HashMap;
@@ -41,7 +42,6 @@ import java.util.Map;
 
 public class DataActivity extends AppCompatActivity {
 
-    ImageView backIcon;
     WebView webView;
     TextView title;
     int count = 1;
@@ -68,6 +68,7 @@ public class DataActivity extends AppCompatActivity {
         }
     };
     private IntentFilter intentFilter;
+    Dialog dialog;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -80,18 +81,19 @@ public class DataActivity extends AppCompatActivity {
 
         binding = ActivityDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        backIcon = binding.backIcon;
         webView = binding.webView;
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
-        lottieAnimationView =binding.lottieHome;
+        lottieAnimationView = binding.lottieAnimationEmpty;
+        dialog = CommonMethod.getDialog(this);
+
         visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
         visitSiteBtn.setOnClickListener(v -> {
-            Intent intent =new Intent(getApplicationContext(),WebViewActivity.class);
-            intent.putExtra("url",getIntent().getStringExtra("url"));
+            Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
+            intent.putExtra("url", getIntent().getStringExtra("url"));
             startActivity(intent);
         });
-        backIcon.setOnClickListener(v -> onBackPressed());
+        binding.backIcon.setOnClickListener(v -> onBackPressed());
         title.setText(getIntent().getStringExtra("title"));
         id = getIntent().getStringExtra("id");
         map.put("yojanaId", id);
@@ -102,7 +104,7 @@ public class DataActivity extends AppCompatActivity {
         english = binding.englishPreview;
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
-
+dialog.show();
             if (!yojanaPreviewModelList.getData().isEmpty()) {
                 String hindiString = null;
                 String englishString = null;
@@ -145,6 +147,7 @@ public class DataActivity extends AppCompatActivity {
                     webView.loadData(finalEnglishString, "text/html", "UTF-8");
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
+                dialog.dismiss();
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
@@ -172,11 +175,9 @@ public class DataActivity extends AppCompatActivity {
                 });
 
             } else {
-
+                dialog.dismiss();
                 lottieAnimationView.setVisibility(View.VISIBLE);
-                    lottieAnimationView.setAnimation(R.raw.empty);
-                    lottieAnimationView.playAnimation();
-                    visitSiteBtn.setVisibility(View.GONE);
+                visitSiteBtn.setVisibility(View.GONE);
 
             }
         });

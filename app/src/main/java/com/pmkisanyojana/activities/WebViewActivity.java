@@ -12,12 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.pmkisanyojana.databinding.ActivityWebViewBinding;
 
 public class WebViewActivity extends AppCompatActivity {
-    ImageView backIcon;
     WebView webView;
     TextView title;
     ActivityWebViewBinding binding;
     String data;
-    Dialog dialog;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -26,10 +24,9 @@ public class WebViewActivity extends AppCompatActivity {
         binding = ActivityWebViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        backIcon = binding.backIcon;
         webView = binding.webView;
         title = binding.title;
-        backIcon.setOnClickListener(v -> onBackPressed());
+        binding.backIcon.setOnClickListener(v -> onBackPressed());
         data = getIntent().getStringExtra("url");
         webView.loadUrl(data);
         webView.getSettings().setJavaScriptEnabled(true);
