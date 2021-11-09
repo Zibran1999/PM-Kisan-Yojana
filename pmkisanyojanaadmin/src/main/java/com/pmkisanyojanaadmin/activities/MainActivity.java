@@ -672,8 +672,6 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-
-
                 assert response.body() != null;
                 if (response.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
