@@ -3,23 +3,35 @@ package com.pmkisanyojanaadmin.activities;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.adapter.NewsAdapter;
 import com.pmkisanyojanaadmin.adapter.YojanaAdapter;
 import com.pmkisanyojanaadmin.model.NewsModel;
+import com.pmkisanyojanaadmin.model.NewsModelList;
+import com.pmkisanyojanaadmin.model.NewsPreveiwModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
+
+import java.util.List;
 
 public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
     Button editAndDeleteYojana, editAndDeleteNews;
@@ -28,9 +40,11 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
     PageViewModel pageViewModel;
     RecyclerView recyclerView;
     TextView title;
+    MaterialAlertDialogBuilder builder;
     ImageView backIcon;
     NewsAdapter newsAdapter;
     Dialog loadingDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,12 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         editAndDeleteNews = findViewById(R.id.edit_news);
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
 
+        builder = new MaterialAlertDialogBuilder(this);
+        builder.setTitle("What you want to do?")
+                .setMessage("Edit or Delete")
+                .setNegativeButton("CANCEL", (dialog1, which) -> {
+
+                });
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(this);
@@ -84,7 +104,6 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
 
                 if (yojanaModel != null) {
                     yojanaAdapter.updateYojanaList(yojanaModel.getData());
-
                 }
                 loadingDialog.dismiss();
             });
@@ -100,23 +119,34 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
             });
         }
     }
-
-    private void setYojanaData(Context context) {
-
-
-    }
-
-    public void getNewsLiveData() {
-
-    }
-
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
-
+        builder.setPositiveButton("Delete", (dialog, which) -> {
+            Toast.makeText(EditAndDeleteActivity.this, "Yojana", Toast.LENGTH_SHORT).show();
+        });
+        builder.setNeutralButton("Edit", (dialog, which) -> {
+            Intent intent = new Intent(getApplicationContext(),EditActivity.class);
+            startActivity(intent);
+        });
+        builder.show();
     }
 
     @Override
     public void onItemClicked(NewsModel newsModel) {
+        builder.setPositiveButton("Delete", (dialog, which) -> {
+            Toast.makeText(EditAndDeleteActivity.this, "News", Toast.LENGTH_SHORT).show();
 
+        });
+
+        builder.setNeutralButton("Edit", (dialog, which) -> {
+            Intent intent = new Intent(getApplicationContext(),EditActivity.class);
+            intent.putExtra("id",newsModel.getId());
+            intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModel.getImage());
+            intent.putExtra("image2",newsModel.getImage());
+            intent.putExtra("title",newsModel.getTitle());
+            intent.putExtra("url","https://gedgetsworld.in/PM_Kisan_Yojana/upload_news_api.php");
+            startActivity(intent);
+        });
+        builder.show();
     }
 }

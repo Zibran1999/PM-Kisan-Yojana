@@ -39,4 +39,8 @@ public interface ApiInterface {
     @POST("fetch_news_preview_data.php")
     Call<NewsPreviewModelList> getNewsPreview(@FieldMap Map<String, String> map);
 
+    @FormUrlEncoded
+    @POST("update_news_api.php")
+    Call<MessageModel> updateNews(@FieldMap Map<String, String> map);
+
 }
