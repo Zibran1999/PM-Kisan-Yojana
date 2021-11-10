@@ -1,6 +1,7 @@
 package com.pmkisanyojanaadmin.model;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -18,13 +19,6 @@ public class PageViewModel extends AndroidViewModel {
         yojanaRepository = YojanaRepository.getInstance();
     }
 
-    public PageViewModel(@NonNull Application application, Map<String, String> map) {
-        super(application);
-        this.map = map;
-        yojanaRepository = YojanaRepository.getInstance();
-
-    }
-
     public LiveData<YojanaModelList> geYojanaList() {
         return yojanaRepository.getYojanaModelLiveData();
     }
@@ -33,11 +27,4 @@ public class PageViewModel extends AndroidViewModel {
         return yojanaRepository.getNewsLiveData();
     }
 
-    public LiveData<YojanaPreviewModelList> getYojanaPreviewData() {
-        return yojanaRepository.getYojanaPreviewLiveData(map);
-    }
-
-    public LiveData<NewsPreviewModelList> getNewsPreviewData() {
-        return yojanaRepository.getNewsPreviewLiveData(map);
-    }
 }

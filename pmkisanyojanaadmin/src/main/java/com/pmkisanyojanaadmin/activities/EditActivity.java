@@ -35,6 +35,7 @@ import com.pmkisanyojanaadmin.model.ModelFactory;
 import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaPreviewModel;
+import com.pmkisanyojanaadmin.model.YojanaViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -243,14 +244,14 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
         cancelPreview = editDialog.findViewById(R.id.cancel_yojana_btn);
         uploadDataBtn = editDialog.findViewById(R.id.upload_yojana_btn);
         cancelPreview.setOnClickListener(v -> {
-           editDialog.dismiss();
+            editDialog.dismiss();
         });
+
         if (intentId.equals("yojana")) {
             Toast.makeText(EditActivity.this, "Yojana", Toast.LENGTH_SHORT).show();
-            Map<String,String> mapId = new HashMap<>();
-            Log.d("vvvvvv",id);
+            Map<String, String> mapId = new HashMap<>();
+            mapId.put("yojanaId", id.trim());
 
-            mapId.put("yojanaId",id);
             MaterialButtonToggleGroup materialButtonToggleGroup = editDialog.findViewById(R.id.materialButtonToggleGroup);
             materialButtonToggleGroup.setVisibility(View.GONE);
 
@@ -258,20 +259,19 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
             hindi = editDialog.findViewById(R.id.hindiPreview);
             english = editDialog.findViewById(R.id.englishPreview);
 
-            pageViewModel = new ViewModelProvider(this,
-                    new ModelFactory(this.getApplication(),mapId)).get(PageViewModel.class);
+           YojanaViewModel viewModel = new ViewModelProvider(this,new ModelFactory(this.getApplication(),mapId)).get(YojanaViewModel.class);
+            viewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
 
-            pageViewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
-
+                Log.d("check", yojanaPreviewModelList.getData().toString());
                 if (!yojanaPreviewModelList.getData().isEmpty()) {
 
                     String hindiString = null;
                     String englishString = null;
-                    for (YojanaPreviewModel ypm: yojanaPreviewModelList.getData()){
+                    for (YojanaPreviewModel ypm : yojanaPreviewModelList.getData()) {
 
-                        if (ypm.getYojanaId().equals(id)){
+                        if (ypm.getYojanaId().equals(id)) {
 
-                            Log.d("fffff",ypm.getDesc().toString());
+                            Log.d("fffff", ypm.getDesc().toString());
                             hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
                             hindi.setTextColor(Color.WHITE);
 

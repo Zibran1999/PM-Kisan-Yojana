@@ -1,6 +1,7 @@
 package com.pmkisanyojanaadmin.model;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
@@ -12,16 +13,18 @@ import java.util.Map;
 public class ModelFactory implements ViewModelProvider.Factory {
 
     Application application;
-    Map<String,String> map;
+    Map<String,String> yojanaMap;
 
     public ModelFactory(Application application, Map<String, String> map) {
         this.application = application;
-        this.map = map;
+        yojanaMap = map;
     }
 
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
-        return (T) new PageViewModel(application,map);
+        Log.d("checkMap",yojanaMap.get("yojanaId"));
+
+        return (T) new YojanaViewModel(application, yojanaMap);
     }
 }
