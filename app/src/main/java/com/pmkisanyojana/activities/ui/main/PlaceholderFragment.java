@@ -14,9 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.pmkisanyojana.activities.DataActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.adapters.NewsAdapter;
@@ -33,7 +31,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     int pos = 1;
-    RecyclerView homeRV;
+    RecyclerView homeRV, pinnedRv;
     YojanaAdapter yojanaAdapter;
     NewsAdapter newsAdapter;
     Dialog dialog;
@@ -72,6 +70,9 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
+        layoutManager1.setOrientation(RecyclerView.VERTICAL);
+        binding.pinnedRV.setLayoutManager(layoutManager1);
 
 
         if (pos == 1) {
@@ -113,6 +114,10 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     private void setYojanaData(Context context) {
         yojanaAdapter = new YojanaAdapter(context, this);
         homeRV.setAdapter(yojanaAdapter);
+
+        YojanaAdapter adapter = new YojanaAdapter(context,this);
+        binding.pinnedRV.setAdapter(adapter);
+        binding.pinnedRV.setVisibility(View.VISIBLE);
         pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
 
             if (yojanaModel.getData() != null) {

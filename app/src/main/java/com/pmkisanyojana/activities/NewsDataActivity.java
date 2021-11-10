@@ -75,7 +75,7 @@ public class NewsDataActivity extends AppCompatActivity {
                 for (NewsPreveiwModel m : newsPreviewModelList.getData()) {
                     if (m.getNewsId().equals(id)) {
                         lottieAnimationView.setVisibility(View.GONE);
-                        hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                        hindi.setBackgroundColor(Color.parseColor("#009637"));
                         hindi.setTextColor(Color.WHITE);
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
                         String removeNumeric = replaceString.replaceAll("[0-9]", "");
@@ -128,13 +128,13 @@ public class NewsDataActivity extends AppCompatActivity {
                         case R.id.hindiPreview:
                             english.setBackgroundColor(0);
                             english.setTextColor(Color.BLACK);
-                            hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            hindi.setBackgroundColor(Color.parseColor("#009637"));
                             hindi.setTextColor(Color.WHITE);
                             newsDesc.setText(finalHindiString);
                             newsDesc.setVisibility(View.VISIBLE);
                             break;
                         case R.id.englishPreview:
-                            english.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            english.setBackgroundColor(Color.parseColor("#009637"));
                             english.setTextColor(Color.WHITE);
                             hindi.setBackgroundColor(0);
                             hindi.setTextColor(Color.BLACK);

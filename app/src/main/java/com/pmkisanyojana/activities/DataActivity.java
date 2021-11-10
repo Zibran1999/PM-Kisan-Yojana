@@ -110,7 +110,7 @@ dialog.show();
                 String englishString = null;
                 for (YojanaPreviewModel m : yojanaPreviewModelList.getData()) {
                     if (m.getYojanaId().equals(id)) {
-                        hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                        hindi.setBackgroundColor(Color.parseColor("#009637"));
                         hindi.setTextColor(Color.WHITE);
 
 
@@ -157,13 +157,13 @@ dialog.show();
                         case R.id.hindiPreview:
                             english.setBackgroundColor(0);
                             english.setTextColor(Color.BLACK);
-                            hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            hindi.setBackgroundColor(Color.parseColor("#009637"));
                             hindi.setTextColor(Color.WHITE);
                             webView.loadDataWithBaseURL(null, finalHindiString, "text/html", "UTF-8", null);
                             webView.setVisibility(View.VISIBLE);
                             break;
                         case R.id.englishPreview:
-                            english.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            english.setBackgroundColor(Color.parseColor("#009637"));
                             english.setTextColor(Color.WHITE);
                             hindi.setBackgroundColor(0);
                             hindi.setTextColor(Color.BLACK);
