@@ -144,7 +144,6 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
             intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModel.getImage());
             intent.putExtra("image2",newsModel.getImage());
             intent.putExtra("title",newsModel.getTitle());
-            intent.putExtra("url","https://gedgetsworld.in/PM_Kisan_Yojana/upload_news_api.php");
             startActivity(intent);
         });
         builder.show();

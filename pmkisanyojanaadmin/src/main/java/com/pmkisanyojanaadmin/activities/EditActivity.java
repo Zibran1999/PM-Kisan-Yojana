@@ -52,13 +52,14 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     Dialog editDialog, editDialog2, loadingDialog;
     List<NewsModel> newsModelList = new ArrayList<>();
     NewsAdapter newsAdapter;
-    String id, title, image,image2, encodedImage, url, getTitle;
+    String id, title, image,image2, encodedImage, getTitle;
     Uri uri;
     Bitmap bitmap;
     ApiInterface apiInterface;
     Map<String, String> map = new HashMap<>();
     private PageViewModel pageViewModel;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,18 +82,18 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
         title = getIntent().getStringExtra("title");
         image = getIntent().getStringExtra("image");
         image2 = getIntent().getStringExtra("image2");
-        url = getIntent().getStringExtra("url");
-        Log.d("fffffff", id);
-        Log.d("fffffff", title);
-        Log.d("fffffff", image);
+        encodedImage = image2;
         editExternalBtn.setOnClickListener(v -> {
-            showExternalEdit(this);
+            showUpdateNewsDialog();
+        });
+        editInternalBtn.setOnClickListener(v -> {
+            showNewsPreview();
         });
     }
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void editNews() {
+    public void showNewsPreview() {
         editDialog = new Dialog(EditActivity.this);
         editDialog.setContentView(R.layout.news_layout);
         editDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -141,7 +142,7 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private void showExternalEdit(Context context) {
+    private void showUpdateNewsDialog() {
         editDialog2 = new Dialog(EditActivity.this);
         editDialog2.setContentView(R.layout.edit_news_card);
         editDialog2.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -153,7 +154,12 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
         dismiss2 = editDialog2.findViewById(R.id.cancel_btn);
         uploadNewsBtn2 = editDialog2.findViewById(R.id.upload_btn2);
 
-        dismiss2.setOnClickListener(v -> editDialog2.dismiss());
+        dismiss2.setOnClickListener(v -> {
+                    editDialog2.dismiss();
+                    encodedImage = "";
+
+                }
+            );
         Glide.with(EditActivity.this).load(image).into(cardNewsImage);
         cardNewsTitle.setText(title);
         cardNewsImage.setOnClickListener(v -> {
@@ -168,22 +174,20 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
                 map.put("title", getTitle);
                 map.put("deleteImg", image2);
                 map.put("imgKey", "0");
-                map.put("url", url);
-                uploadNewsData(map);
+                updateNewsData(map);
             }if (encodedImage.length() > 100) {
                 map.put("id", id);
                 map.put("img", encodedImage);
                 map.put("title", getTitle);
                 map.put("deleteImg", image);
                 map.put("imgKey", "1");
-                map.put("url", url);
-                uploadNewsData(map);
+                updateNewsData(map);
             }
         });
 
 
     }
-    private void uploadNewsData(Map<String, String> map) {
+    private void updateNewsData(Map<String, String> map) {
         Call<MessageModel> call = apiInterface.updateNews(map);
         call.enqueue(new Callback<MessageModel>() {
             @Override

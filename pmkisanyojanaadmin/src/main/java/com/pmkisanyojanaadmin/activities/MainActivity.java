@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = findViewById(R.id.radio_group);
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
-//        editAndDeleteBtn = binding.editDeleteBtn;
+        editAndDeleteBtn = binding.editDeleteBtn;
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(this);
@@ -125,11 +125,10 @@ public class MainActivity extends AppCompatActivity {
             fetchNewsDetails();
             addYojanaData(this, "Add News Preview");
         });
-//        editAndDeleteBtn.setOnClickListener(v -> {
-//            startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
-//        });
+        editAndDeleteBtn.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
+        });
     }
-
 
     @SuppressLint({"UseCompatLoadingForDrawables", "NonConstantResourceId"})
     private void showYojanaUploadDialog(Context context, String title, String tableName) {
