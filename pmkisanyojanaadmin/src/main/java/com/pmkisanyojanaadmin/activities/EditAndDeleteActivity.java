@@ -96,8 +96,8 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
         title.setText(s);
-        if (s.equals("Yojana")) {
 
+        if (s.equals("Yojana")) {
             yojanaAdapter = new YojanaAdapter(context, this);
             recyclerView.setAdapter(yojanaAdapter);
             pageViewModel.geYojanaList().observe(this, yojanaModel -> {
@@ -126,6 +126,12 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         });
         builder.setNeutralButton("Edit", (dialog, which) -> {
             Intent intent = new Intent(getApplicationContext(),EditActivity.class);
+            intent.putExtra("intentId","yojana");
+            intent.putExtra("id",yojanaModel.getId());
+            intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/"+yojanaModel.getImage());
+            intent.putExtra("image2",yojanaModel.getImage());
+            intent.putExtra("title",yojanaModel.getTitle());
+            intent.putExtra("link",yojanaModel.getUrl());
             startActivity(intent);
         });
         builder.show();
@@ -140,6 +146,7 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
 
         builder.setNeutralButton("Edit", (dialog, which) -> {
             Intent intent = new Intent(getApplicationContext(),EditActivity.class);
+            intent.putExtra("intentId","news");
             intent.putExtra("id",newsModel.getId());
             intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModel.getImage());
             intent.putExtra("image2",newsModel.getImage());
