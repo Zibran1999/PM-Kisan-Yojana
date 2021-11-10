@@ -2,6 +2,7 @@ package com.pmkisanyojana.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class NewsDataActivity extends AppCompatActivity {
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
     Dialog dialog;
+    String finalEnglishString, finalHindiString;
 
     @SuppressLint("NonConstantResourceId")
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -54,9 +56,8 @@ public class NewsDataActivity extends AppCompatActivity {
         backIcon = binding.backIcon;
         lottieAnimationView = binding.lottieHome;
         id = getIntent().getStringExtra("id");
-        title = getIntent().getStringExtra("title");
-        img = getIntent().getStringExtra("img");
         dialog = CommonMethod.getDialog(this);
+        dialog.show();
 
         map.put("newsId", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
@@ -73,9 +74,9 @@ public class NewsDataActivity extends AppCompatActivity {
                 String englishString = null;
                 for (NewsPreveiwModel m : newsPreviewModelList.getData()) {
                     if (m.getNewsId().equals(id)) {
+                        lottieAnimationView.setVisibility(View.GONE);
                         hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
                         hindi.setTextColor(Color.WHITE);
-
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
                         String removeNumeric = replaceString.replaceAll("[0-9]", "");
                         Log.d("both data", removeNumeric.trim());
@@ -83,28 +84,34 @@ public class NewsDataActivity extends AppCompatActivity {
                         for (char c : removeNumeric.trim().toCharArray()) {
                             if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.DEVANAGARI) {
                                 hindiString = m.getDesc();
-                                Log.d("hindi", hindiString);
                                 break;
                             } else {
-
                                 if (englishString == null) {
                                     englishString = m.getDesc();
-                                    Log.d("english", englishString);
                                     materialButtonToggleGroup.setVisibility(View.VISIBLE);
-
                                 }
-
                             }
-
                         }
                     }
                 }
-                String finalEnglishString = englishString;
-                String finalHindiString = hindiString;
-                Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
-                newsImg.setVisibility(View.VISIBLE);
-                newsTitle.setText(title);
-                newsDesc.setVisibility(View.VISIBLE);
+                finalEnglishString = englishString;
+                finalHindiString = hindiString;
+
+                if (finalHindiString != null || finalEnglishString != null) {
+                    lottieAnimationView.setVisibility(View.GONE);
+                    newsDesc.setVisibility(View.VISIBLE);
+                    newsTitle.setVisibility(View.VISIBLE);
+                    newsImg.setVisibility(View.VISIBLE);
+                    title = getIntent().getStringExtra("title");
+                    img = getIntent().getStringExtra("img");
+                    Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
+                    newsTitle.setText(title);
+                } else {
+                    newsImg.setVisibility(View.GONE);
+                    newsTitle.setVisibility(View.GONE);
+                    newsDesc.setVisibility(View.GONE);
+                }
+
                 if (finalHindiString != null) {
                     newsDesc.setText(finalHindiString);
                 } else {
@@ -144,7 +151,6 @@ public class NewsDataActivity extends AppCompatActivity {
                 newsTitle.setVisibility(View.GONE);
                 newsDesc.setVisibility(View.GONE);
                 lottieAnimationView.setVisibility(View.VISIBLE);
-                lottieAnimationView.playAnimation();
             }
         });
 
