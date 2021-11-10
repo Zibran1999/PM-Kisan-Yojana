@@ -7,4 +7,6 @@
     <string name="select_yojana">Select Yojana</string>
     <string name="yajana">Yajana</string>
     <string name="enter_title">Enter Name</string>
+    <string name="hin">Hin</string>
+    <string name="eng">Eng</string>
 </resources>

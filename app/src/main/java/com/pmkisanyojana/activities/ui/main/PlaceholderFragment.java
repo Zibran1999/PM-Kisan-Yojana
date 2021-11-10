@@ -120,8 +120,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
             } else {
                 Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
-
-
             }
             dialog.dismiss();
         });

@@ -12,18 +12,45 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/dialog_title2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/yajana"
-        android:textColor="@color/black"
-        android:textSize="20sp"
-        android:padding="10dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/dialog_title2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/yajana"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/materialButtonToggleGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/materialButtonToggleGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:checkedButton="@id/hindiPreview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:singleSelection="true">
+
+            <Button
+                android:id="@+id/hindiPreview"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="70sp"
+                android:layout_height="wrap_content"
+                android:text="@string/hin" />
+
+            <Button
+                android:id="@+id/englishPreview"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="70sp"
+                android:layout_height="wrap_content"
+                android:text="@string/eng"
+                />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
@@ -57,14 +84,13 @@
             android:hint="@string/enter_yojana"
             android:textColorHint="@color/black"
             app:boxStrokeColor="@color/black"
-            app:endIconMode="clear_text"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
             tools:layout_editor_absoluteX="8dp">
 
             <EditText
                 android:id="@+id/yojana_data"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="250dp"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:textColor="@color/black"
