@@ -59,6 +59,7 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     List<NewsModel> newsModelList = new ArrayList<>();
     NewsAdapter newsAdapter;
     TextView dialogTitle;
+    Call<MessageModel> call;
     String id, title, image, image2, encodedImage, getTitle, getLink, intentId, link, yojanaPreview, hindiPreviewId, englishPreviewId;
     Uri uri;
     Bitmap bitmap;
@@ -120,10 +121,10 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
             editDialog2.dismiss();
             encodedImage = "";
         });
-        if (intentId.equals("yojana")) {
-            editTextInputLayout.setVisibility(View.VISIBLE);
-            yojanaLink.setText(link);
+        if (intentId.equals("news")) {
+            editTextInputLayout.setVisibility(View.GONE);
         }
+        yojanaLink.setText(link);
 
         Glide.with(EditActivity.this).load(image).into(cardNewsImage);
         cardNewsTitle.setText(title);
@@ -136,39 +137,32 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
             getLink = yojanaLink.getText().toString().trim();
             if (encodedImage.length() <= 100) {
 
-                if (intentId.equals("yojana")) {
-                    map.put("id", id);
-                    map.put("img", encodedImage);
-                    map.put("title", getTitle);
-                    map.put("deleteImg", image2);
-                    map.put("imgKey", "0");
+                map.put("id", id);
+                map.put("img", encodedImage);
+                map.put("title", getTitle);
+                map.put("deleteImg", image2);
+                map.put("imgKey", "0");
+
+                if (intentId.equals("news")) {
+                    updateNewsData(map);
+                } else {
                     map.put("link", getLink);
                     updateYojanaData(map);
-                } else {
-                    map.put("id", id);
-                    map.put("img", encodedImage);
-                    map.put("title", getTitle);
-                    map.put("deleteImg", image2);
-                    map.put("imgKey", "0");
-                    updateNewsData(map);
                 }
             }
             if (encodedImage.length() > 100) {
-                if (intentId.equals("yojana")) {
-                    map.put("id", id);
-                    map.put("img", encodedImage);
-                    map.put("title", getTitle);
-                    map.put("deleteImg", image2);
-                    map.put("imgKey", "1");
+
+                map.put("id", id);
+                map.put("img", encodedImage);
+                map.put("title", getTitle);
+                map.put("deleteImg", image2);
+                map.put("imgKey", "1");
+
+                if (intentId.equals("news")) {
+                    updateNewsData(map);
+                } else {
                     map.put("link", getLink);
                     updateYojanaData(map);
-                } else {
-                    map.put("id", id);
-                    map.put("img", encodedImage);
-                    map.put("title", getTitle);
-                    map.put("deleteImg", image2);
-                    map.put("imgKey", "1");
-                    updateNewsData(map);
                 }
             }
         });
@@ -203,7 +197,11 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     }
 
     private void updateYojanaData(Map<String, String> map) {
-        Call<MessageModel> call = apiInterface.updateYojana(map);
+        if (intentId.equals("yonaja")) {
+             call = apiInterface.updateYojana(map);
+        }else {
+             call = apiInterface.updateOthers(map);
+        }
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
@@ -337,7 +335,7 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
             });
         } else {
             Toast.makeText(EditActivity.this, "News id " + id, Toast.LENGTH_SHORT).show();
-            map.put("newsId", id);
+            map.put("previewId", id);
             YojanaViewModel viewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(YojanaViewModel.class);
             viewModel.getNewsPreviewData().observe(this, newsPreviewModelList -> {
                 Log.d("vvvvvvvvv", newsPreviewModelList.getData().toString());

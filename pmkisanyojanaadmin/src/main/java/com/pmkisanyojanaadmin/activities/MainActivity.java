@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
-    UUID uuid = UUID.randomUUID();
+
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
         editAndDeleteBtn = binding.editDeleteBtn;
-        randomId = String.valueOf(uuid);
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(this);
@@ -217,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
 
                     yojanaLink.setError("required field");
                 } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
                     map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);
@@ -240,6 +241,8 @@ public class MainActivity extends AppCompatActivity {
 
                     selectTitle.setError("required field");
                 } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
                     map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);
@@ -266,6 +269,8 @@ public class MainActivity extends AppCompatActivity {
 
                     yojanaLink.setError("required field");
                 } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
                     map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);

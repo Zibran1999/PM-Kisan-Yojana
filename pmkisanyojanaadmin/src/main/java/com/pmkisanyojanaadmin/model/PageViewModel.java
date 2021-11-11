@@ -27,4 +27,8 @@ public class PageViewModel extends AndroidViewModel {
         return yojanaRepository.getNewsLiveData();
     }
 
+    public LiveData<YojanaModelList> getAllOthers() {
+        return yojanaRepository.getOtherModelLiveData();
+    }
+
 }

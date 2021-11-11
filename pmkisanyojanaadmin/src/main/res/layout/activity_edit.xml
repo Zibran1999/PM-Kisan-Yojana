@@ -11,19 +11,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="176dp"
+        android:padding="10dp"
+        android:textAllCaps="false"
         android:text="Edit external Details"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/edit_internal_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="8dp"
+        android:padding="10dp"
+        android:textAllCaps="false"
         android:text="Edit Internal Details"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/edit_external_btn"
         app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/edit_external_btn"
         app:layout_constraintTop_toBottomOf="@+id/edit_external_btn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.adapter.NewsAdapter;
 import com.pmkisanyojanaadmin.adapter.YojanaAdapter;
+import com.pmkisanyojanaadmin.databinding.ActivityEditAndDeleteBinding;
 import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
@@ -35,12 +36,14 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
     ImageView backIcon;
     NewsAdapter newsAdapter;
     Dialog loadingDialog;
+    ActivityEditAndDeleteBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_and_delete);
+        binding = ActivityEditAndDeleteBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         editAndDeleteYojana = findViewById(R.id.edit_yojana);
         editAndDeleteNews = findViewById(R.id.edit_news);
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
@@ -64,6 +67,9 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         });
         editAndDeleteNews.setOnClickListener(v -> {
             showDialog(this, "News");
+        });
+        binding.editOthers.setOnClickListener(v -> {
+            showDialog(this, "Others");
         });
     }
 
@@ -98,7 +104,7 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
                 }
                 loadingDialog.dismiss();
             });
-        } else {
+        } else if(s.equals("News")) {
             loadingDialog.show();
             newsAdapter = new NewsAdapter(context, this);
             recyclerView.setAdapter(newsAdapter);
@@ -109,7 +115,18 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
                 }
                 loadingDialog.dismiss();
             });
+        }else if(s.equals("Others")) {
+            loadingDialog.show();
+            yojanaAdapter = new YojanaAdapter(context, this);
+            recyclerView.setAdapter(yojanaAdapter);
+            pageViewModel.getAllOthers().observe(this, yojanaModel -> {
+                if (yojanaModel != null) {
+                    yojanaAdapter.updateYojanaList(yojanaModel.getData());
+                }
+                loadingDialog.dismiss();
+            });
         }
+
     }
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {

@@ -55,6 +55,28 @@ public class YojanaRepository {
         return yojanaModelLiveData;
     }
 
+    public LiveData<YojanaModelList> getOtherModelLiveData() {
+        Call<YojanaModelList> call = apiInterface.getAllOthers();
+        call.enqueue(new Callback<YojanaModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<YojanaModelList> call, @NonNull Response<YojanaModelList> response) {
+
+                if (response.isSuccessful()) {
+                    yojanaModelLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<YojanaModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+
+            }
+        });
+        return yojanaModelLiveData;
+    }
+
     public LiveData<NewsModelList> getNewsLiveData() {
         Call<NewsModelList> call = apiInterface.getAllNews();
         call.enqueue(new Callback<NewsModelList>() {
