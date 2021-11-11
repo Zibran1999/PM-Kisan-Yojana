@@ -18,8 +18,8 @@ public class YojanaRepository {
     private static YojanaRepository yojanaRepository;
     private final MutableLiveData<YojanaModelList> yojanaModelLiveData = new MutableLiveData<>();
     private final MutableLiveData<NewsModelList> newsModelLiveData = new MutableLiveData<>();
-    private final MutableLiveData<YojanaPreviewModelList> yojanaPreviewModelListMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<NewsPreviewModelList> newsPreviewModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<PreviewModelList> previewModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<PreviewModelList> newsPreviewModelListMutableLiveData = new MutableLiveData<>();
 
 
     public YojanaRepository() {
@@ -35,6 +35,28 @@ public class YojanaRepository {
 
     public LiveData<YojanaModelList> getYojanaModelLiveData() {
         Call<YojanaModelList> call = apiInterface.getAllYojana();
+        call.enqueue(new Callback<YojanaModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<YojanaModelList> call, @NonNull Response<YojanaModelList> response) {
+
+                if (response.isSuccessful()) {
+                    yojanaModelLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<YojanaModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+
+            }
+        });
+        return yojanaModelLiveData;
+    }
+
+    public LiveData<YojanaModelList> getOtherModelLiveData() {
+        Call<YojanaModelList> call = apiInterface.getAllOthers();
         call.enqueue(new Callback<YojanaModelList>() {
             @Override
             public void onResponse(@NonNull Call<YojanaModelList> call, @NonNull Response<YojanaModelList> response) {
@@ -77,32 +99,32 @@ public class YojanaRepository {
         return newsModelLiveData;
     }
 
-    public LiveData<YojanaPreviewModelList> getYojanaPreviewLiveData(Map<String, String> map) {
-        Call<YojanaPreviewModelList> call = apiInterface.getYojanaPreview(map);
-        call.enqueue(new Callback<YojanaPreviewModelList>() {
+    public LiveData<PreviewModelList> getYojanaPreviewLiveData(Map<String, String> map) {
+        Call<PreviewModelList> call = apiInterface.getPreview(map);
+        call.enqueue(new Callback<PreviewModelList>() {
             @Override
-            public void onResponse(@NonNull Call<YojanaPreviewModelList> call, @NonNull Response<YojanaPreviewModelList> response) {
+            public void onResponse(@NonNull Call<PreviewModelList> call, @NonNull Response<PreviewModelList> response) {
                 if (response.isSuccessful()) {
-                    yojanaPreviewModelListMutableLiveData.setValue(response.body());
+                    previewModelListMutableLiveData.setValue(response.body());
                 } else {
                     Log.d("onResponse", response.message());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<YojanaPreviewModelList> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PreviewModelList> call, @NonNull Throwable t) {
                 Log.d("onResponse error", t.getMessage());
 
             }
         });
-        return yojanaPreviewModelListMutableLiveData;
+        return previewModelListMutableLiveData;
     }
 
-    public LiveData<NewsPreviewModelList> getNewsPreviewLiveData(Map<String, String> map) {
-        Call<NewsPreviewModelList> call = apiInterface.getNewsPreview(map);
-        call.enqueue(new Callback<NewsPreviewModelList>() {
+    public LiveData<PreviewModelList> getPreviewLiveData(Map<String, String> map) {
+        Call<PreviewModelList> call = apiInterface.getPreview(map);
+        call.enqueue(new Callback<PreviewModelList>() {
             @Override
-            public void onResponse(@NonNull Call<NewsPreviewModelList> call, @NonNull Response<NewsPreviewModelList> response) {
+            public void onResponse(@NonNull Call<PreviewModelList> call, @NonNull Response<PreviewModelList> response) {
                 if (response.isSuccessful()) {
                     newsPreviewModelListMutableLiveData.setValue(response.body());
                 } else {
@@ -111,7 +133,7 @@ public class YojanaRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<NewsPreviewModelList> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PreviewModelList> call, @NonNull Throwable t) {
                 Log.d("onResponse error", t.getMessage());
 
             }

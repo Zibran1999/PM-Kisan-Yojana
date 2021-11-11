@@ -8,56 +8,105 @@
 
     <Button
         android:id="@+id/yojana_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginTop="116dp"
         android:text="Upload Yojana Data"
         android:textAllCaps="false"
+        android:padding="10dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/news_btn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:padding="10dp"
         android:text="Upload News Data"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/yojana_btn"
+        app:layout_constraintStart_toStartOf="@+id/yojana_btn"
         app:layout_constraintTop_toBottomOf="@+id/yojana_btn" />
 
     <Button
         android:id="@+id/add_yojana_btn"
-        android:layout_width="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="Add Yojana Preview"
+        android:padding="10dp"
+        android:textSize="20sp"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/news_btn" />
+        app:layout_constraintEnd_toEndOf="@+id/upload_other_data"
+        app:layout_constraintStart_toStartOf="@+id/upload_other_data"
+        app:layout_constraintTop_toBottomOf="@+id/upload_other_data" />
+
     <Button
         android:id="@+id/add_news_btn"
-        android:layout_width="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:textSize="20sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Add News Preview"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/add_yojana_btn"
+        app:layout_constraintStart_toStartOf="@+id/add_yojana_btn"
         app:layout_constraintTop_toBottomOf="@+id/add_yojana_btn" />
 
     <Button
+        android:id="@+id/add_others_btn"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Add Others Preview"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="@+id/add_news_btn"
+        app:layout_constraintStart_toStartOf="@+id/add_news_btn"
+        app:layout_constraintTop_toBottomOf="@+id/add_news_btn" />
+
+    <Button
         android:id="@+id/edit_delete_btn"
-        android:layout_width="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:padding="10dp"
+        android:textSize="20sp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Edit and Delete"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_news_btn" />
+        app:layout_constraintEnd_toEndOf="@+id/add_others_btn"
+        app:layout_constraintStart_toStartOf="@+id/add_others_btn"
+        app:layout_constraintTop_toBottomOf="@+id/add_others_btn" />
+
+    <Button
+        android:id="@+id/upload_other_data"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Upload Others"
+        android:textAllCaps="false"
+        android:padding="10dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/news_btn"
+        app:layout_constraintStart_toStartOf="@+id/news_btn"
+        app:layout_constraintTop_toBottomOf="@+id/news_btn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             android:hint="@string/enter_link"
             android:textColorHint="@color/black"
             app:boxStrokeColor="@color/black"

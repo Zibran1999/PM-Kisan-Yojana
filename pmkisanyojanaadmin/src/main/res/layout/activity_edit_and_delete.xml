@@ -10,21 +10,36 @@
         android:id="@+id/edit_yojana"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="168dp"
+        android:layout_marginTop="208dp"
+        android:padding="10dp"
         android:text="Edit and Delete Yojana"
         android:textAllCaps="false"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/edit_news"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:text="Edit and Delete News"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/edit_yojana"
+        app:layout_constraintStart_toStartOf="@+id/edit_yojana"
         app:layout_constraintTop_toBottomOf="@+id/edit_yojana" />
+
+    <Button
+        android:id="@+id/edit_others"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Edit and Delete Others"
+        android:textAllCaps="false"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/edit_news"
+        app:layout_constraintStart_toStartOf="@+id/edit_news"
+        app:layout_constraintTop_toBottomOf="@+id/edit_news" />
 </androidx.constraintlayout.widget.ConstraintLayout>

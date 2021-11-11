@@ -1,13 +1,13 @@
 package com.pmkisanyojanaadmin.model;
 
-public class NewsPreveiwModel {
+public class PreviewModel {
     private final String id;
-    private final String newsId;
+    private final String previewId;
     private final String desc;
 
-    public NewsPreveiwModel(String id, String newsId, String desc) {
+    public PreviewModel(String id, String newsId, String desc) {
         this.id = id;
-        this.newsId = newsId;
+        this.previewId = newsId;
         this.desc = desc;
     }
 
@@ -15,8 +15,8 @@ public class NewsPreveiwModel {
         return id;
     }
 
-    public String getNewsId() {
-        return newsId;
+    public String getPreviewId() {
+        return previewId;
     }
 
     public String getDesc() {

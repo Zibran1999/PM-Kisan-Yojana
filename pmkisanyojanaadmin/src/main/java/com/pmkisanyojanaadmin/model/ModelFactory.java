@@ -23,8 +23,6 @@ public class ModelFactory implements ViewModelProvider.Factory {
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
-        Log.d("checkMap",yojanaMap.get("yojanaId"));
-
         return (T) new YojanaViewModel(application, yojanaMap);
     }
 }

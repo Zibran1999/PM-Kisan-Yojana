@@ -90,9 +90,9 @@
             <EditText
                 android:id="@+id/yojana_data"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="350dp"
+                android:gravity="start"
                 android:importantForAutofill="no"
-                android:inputType="text"
                 android:textColor="@color/black"
                 tools:ignore="LabelFor,SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>

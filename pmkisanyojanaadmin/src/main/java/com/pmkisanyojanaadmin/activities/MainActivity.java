@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,7 +60,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    Button yojnaBtn, newsBtn, cancelBtn, uploadBtn, addYojanaBtn, addNewsBtn, cancelYoajanBtn, uploadYojanaBtn,editAndDeleteBtn;
+    Button yojnaBtn, newsBtn, cancelBtn, uploadBtn, addYojanaBtn, addNewsBtn,
+            cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn, othersBtn;
     Dialog uploadDialog, adYojanaDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
@@ -73,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     List<NewsModel> newsModelList = new ArrayList<>();
     List<String> arrayList = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
-    String getYojanaName, yojanaId;
+    String getYojanaName, previewId, randomId;
     ApiInterface apiInterface;
     String encodedImage;
     Uri uri;
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
+
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -110,28 +113,33 @@ public class MainActivity extends AppCompatActivity {
         apiInterface = ApiWebServices.getApiInterface();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, arrayList);
         yojnaBtn.setOnClickListener(v -> {
-            showYojanaUploadDialog(this, "Upload Yojana", "Kisan_Yojana");
+            showYojanaUploadDialog(this, "Upload Yojana");
         });
         newsBtn.setOnClickListener(v -> {
-            showYojanaUploadDialog(this, "Upload News", "News_Data");
+            showYojanaUploadDialog(this, "Upload News");
         });
         addYojanaBtn.setOnClickListener(v -> {
             arrayList.clear();
-            fetchYojanaDetails();
-            addYojanaData(this, "Add Yojana Preview");
+            addPreviewData(this, "Yojana");
         });
         addNewsBtn.setOnClickListener(v -> {
             arrayList.clear();
-            fetchNewsDetails();
-            addYojanaData(this, "Add News Preview");
+            addPreviewData(this, "News");
+        });
+        binding.addOthersBtn.setOnClickListener(v -> {
+            addPreviewData(this, "Others");
         });
         editAndDeleteBtn.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
         });
+        binding.uploadOtherData.setOnClickListener(v -> {
+            showYojanaUploadDialog(this, "Upload Others");
+        });
+
     }
 
     @SuppressLint({"UseCompatLoadingForDrawables", "NonConstantResourceId"})
-    private void showYojanaUploadDialog(Context context, String title, String tableName) {
+    private void showYojanaUploadDialog(Context context, String title) {
         uploadDialog = new Dialog(context);
         uploadDialog.setContentView(R.layout.upload_dialog);
         uploadDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -156,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (title.equals("Upload News")) {
             textInputLayout.setVisibility(View.GONE);
+
+        } else if (title.equals("Upload Others")) {
+            textInputLayout.setVisibility(View.VISIBLE);
 
         }
 
@@ -183,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
             }
             @SuppressLint("SimpleDateFormat") SimpleDateFormat CurrentfmtOut = new SimpleDateFormat("hh:mm aa");
 
+            assert currentDate != null;
             selectTime = CurrentfmtOut.format(currentDate);
             setTime.setText(selectTime);
             if (title.equals("Upload Yojana")) {
@@ -204,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
 
                     yojanaLink.setError("required field");
                 } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
+                    map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);
                     map.put("time", time);
@@ -226,11 +241,43 @@ public class MainActivity extends AppCompatActivity {
 
                     selectTitle.setError("required field");
                 } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
+                    map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);
                     map.put("time", time);
                     map.put("date", date);
                     uploadNewsData(map);
+                }
+            } else if (title.equals("Upload Others")) {
+                String sTitle = selectTitle.getText().toString().trim();
+                String url = yojanaLink.getText().toString();
+                String date = setDate.getText().toString();
+                String time = setTime.getText().toString();
+
+                if (TextUtils.isEmpty(encodedImage)) {
+                    loadingDialog.dismiss();
+
+                    Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(sTitle)) {
+                    loadingDialog.dismiss();
+
+                    selectTitle.setError("required field");
+                } else if (TextUtils.isEmpty(url)) {
+                    loadingDialog.dismiss();
+
+                    yojanaLink.setError("required field");
+                } else {
+                    UUID uuid = UUID.randomUUID();
+                    randomId = String.valueOf(uuid);
+                    map.put("id", randomId);
+                    map.put("img", encodedImage);
+                    map.put("title", sTitle);
+                    map.put("time", time);
+                    map.put("date", date);
+                    map.put("url", url);
+                    uploadOthers(map);
                 }
             }
         });
@@ -280,6 +327,7 @@ public class MainActivity extends AppCompatActivity {
                                 loadingDialog.dismiss();
 
                             } else {
+                                map.put("id", randomId);
                                 map.put("img", encodedImage);
                                 map.put("title", sTitle);
                                 map.put("time", time);
@@ -308,6 +356,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
 
                             } else {
+                                map.put("id", randomId);
                                 map.put("img", encodedImage);
                                 map.put("title", sTitle);
                                 map.put("time", time);
@@ -381,6 +430,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
 
                             } else {
+                                map.put("id", randomId);
                                 map.put("img", encodedImage);
                                 map.put("title", sTitle);
                                 map.put("time", time);
@@ -399,6 +449,7 @@ public class MainActivity extends AppCompatActivity {
                             } else if (TextUtils.isEmpty(sTitle)) {
                                 selectTitle.setError("required field!");
                             } else {
+                                map.put("id", randomId);
                                 map.put("img", encodedImage);
                                 map.put("title", sTitle);
                                 map.put("time", time);
@@ -416,9 +467,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void uploadOthers(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.uploadOthers(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
+                    uploadDialog.dismiss();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+
+
+            }
+        });
+
+    }
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void addYojanaData(Context context, String title) {
+    public void addPreviewData(Context context, String title) {
         adYojanaDialog = new Dialog(context);
         adYojanaDialog.setContentView(R.layout.yojna_item_layout);
         adYojanaDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -443,85 +524,89 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, getYojanaName, Toast.LENGTH_SHORT).show();
         });
 
-        uploadYojanaBtn.setOnClickListener(v -> {
-            loadingDialog.show();
-            if (title.equals("Add Yojana Preview")) {
+        if (title.equals("Yojana")) {
+            arrayList.clear();
+            yojanaModelList.clear();
+            fetchYojanaDetails();
+            uploadYojanaBtn.setOnClickListener(v -> {
+                loadingDialog.show();
                 String desc = yojanaData.getText().toString();
                 if (TextUtils.isEmpty(getYojanaName)) {
                     loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Please select a Category!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(desc)) {
                     yojanaData.setError("field required!");
+                    loadingDialog.dismiss();
                 } else {
                     for (YojanaModel m : yojanaModelList) {
                         if (m.getTitle().equals(getYojanaName)) {
-                            yojanaId = m.getId();
+                            previewId = m.getId();
                             break;
                         }
                     }
-
-                    map.put("yojanaId", yojanaId);
+                    map.put("previewId", previewId);
                     map.put("desc", desc);
-                    uploadYojanaPreview(map);
+                    uploadPreview(map);
                 }
-
-            } else if (title.equals("Add News Preview")) {
+            });
+        } else if (title.equals("News")) {
+            arrayList.clear();
+            newsModelList.clear();
+            fetchNewsDetails();
+            uploadYojanaBtn.setOnClickListener(v -> {
+                loadingDialog.show();
                 String desc = yojanaData.getText().toString();
                 if (TextUtils.isEmpty(getYojanaName)) {
                     loadingDialog.dismiss();
                     Toast.makeText(getApplicationContext(), "Please select a Category!", Toast.LENGTH_SHORT).show();
                 } else if (TextUtils.isEmpty(desc)) {
                     yojanaData.setError("field required!");
+                    loadingDialog.dismiss();
                 } else {
                     for (NewsModel m : newsModelList) {
                         if (m.getTitle().equals(getYojanaName)) {
-                            yojanaId = m.getId();
+                            previewId = m.getId();
                             break;
                         }
-
                     }
-                    map.put("newsId", yojanaId);
+                    map.put("previewId", previewId);
                     map.put("desc", desc);
-                    uploadNewsPreview(map);
+                    uploadPreview(map);
                 }
-            }
-
-        });
-    }
-
-    private void uploadNewsPreview(Map<String, String> map) {
-        Call<MessageModel> call = apiInterface.uploadNewsPreviewData(map);
-        call.enqueue(new Callback<MessageModel>() {
-            @Override
-            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-
-
-                assert response.body() != null;
-                if (response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+            });
+        } else if (title.equals("Others")) {
+            arrayList.clear();
+            yojanaModelList.clear();
+            fetchOthersDetails();
+            uploadYojanaBtn.setOnClickListener(v -> {
+                loadingDialog.show();
+                String desc = yojanaData.getText().toString();
+                if (TextUtils.isEmpty(getYojanaName)) {
                     loadingDialog.dismiss();
-                    adYojanaDialog.dismiss();
-
+                    Toast.makeText(getApplicationContext(), "Please select a Category!", Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(desc)) {
+                    yojanaData.setError("field required!");
+                    loadingDialog.dismiss();
                 } else {
-                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                    for (YojanaModel m : yojanaModelList) {
+                        if (m.getTitle().equals(getYojanaName)) {
+                            previewId = m.getId();
+                            break;
+                        }
+                    }
+                    map.put("previewId", previewId);
+                    map.put("desc", desc);
+                    uploadPreview(map);
                 }
-                loadingDialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                loadingDialog.dismiss();
-                Log.d("onResponse", t.getMessage());
+            });
+        }
 
 
-            }
-        });
 
     }
 
-    private void uploadYojanaPreview(Map<String, String> map) {
-        Call<MessageModel> call = apiInterface.upladYojanaPreivewData(map);
+    private void uploadPreview(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.uploadPreviewData(map);
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
@@ -595,6 +680,33 @@ public class MainActivity extends AppCompatActivity {
                         arrayList.add(yjm.getTitle());
                         yojanaModelList.addAll(response.body().getData());
                     }
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<YojanaModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+
+            }
+        });
+    }
+
+    public void fetchOthersDetails() {
+        Call<YojanaModelList> call = apiInterface.getAllOthers();
+        call.enqueue(new Callback<YojanaModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<YojanaModelList> call, @NonNull Response<YojanaModelList> response) {
+
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+
+                    for (YojanaModel yjm : response.body().getData()) {
+                        arrayList.add(yjm.getTitle());
+                        yojanaModelList.addAll(response.body().getData());
+                    }
+                    Log.d("ffffffff",response.body().getData().toString());
                 } else {
                     Log.d("onResponse", response.message());
                 }

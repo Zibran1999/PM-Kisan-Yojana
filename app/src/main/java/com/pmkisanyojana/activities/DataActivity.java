@@ -97,12 +97,14 @@ public class DataActivity extends AppCompatActivity {
         title.setText(getIntent().getStringExtra("title"));
         id = getIntent().getStringExtra("id");
         map.put("yojanaId", id);
+        Log.d("ccccc",id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
         Button hindi, english;
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
-        pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
+        pageViewModel = new ViewModelProvider(this,
+                new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
 dialog.show();
             if (!yojanaPreviewModelList.getData().isEmpty()) {
