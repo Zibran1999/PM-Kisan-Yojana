@@ -3,20 +3,15 @@ package com.pmkisanyojanaadmin.activities;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,12 +21,8 @@ import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.adapter.NewsAdapter;
 import com.pmkisanyojanaadmin.adapter.YojanaAdapter;
 import com.pmkisanyojanaadmin.model.NewsModel;
-import com.pmkisanyojanaadmin.model.NewsModelList;
-import com.pmkisanyojanaadmin.model.NewsPreveiwModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
-
-import java.util.List;
 
 public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
     Button editAndDeleteYojana, editAndDeleteNews;
@@ -78,7 +69,6 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private void showDialog(Context context, String s) {
-        loadingDialog.show();
         editDeleteDialog = new Dialog(context);
         editDeleteDialog.setContentView(R.layout.edit_and_delete_dialog);
         editDeleteDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -98,6 +88,7 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         title.setText(s);
 
         if (s.equals("Yojana")) {
+            loadingDialog.show();
             yojanaAdapter = new YojanaAdapter(context, this);
             recyclerView.setAdapter(yojanaAdapter);
             pageViewModel.geYojanaList().observe(this, yojanaModel -> {
@@ -108,6 +99,7 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
                 loadingDialog.dismiss();
             });
         } else {
+            loadingDialog.show();
             newsAdapter = new NewsAdapter(context, this);
             recyclerView.setAdapter(newsAdapter);
             pageViewModel.getNews().observe(this, newsModelList -> {
