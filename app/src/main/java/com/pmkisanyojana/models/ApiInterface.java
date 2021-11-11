@@ -15,13 +15,13 @@ public interface ApiInterface {
 
     @POST("fetch_news_api.php")
     Call<NewsModelList> getAllNews();
+    @POST("fetch_others_api.php")
+    Call<YojanaModelList> getOthersData();
 
     @FormUrlEncoded
-    @POST("fetch_yojana_preview_data.php")
-    Call<YojanaPreviewModelList> getYojanaPreview(@FieldMap Map<String, String> map);
+    @POST("fetch_preview_data.php")
+    Call<PreviewModelList> getPreview(@FieldMap Map<String, String> map);
 
-    @FormUrlEncoded
-    @POST("fetch_news_preview_data.php")
-    Call<NewsPreviewModelList> getNewsPreview(@FieldMap Map<String, String> map);
+
 
 }

@@ -51,7 +51,7 @@ public interface ApiInterface {
     Call<MessageModel> updateOthers(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
-    @POST("update_yojana_preview_api.php")
-    Call<MessageModel> updateYojanaPreview(@FieldMap Map<String, String> map);
+    @POST("update_preview_api.php")
+    Call<MessageModel> updatePreview(@FieldMap Map<String, String> map);
 
 }

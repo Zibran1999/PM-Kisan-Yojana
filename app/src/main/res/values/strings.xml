@@ -3,6 +3,7 @@
     <string name="title_activity_home_screen">HomeScreenActivity</string>
     <string name="tab_text_1">Yojana</string>
     <string name="tab_text_2">News</string>
+    <string name="tab_text_3">Others</string>
     <string name="home">Home</string>
     <string name="rate_app">Rate Us</string>
     <string name="privacy_policy">Privacy Policy</string>

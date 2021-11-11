@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pmkisanyojanaadmin.R;
@@ -25,7 +26,12 @@ import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
+      List<YojanaModel> yojanaModels = new ArrayList<>();
+      List<NewsModel> newsModels = new ArrayList<>();
     Button editAndDeleteYojana, editAndDeleteNews;
     Dialog editDeleteDialog;
     YojanaAdapter yojanaAdapter;
@@ -36,8 +42,9 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
     ImageView backIcon;
     NewsAdapter newsAdapter;
     Dialog loadingDialog;
-    ActivityEditAndDeleteBinding binding;
 
+    ActivityEditAndDeleteBinding binding;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +91,7 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         editDeleteDialog.show();
         title = editDeleteDialog.findViewById(R.id.dialog_title);
         backIcon = editDeleteDialog.findViewById(R.id.back_icon);
+        swipeRefreshLayout = editDeleteDialog.findViewById(R.id.swipe_refresh);
         backIcon.setOnClickListener(v -> {
             editDeleteDialog.dismiss();
         });
@@ -97,50 +105,97 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
             loadingDialog.show();
             yojanaAdapter = new YojanaAdapter(context, this);
             recyclerView.setAdapter(yojanaAdapter);
-            pageViewModel.geYojanaList().observe(this, yojanaModel -> {
-
-                if (yojanaModel != null) {
-                    yojanaAdapter.updateYojanaList(yojanaModel.getData());
-                }
-                loadingDialog.dismiss();
+            fetchYojana();
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                fetchYojana();
+                swipeRefreshLayout.setRefreshing(false);
             });
-        } else if(s.equals("News")) {
+
+        } else if (s.equals("News")) {
             loadingDialog.show();
             newsAdapter = new NewsAdapter(context, this);
             recyclerView.setAdapter(newsAdapter);
-            pageViewModel.getNews().observe(this, newsModelList -> {
-
-                if (newsModelList != null) {
-                    newsAdapter.updateNewsList(newsModelList.getData());
-                }
-                loadingDialog.dismiss();
+            fetchNews();
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                fetchNews();
+                swipeRefreshLayout.setRefreshing(false);
             });
-        }else if(s.equals("Others")) {
-            loadingDialog.show();
-            yojanaAdapter = new YojanaAdapter(context, this);
-            recyclerView.setAdapter(yojanaAdapter);
-            pageViewModel.getAllOthers().observe(this, yojanaModel -> {
-                if (yojanaModel != null) {
-                    yojanaAdapter.updateYojanaList(yojanaModel.getData());
-                }
-                loadingDialog.dismiss();
+
+        } else if (s.equals("Others")) {
+            fetchOthers();
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                fetchOthers();
+                swipeRefreshLayout.setRefreshing(false);
             });
         }
 
     }
+
+    private void fetchOthers() {
+        loadingDialog.show();
+        yojanaAdapter = new YojanaAdapter(this, yojanaModel -> {
+            builder.setNeutralButton("Edit", (dialog, which) -> {
+                Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+                intent.putExtra("intentId", "others");
+                intent.putExtra("id", yojanaModel.getId());
+                intent.putExtra("image", "https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModel.getImage());
+                intent.putExtra("image2", yojanaModel.getImage());
+                intent.putExtra("title", yojanaModel.getTitle());
+                intent.putExtra("link", yojanaModel.getUrl());
+                startActivity(intent);
+            });
+            builder.show();
+
+        });
+        recyclerView.setAdapter(yojanaAdapter);
+        pageViewModel.getAllOthers().observe(this, yojanaModel -> {
+            if (yojanaModel != null) {
+                yojanaModels.clear();
+                yojanaModels.addAll(yojanaModel.getData());
+                yojanaAdapter.updateYojanaList(yojanaModels);
+            }
+            loadingDialog.dismiss();
+        });
+
+    }
+
+    private void fetchNews() {
+        pageViewModel.getNews().observe(this, newsModelList -> {
+
+            if (newsModelList != null) {
+                newsModels.clear();
+                newsModels.addAll(newsModelList.getData());
+                newsAdapter.updateNewsList(newsModels);
+            }
+            loadingDialog.dismiss();
+        });
+    }
+
+    private void fetchYojana() {
+        pageViewModel.geYojanaList().observe(this, yojanaModel -> {
+
+            if (yojanaModel != null) {
+                yojanaModels.clear();
+                yojanaModels.addAll(yojanaModel.getData());
+                yojanaAdapter.updateYojanaList(yojanaModels);
+            }
+            loadingDialog.dismiss();
+        });
+    }
+
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
         builder.setPositiveButton("Delete", (dialog, which) -> {
             Toast.makeText(EditAndDeleteActivity.this, "Yojana", Toast.LENGTH_SHORT).show();
         });
         builder.setNeutralButton("Edit", (dialog, which) -> {
-            Intent intent = new Intent(getApplicationContext(),EditActivity.class);
-            intent.putExtra("intentId","yojana");
-            intent.putExtra("id",yojanaModel.getId());
-            intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/"+yojanaModel.getImage());
-            intent.putExtra("image2",yojanaModel.getImage());
-            intent.putExtra("title",yojanaModel.getTitle());
-            intent.putExtra("link",yojanaModel.getUrl());
+            Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+            intent.putExtra("intentId", "yojana");
+            intent.putExtra("id", yojanaModel.getId());
+            intent.putExtra("image", "https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModel.getImage());
+            intent.putExtra("image2", yojanaModel.getImage());
+            intent.putExtra("title", yojanaModel.getTitle());
+            intent.putExtra("link", yojanaModel.getUrl());
             startActivity(intent);
         });
         builder.show();
@@ -154,12 +209,12 @@ public class EditAndDeleteActivity extends AppCompatActivity implements YojanaAd
         });
 
         builder.setNeutralButton("Edit", (dialog, which) -> {
-            Intent intent = new Intent(getApplicationContext(),EditActivity.class);
-            intent.putExtra("intentId","news");
-            intent.putExtra("id",newsModel.getId());
-            intent.putExtra("image","https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModel.getImage());
-            intent.putExtra("image2",newsModel.getImage());
-            intent.putExtra("title",newsModel.getTitle());
+            Intent intent = new Intent(getApplicationContext(), EditActivity.class);
+            intent.putExtra("intentId", "news");
+            intent.putExtra("id", newsModel.getId());
+            intent.putExtra("image", "https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + newsModel.getImage());
+            intent.putExtra("image2", newsModel.getImage());
+            intent.putExtra("title", newsModel.getTitle());
             startActivity(intent);
         });
         builder.show();

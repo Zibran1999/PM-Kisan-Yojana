@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +25,9 @@ import com.pmkisanyojana.models.NewsModel;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A placeholder fragment containing a simple view.
  */
@@ -35,6 +39,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     YojanaAdapter yojanaAdapter;
     NewsAdapter newsAdapter;
     Dialog dialog;
+    String yojanaId = "12";
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -66,13 +71,15 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         binding = FragmentHomeScreenBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
+        pinnedRv = binding.pinnedRV;
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
+
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
-        binding.pinnedRV.setLayoutManager(layoutManager1);
+        pinnedRv.setLayoutManager(layoutManager1);
 
 
         if (pos == 1) {
@@ -91,9 +98,31 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
             });
 
+        } else if (pos == 3) {
+            setOthersData(root.getContext());
+            binding.swipeRefresh.setOnRefreshListener(() -> {
+                setOthersData(root.getContext());
+                binding.swipeRefresh.setRefreshing(false);
+
+            });
         }
 
         return root;
+    }
+
+    private void setOthersData(Context context) {
+        YojanaAdapter adapter = new YojanaAdapter(context, this);
+        homeRV.setAdapter(adapter);
+
+        pageViewModel.getOthersData().observe(requireActivity(), othersData -> {
+            if (othersData.getData() != null) {
+                adapter.updateYojanaList(othersData.getData());
+            } else {
+                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
+            }
+            dialog.dismiss();
+        });
+
     }
 
     private void setNewsData(Context context) {
@@ -112,22 +141,40 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     }
 
     private void setYojanaData(Context context) {
+        List<YojanaModel> yojanaModels = new ArrayList<>();
+        List<YojanaModel> yojanaModelList = new ArrayList<>();
         yojanaAdapter = new YojanaAdapter(context, this);
+        YojanaAdapter adapter = new YojanaAdapter(context, this);
         homeRV.setAdapter(yojanaAdapter);
+        pinnedRv.setAdapter(adapter);
+        pinnedRv.setVisibility(View.VISIBLE);
 
-        YojanaAdapter adapter = new YojanaAdapter(context,this);
-        binding.pinnedRV.setAdapter(adapter);
-        binding.pinnedRV.setVisibility(View.VISIBLE);
         pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
 
             if (yojanaModel.getData() != null) {
-                yojanaAdapter.updateYojanaList(yojanaModel.getData());
+                yojanaModelList.clear();
+                yojanaModelList.addAll(yojanaModel.getData());
+                for (int i = 0; i < yojanaModel.getData().size(); i++) {
+                    if (yojanaId.equals(yojanaModel.getData().get(i).getId())) {
+                        yojanaModels.clear();
+                        yojanaModels.add(new YojanaModel(yojanaModel.getData().get(i).getId(), yojanaModel.getData().get(i).getImage(), yojanaModel.getData().get(i).getTitle(), yojanaModel.getData().get(i).getDate(), yojanaModel.getData().get(i).getTime(), yojanaModel.getData().get(i).getUrl()));
+                        yojanaModelList.remove(i);
+                        break;
+                    }
+
+                }
+                adapter.updateYojanaList(yojanaModels);
+                yojanaAdapter.updateYojanaList(yojanaModelList);
+
 
             } else {
                 Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
             }
             dialog.dismiss();
         });
+
+        ViewCompat.setNestedScrollingEnabled(homeRV, false);
+        ViewCompat.setNestedScrollingEnabled(pinnedRv, false);
 
     }
 

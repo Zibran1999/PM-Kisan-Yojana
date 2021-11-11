@@ -27,12 +27,10 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pmkisanyojanaadmin.R;
-import com.pmkisanyojanaadmin.adapter.NewsAdapter;
 import com.pmkisanyojanaadmin.model.ApiInterface;
 import com.pmkisanyojanaadmin.model.ApiWebServices;
 import com.pmkisanyojanaadmin.model.MessageModel;
 import com.pmkisanyojanaadmin.model.ModelFactory;
-import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.PreviewModel;
 import com.pmkisanyojanaadmin.model.YojanaViewModel;
@@ -40,24 +38,20 @@ import com.pmkisanyojanaadmin.model.YojanaViewModel;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsInterface {
+public class EditActivity extends AppCompatActivity {
 
     Button uploadDataBtn, uploadNewsBtn2, editExternalBtn, editInternalBtn, dismiss2, cancelPreview;
     ImageView cardNewsImage;
     TextInputLayout editTextInputLayout, textInputLayout;
     EditText cardNewsTitle, editData, yojanaLink;
     Dialog editDialog, editDialog2, loadingDialog;
-    List<NewsModel> newsModelList = new ArrayList<>();
-    NewsAdapter newsAdapter;
     TextView dialogTitle;
     Call<MessageModel> call;
     String id, title, image, image2, encodedImage, getTitle, getLink, intentId, link, yojanaPreview, hindiPreviewId, englishPreviewId;
@@ -177,7 +171,6 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
                 assert response.body() != null;
                 if (response.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     loadingDialog.dismiss();
                     editDialog2.dismiss();
 
@@ -197,17 +190,16 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     }
 
     private void updateYojanaData(Map<String, String> map) {
-        if (intentId.equals("yonaja")) {
-             call = apiInterface.updateYojana(map);
-        }else {
-             call = apiInterface.updateOthers(map);
+        if (intentId.equals("yojana")) {
+            call = apiInterface.updateYojana(map);
+        } else if (intentId.equals("others")) {
+            call = apiInterface.updateOthers(map);
         }
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
                 assert response.body() != null;
                 if (response.isSuccessful()) {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                     Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     loadingDialog.dismiss();
                     editDialog2.dismiss();
@@ -245,122 +237,102 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
             editDialog.dismiss();
         });
 
-        if (intentId.equals("yojana")) {
-            Toast.makeText(EditActivity.this, "Yojana", Toast.LENGTH_SHORT).show();
-            Map<String, String> mapId = new HashMap<>();
-            mapId.put("previewId", id.trim());
+        Map<String, String> mapId = new HashMap<>();
+        mapId.put("previewId", id.trim());
 
-            MaterialButtonToggleGroup materialButtonToggleGroup = editDialog.findViewById(R.id.materialButtonToggleGroup);
-            materialButtonToggleGroup.setVisibility(View.GONE);
+        MaterialButtonToggleGroup materialButtonToggleGroup = editDialog.findViewById(R.id.materialButtonToggleGroup);
+        materialButtonToggleGroup.setVisibility(View.GONE);
+        Button hindi, english;
+        hindi = editDialog.findViewById(R.id.hindiPreview);
+        english = editDialog.findViewById(R.id.englishPreview);
 
-            Button hindi, english;
-            hindi = editDialog.findViewById(R.id.hindiPreview);
-            english = editDialog.findViewById(R.id.englishPreview);
+        YojanaViewModel viewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), mapId)).get(YojanaViewModel.class);
+        viewModel.getPreviewData().observe(this, yojanaPreviewModelList -> {
 
-            YojanaViewModel viewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), mapId)).get(YojanaViewModel.class);
-            viewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
+            if (!yojanaPreviewModelList.getData().isEmpty()) {
 
-                if (!yojanaPreviewModelList.getData().isEmpty()) {
+                String hindiString = null;
+                String englishString = null;
+                for (PreviewModel ypm : yojanaPreviewModelList.getData()) {
 
-                    String hindiString = null;
-                    String englishString = null;
-                    for (PreviewModel ypm : yojanaPreviewModelList.getData()) {
+                    if (ypm.getPreviewId().equals(id)) {
 
-                        if (ypm.getPreviewId().equals(id)) {
+                        Log.d("fffff", ypm.getDesc().toString());
+                        hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                        hindi.setTextColor(Color.WHITE);
 
-                            Log.d("fffff", ypm.getDesc().toString());
-                            hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
-                            hindi.setTextColor(Color.WHITE);
+                        String replaceString = ypm.getDesc().replaceAll("<.*?>", "");
+                        String removeNumeric = replaceString.replaceAll("[0-9]", "");
 
-                            String replaceString = ypm.getDesc().replaceAll("<.*?>", "");
-                            String removeNumeric = replaceString.replaceAll("[0-9]", "");
+                        for (char c : removeNumeric.trim().toCharArray()) {
+                            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.DEVANAGARI) {
+                                hindiString = ypm.getDesc();
+                                Log.d("hindi", hindiString);
+                                hindiPreviewId = ypm.getId();
+                                break;
+                            } else {
 
-                            for (char c : removeNumeric.trim().toCharArray()) {
-                                if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.DEVANAGARI) {
-                                    hindiString = ypm.getDesc();
-                                    Log.d("hindi", hindiString);
-                                    hindiPreviewId = ypm.getId();
-                                    break;
-                                } else {
-
-                                    if (englishString == null) {
-                                        englishString = ypm.getDesc();
-                                        Log.d("english", englishString);
-                                        materialButtonToggleGroup.setVisibility(View.VISIBLE);
-                                        englishPreviewId = ypm.getId();
-
-                                    }
+                                if (englishString == null) {
+                                    englishString = ypm.getDesc();
+                                    Log.d("english", englishString);
+                                    materialButtonToggleGroup.setVisibility(View.VISIBLE);
+                                    englishPreviewId = ypm.getId();
 
                                 }
 
                             }
-                        }
-                    }
-                    String finalEnglishString = englishString;
-                    String finalHindiString = hindiString;
-                    if (finalHindiString != null) {
-                        editData.setText(finalHindiString);
 
-                    } else {
-                        editData.setText(finalEnglishString);
-                        materialButtonToggleGroup.setVisibility(View.GONE);
-                    }
-
-                    english.setBackgroundColor(0);
-                    english.setTextColor(Color.BLACK);
-                    uploadDataBtn.setOnClickListener(v -> updateYojanaPreview(hindiPreviewId, editData.getText().toString().trim()));
-                    materialButtonToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-
-                        switch (checkedId) {
-                            case R.id.hindiPreview:
-                                english.setBackgroundColor(0);
-                                english.setTextColor(Color.BLACK);
-                                hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
-                                hindi.setTextColor(Color.WHITE);
-                                editData.setText(finalHindiString);
-                                uploadDataBtn.setOnClickListener(v -> updateYojanaPreview(hindiPreviewId, editData.getText().toString().trim()));
-                                break;
-                            case R.id.englishPreview:
-                                english.setBackgroundColor(Color.parseColor("#0C61F1"));
-                                english.setTextColor(Color.WHITE);
-                                hindi.setBackgroundColor(0);
-                                hindi.setTextColor(Color.BLACK);
-                                editData.setText(finalEnglishString);
-                                uploadDataBtn.setOnClickListener(v -> updateYojanaPreview(englishPreviewId, editData.getText().toString().trim()));
-                                break;
-                            default:
-                        }
-                    });
-                }
-            });
-        } else {
-            Toast.makeText(EditActivity.this, "News id " + id, Toast.LENGTH_SHORT).show();
-            map.put("previewId", id);
-            YojanaViewModel viewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(YojanaViewModel.class);
-            viewModel.getNewsPreviewData().observe(this, newsPreviewModelList -> {
-                Log.d("vvvvvvvvv", newsPreviewModelList.getData().toString());
-                if (!newsPreviewModelList.getData().isEmpty()) {
-                    for (PreviewModel npm : newsPreviewModelList.getData()) {
-                        if (npm.getPreviewId().equals(id)) {
-                            editData.setText(npm.getDesc());
                         }
                     }
                 }
-            });
-            uploadDataBtn.setOnClickListener(v -> {
+                String finalEnglishString = englishString;
+                String finalHindiString = hindiString;
+                if (finalHindiString != null) {
+                    editData.setText(finalHindiString);
 
-            });
-        }
+                } else {
+                    editData.setText(finalEnglishString);
+                    materialButtonToggleGroup.setVisibility(View.GONE);
+                }
+
+                english.setBackgroundColor(0);
+                english.setTextColor(Color.BLACK);
+                uploadDataBtn.setOnClickListener(v -> updatePreview(hindiPreviewId, editData.getText().toString().trim()));
+                materialButtonToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+
+                    switch (checkedId) {
+                        case R.id.hindiPreview:
+                            english.setBackgroundColor(0);
+                            english.setTextColor(Color.BLACK);
+                            hindi.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            hindi.setTextColor(Color.WHITE);
+                            editData.setText(finalHindiString);
+                            uploadDataBtn.setOnClickListener(v -> updatePreview(hindiPreviewId, editData.getText().toString().trim()));
+                            break;
+                        case R.id.englishPreview:
+                            english.setBackgroundColor(Color.parseColor("#0C61F1"));
+                            english.setTextColor(Color.WHITE);
+                            hindi.setBackgroundColor(0);
+                            hindi.setTextColor(Color.BLACK);
+                            editData.setText(finalEnglishString);
+                            uploadDataBtn.setOnClickListener(v -> updatePreview(englishPreviewId, editData.getText().toString().trim()));
+                            break;
+                        default:
+                    }
+                });
+            }
+        });
+
     }
 
-    private void updateNewsPreview(String previewId, String s) {
+    private void updatePreview(String previewId, String s) {
         loadingDialog.show();
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("previewId", id);
-        map1.put("id", previewId);
-        map1.put("desc", s);
+        Map<String, String> map = new HashMap<>();
+        map.put("previewId", id);
+        map.put("id", previewId);
+        map.put("desc", s);
 
-        Call<MessageModel> call = apiInterface.updateYojanaPreview(map1);
+        Call<MessageModel> call = apiInterface.updatePreview(map);
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
@@ -385,37 +357,6 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
         });
     }
 
-    private void updateYojanaPreview(String previewId, String s) {
-        loadingDialog.show();
-        Map<String, String> map1 = new HashMap<>();
-        map1.put("yojanaId", id);
-        map1.put("id", previewId);
-        map1.put("desc", s);
-
-        Call<MessageModel> call = apiInterface.updateYojanaPreview(map1);
-        call.enqueue(new Callback<MessageModel>() {
-            @Override
-            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-
-                assert response.body() != null;
-                if (response.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    loadingDialog.dismiss();
-                    editDialog.dismiss();
-                } else {
-                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
-                }
-                loadingDialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
-                loadingDialog.dismiss();
-                Log.d("onResponse", t.getMessage());
-            }
-        });
-    }
 
     private void FileChooser(int i) {
         Intent intent = new Intent();
@@ -449,8 +390,4 @@ public class EditActivity extends AppCompatActivity implements NewsAdapter.NewsI
     }
 
 
-    @Override
-    public void onItemClicked(NewsModel newsModel) {
-
-    }
 }

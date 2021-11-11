@@ -34,6 +34,8 @@ public class WebViewActivity extends AppCompatActivity {
         binding.backIcon.setOnClickListener(v -> onBackPressed());
         data = getIntent().getStringExtra("url");
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
 
         dialog = CommonMethod.getDialog(this);
         dialog.show();

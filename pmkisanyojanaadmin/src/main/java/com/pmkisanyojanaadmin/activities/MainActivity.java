@@ -60,8 +60,8 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    Button yojnaBtn, newsBtn, cancelBtn, uploadBtn, addYojanaBtn, addNewsBtn,
-            cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn, othersBtn;
+    Button  cancelBtn, uploadBtn,
+            cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn;
     Dialog uploadDialog, adYojanaDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
@@ -93,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        yojnaBtn = binding.yojanaBtn;
-        newsBtn = binding.newsBtn;
-        addYojanaBtn = binding.addYojanaBtn;
-        addNewsBtn = binding.addNewsBtn;
         radioGroup = findViewById(R.id.radio_group);
         immediateBtn = findViewById(R.id.immediate);
         scheduleBtn = findViewById(R.id.schedule);
@@ -112,24 +108,24 @@ public class MainActivity extends AppCompatActivity {
 
         apiInterface = ApiWebServices.getApiInterface();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, arrayList);
-        yojnaBtn.setOnClickListener(v -> {
+        binding.yojanaBtn.setOnClickListener(v -> {
             showYojanaUploadDialog(this, "Upload Yojana");
         });
-        newsBtn.setOnClickListener(v -> {
+        binding.newsBtn.setOnClickListener(v -> {
             showYojanaUploadDialog(this, "Upload News");
         });
-        addYojanaBtn.setOnClickListener(v -> {
+        binding.addYojanaBtn.setOnClickListener(v -> {
             arrayList.clear();
             addPreviewData(this, "Yojana");
         });
-        addNewsBtn.setOnClickListener(v -> {
+        binding.addNewsBtn.setOnClickListener(v -> {
             arrayList.clear();
             addPreviewData(this, "News");
         });
         binding.addOthersBtn.setOnClickListener(v -> {
             addPreviewData(this, "Others");
         });
-        editAndDeleteBtn.setOnClickListener(v -> {
+        binding.editDeleteBtn.setOnClickListener(v -> {
             startActivity(new Intent(MainActivity.this, EditAndDeleteActivity.class));
         });
         binding.uploadOtherData.setOnClickListener(v -> {

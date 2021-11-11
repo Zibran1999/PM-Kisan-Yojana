@@ -5,15 +5,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.models.YojanaTypeModel;
@@ -63,35 +59,26 @@ public class YojanaTypeAdapter extends RecyclerView.Adapter implements YojanaAda
 
         switch (yojanaTypeModels.get(position).getType()) {
             case YojanaTypeModel.PinnedItem:
-                List<YojanaModel> yojanaModelList = yojanaTypeModels.get(position).getPinnedYojanaList();
+//                LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+//                layoutManager.setOrientation(RecyclerView.VERTICAL);
+//                ((PinnedItems) holder).YojanaRv.setLayoutManager(layoutManager);
+//
+//                List<YojanaModel> yojanaModelList = yojanaTypeModels.get(position).getPinnedYojanaList();
+//                YojanaAdapter yojanaAdapter = new YojanaAdapter(context, this);
+//                ((PinnedItems) holder).YojanaRv.setAdapter(yojanaAdapter);
+//                yojanaAdapter.updateYojanaList(yojanaModelList);
 
-                YojanaAdapter yojanaAdapter = new YojanaAdapter(context, this);
-                yojanaAdapter.updateYojanaList(yojanaModelList);
-//                for (YojanaModel m:yojanaModelList) {
-//                    ((PinnedItems) holder).yojanaTitle.setText(m.getTitle());
-//                    RequestOptions requestOptions = new RequestOptions()
-//                            .diskCacheStrategy(DiskCacheStrategy.ALL);
-//                    Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + m.getImage()).apply(requestOptions).into(((PinnedItems) holder).yojanaImage);
-//                    //holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
-//
-//
-//                }
                 break;
             case YojanaTypeModel.OtherItem:
-                List<YojanaModel> yojanaModels = yojanaTypeModels.get(position).getYojanaModelList();
+//                LinearLayoutManager layoutManager1 = new LinearLayoutManager(context);
+//                layoutManager1.setOrientation(RecyclerView.VERTICAL);
+//                ((OtherItems) holder).YojanaRv.setLayoutManager(layoutManager1);
+//
+//                List<YojanaModel> yojanaModels = yojanaTypeModels.get(position).getYojanaModelList();
+//                YojanaAdapter yojanaAdap = new YojanaAdapter(context, this);
+//                ((OtherItems) holder).YojanaRv.setAdapter(yojanaAdap);
+//                yojanaAdap.updateYojanaList(yojanaModels);
 
-                YojanaAdapter yojanaAdap = new YojanaAdapter(context, this);
-                yojanaAdap.updateYojanaList(yojanaModels);
-                ((OtherItems)holder).YojanaRv.setAdapter(yojanaAdap);
-//                for (YojanaModel m:yojanaModels) {
-//                    ((OtherItems) holder).yojanaTitle.setText(m.getTitle());
-//                    RequestOptions requestOptions = new RequestOptions()
-//                            .diskCacheStrategy(DiskCacheStrategy.ALL);
-//                    Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + m.getImage()).apply(requestOptions).into(((OtherItems) holder).yojanaImage);
-//                    //holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
-//
-//
-//                }
                 break;
             default:
         }
@@ -107,7 +94,6 @@ public class YojanaTypeAdapter extends RecyclerView.Adapter implements YojanaAda
     public void updateYojanaList(List<YojanaTypeModel> yojanaTypeModelList) {
         yojanaTypeModels.clear();
         yojanaTypeModels.addAll(yojanaTypeModelList);
-//        Collections.reverse(yojanaTypeModels);
         notifyDataSetChanged();
     }
 
@@ -117,20 +103,20 @@ public class YojanaTypeAdapter extends RecyclerView.Adapter implements YojanaAda
     }
 
     public static class PinnedItems extends RecyclerView.ViewHolder {
-      RecyclerView YojanaRv;
+        RecyclerView YojanaRv;
+
         public PinnedItems(@NonNull View itemView) {
             super(itemView);
-            YojanaRv  =itemView.findViewById(R.id.yojanaRv);
+            YojanaRv = itemView.findViewById(R.id.yojanaRv);
         }
     }
 
     public static class OtherItems extends RecyclerView.ViewHolder {
         RecyclerView YojanaRv;
 
-
         public OtherItems(@NonNull View itemView) {
             super(itemView);
-            YojanaRv  =itemView.findViewById(R.id.yojanaRv);
+            YojanaRv = itemView.findViewById(R.id.yojanaRv);
 
         }
     }

@@ -18,8 +18,7 @@ public class YojanaRepository {
     private static YojanaRepository yojanaRepository;
     private final MutableLiveData<YojanaModelList> yojanaModelLiveData = new MutableLiveData<>();
     private final MutableLiveData<NewsModelList> newsModelLiveData = new MutableLiveData<>();
-    private final MutableLiveData<PreviewModelList> previewModelListMutableLiveData = new MutableLiveData<>();
-    private final MutableLiveData<PreviewModelList> newsPreviewModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<PreviewModelList> previewLiveData = new MutableLiveData<>();
 
 
     public YojanaRepository() {
@@ -99,34 +98,13 @@ public class YojanaRepository {
         return newsModelLiveData;
     }
 
-    public LiveData<PreviewModelList> getYojanaPreviewLiveData(Map<String, String> map) {
-        Call<PreviewModelList> call = apiInterface.getPreview(map);
-        call.enqueue(new Callback<PreviewModelList>() {
-            @Override
-            public void onResponse(@NonNull Call<PreviewModelList> call, @NonNull Response<PreviewModelList> response) {
-                if (response.isSuccessful()) {
-                    previewModelListMutableLiveData.setValue(response.body());
-                } else {
-                    Log.d("onResponse", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<PreviewModelList> call, @NonNull Throwable t) {
-                Log.d("onResponse error", t.getMessage());
-
-            }
-        });
-        return previewModelListMutableLiveData;
-    }
-
     public LiveData<PreviewModelList> getPreviewLiveData(Map<String, String> map) {
         Call<PreviewModelList> call = apiInterface.getPreview(map);
         call.enqueue(new Callback<PreviewModelList>() {
             @Override
             public void onResponse(@NonNull Call<PreviewModelList> call, @NonNull Response<PreviewModelList> response) {
                 if (response.isSuccessful()) {
-                    newsPreviewModelListMutableLiveData.setValue(response.body());
+                    previewLiveData.setValue(response.body());
                 } else {
                     Log.d("onResponse", response.message());
                 }
@@ -138,7 +116,7 @@ public class YojanaRepository {
 
             }
         });
-        return newsPreviewModelListMutableLiveData;
+        return previewLiveData;
     }
 
 

@@ -20,11 +20,9 @@ public class YojanaViewModel extends AndroidViewModel {
 
     }
 
-    public LiveData<PreviewModelList> getYojanaPreviewData() {
-        return yojanaRepository.getYojanaPreviewLiveData(map);
-    }
-    public LiveData<PreviewModelList> getNewsPreviewData() {
+    public LiveData<PreviewModelList> getPreviewData() {
         return yojanaRepository.getPreviewLiveData(map);
     }
+
 
 }

@@ -7,33 +7,45 @@
     android:layout_marginTop="5dp"
     android:layout_marginEnd="20sp"
     android:layout_marginBottom="5dp"
-    app:cardCornerRadius="8dp"
     android:clickable="true"
-    app:cardElevation="5dp"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="5dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/ic_baseline_check_box_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/yojanaTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/yojanaTitle"
+            app:tint="@color/black" />
+
         <TextView
             android:id="@+id/yojanaTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="2dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxEms="31"
             android:maxLength="61"
+            android:layout_marginStart="5dp"
             android:minLines="2"
             android:text="@string/app_name"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/yojnaImage"
             app:layout_constraintEnd_toStartOf="@+id/yojnaImage"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/checkbox"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -44,8 +56,7 @@
             android:src="@drawable/ic_baseline_image_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

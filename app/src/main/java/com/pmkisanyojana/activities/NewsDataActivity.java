@@ -2,7 +2,6 @@ package com.pmkisanyojana.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +23,7 @@ import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
-import com.pmkisanyojana.models.NewsPreveiwModel;
+import com.pmkisanyojana.models.PreviewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.HashMap;
@@ -59,7 +58,7 @@ public class NewsDataActivity extends AppCompatActivity {
         dialog = CommonMethod.getDialog(this);
         dialog.show();
 
-        map.put("newsId", id);
+        map.put("previewIdId", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
         Button hindi, english;
@@ -67,13 +66,13 @@ public class NewsDataActivity extends AppCompatActivity {
         english = binding.englishPreview;
         backIcon.setOnClickListener(v -> onBackPressed());
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
-        pageViewModel.getNewsPreviewData().observe(this, newsPreviewModelList -> {
+        pageViewModel.getPreviewData().observe(this, previewModelList -> {
             dialog.show();
-            if (!newsPreviewModelList.getData().isEmpty()) {
+            if (!previewModelList.getData().isEmpty()) {
                 String hindiString = null;
                 String englishString = null;
-                for (NewsPreveiwModel m : newsPreviewModelList.getData()) {
-                    if (m.getNewsId().equals(id)) {
+                for (PreviewModel m : previewModelList.getData()) {
+                    if (m.getPreviewId().equals(id)) {
                         lottieAnimationView.setVisibility(View.GONE);
                         hindi.setBackgroundColor(Color.parseColor("#009637"));
                         hindi.setTextColor(Color.WHITE);

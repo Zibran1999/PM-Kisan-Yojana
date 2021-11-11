@@ -19,7 +19,6 @@ import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
@@ -33,11 +32,13 @@ import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
-import com.pmkisanyojana.models.YojanaPreviewModel;
+import com.pmkisanyojana.models.PreviewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DataActivity extends AppCompatActivity {
@@ -49,6 +50,8 @@ public class DataActivity extends AppCompatActivity {
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
+    String finalEnglishString,finalHindiString;
+
 
     MaterialButton visitSiteBtn;
     ActivityDataBinding binding;
@@ -67,9 +70,8 @@ public class DataActivity extends AppCompatActivity {
             }
         }
     };
-    private IntentFilter intentFilter;
     Dialog dialog;
-
+    private IntentFilter intentFilter;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @SuppressLint({"SetJavaScriptEnabled", "NonConstantResourceId"})
@@ -86,8 +88,11 @@ public class DataActivity extends AppCompatActivity {
         visitSiteBtn = binding.visitSiteBtn;
         lottieAnimationView = binding.lottieAnimationEmpty;
         dialog = CommonMethod.getDialog(this);
+        lottieAnimationView.setVisibility(View.GONE);
 
         visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
+        if (getIntent().getStringExtra("url").equals("null"))
+            visitSiteBtn.setVisibility(View.GONE);
         visitSiteBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
             intent.putExtra("url", getIntent().getStringExtra("url"));
@@ -96,25 +101,28 @@ public class DataActivity extends AppCompatActivity {
         binding.backIcon.setOnClickListener(v -> onBackPressed());
         title.setText(getIntent().getStringExtra("title"));
         id = getIntent().getStringExtra("id");
-        map.put("yojanaId", id);
-        Log.d("ccccc",id);
+        map.put("previewId", id);
+        Log.d("previewIds", id);
+        Log.d("ccccc", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
         Button hindi, english;
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
-        pageViewModel = new ViewModelProvider(this,
-                new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
-        pageViewModel.getYojanaPreviewData().observe(this, yojanaPreviewModelList -> {
-dialog.show();
-            if (!yojanaPreviewModelList.getData().isEmpty()) {
+        List<PreviewModel> previewModels =new ArrayList<>();
+
+        pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
+        pageViewModel.getPreviewData().observe(this, previewModelList -> {
+            dialog.show();
+            previewModels.clear();
+            previewModels.addAll(previewModelList.getData());
+            if (!previewModels.isEmpty()) {
                 String hindiString = null;
                 String englishString = null;
-                for (YojanaPreviewModel m : yojanaPreviewModelList.getData()) {
-                    if (m.getYojanaId().equals(id)) {
+                for (PreviewModel m : previewModelList.getData()) {
+                    if (m.getPreviewId().equals(id)) {
                         hindi.setBackgroundColor(Color.parseColor("#009637"));
                         hindi.setTextColor(Color.WHITE);
-
 
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
                         String removeNumeric = replaceString.replaceAll("[0-9]", "");
@@ -139,8 +147,8 @@ dialog.show();
                         }
                     }
                 }
-                String finalEnglishString = englishString;
-                String finalHindiString = hindiString;
+                 finalEnglishString = englishString;
+                 finalHindiString = hindiString;
                 webView.setVisibility(View.VISIBLE);
                 if (finalHindiString != null) {
                     webView.loadData(finalHindiString, "text/html", "UTF-8");
@@ -176,12 +184,19 @@ dialog.show();
                     }
                 });
 
-            } else {
+            }
+            if (finalHindiString!=null || finalEnglishString!=null){
                 dialog.dismiss();
+                lottieAnimationView.setVisibility(View.GONE);
+                visitSiteBtn.setVisibility(View.VISIBLE);
+            }else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
                 visitSiteBtn.setVisibility(View.GONE);
+                dialog.dismiss();
 
             }
+
+
         });
 
         webView.getSettings().setBuiltInZoomControls(true);
