@@ -8,7 +8,7 @@
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.109375" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/drawable/item_bg.xml" value="0.21510416666666668" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_data.xml" value="0.2" />
-        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_home_screen.xml" value="0.22" />
+        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_home_screen.xml" value="0.18" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_main.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_news_data.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/app/src/main/res/layout/activity_privacy_policy.xml" value="0.19895833333333332" />
@@ -21,12 +21,14 @@
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/activity_edit.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/activity_edit_and_delete.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/activity_main.xml" value="0.19895833333333332" />
-        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/edit_and_delete_dialog.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/activity_show_item.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/edit_and_delete_dialog.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/edit_news_card.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/loading.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/news_layout.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/upload_dialog.xml" value="0.19895833333333332" />
-        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/yojna_layout.xml" value="0.5" />
+        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/yojna_item_layout.xml" value="0.19589743589743588" />
+        <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/layout/yojna_layout.xml" value="0.25" />
         <entry key="..\:/ANDROID PROJECTS/PMKisanYojana/pmkisanyojanaadmin/src/main/res/menu/menu.xml" value="0.1" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/drawable/ic_baseline_image_24.xml" value="0.23958333333333334" />
         <entry key="..\:/Android Applications/PM-Kisan-Yojana/app/src/main/res/layout/activity_data.xml" value="0.2234375" />

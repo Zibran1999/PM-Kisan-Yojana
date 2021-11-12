@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="20sp"
@@ -16,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
         <ImageView
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
@@ -28,16 +30,22 @@
             app:layout_constraintTop_toTopOf="@+id/yojanaTitle"
             app:tint="@color/black" />
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/pin_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/yojanaTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginEnd="2dp"
             android:ellipsize="end"
-            android:gravity="center_vertical"
             android:maxEms="31"
             android:maxLength="61"
-            android:layout_marginStart="5dp"
             android:minLines="2"
             android:text="@string/app_name"
             android:textColor="@color/black"
@@ -46,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/yojnaImage"
             app:layout_constraintEnd_toStartOf="@+id/yojnaImage"
             app:layout_constraintStart_toEndOf="@+id/checkbox"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/pin_switch" />
 
         <ImageView
             android:id="@+id/yojnaImage"

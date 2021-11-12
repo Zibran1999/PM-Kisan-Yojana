@@ -12,9 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.model.NewsModel;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,9 +24,9 @@ import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
+    private final List<NewsModel> newsModelList = new ArrayList<>();
     Context context;
     NewsInterface newsInterface;
-    private final List<NewsModel> newsModelList = new ArrayList<>();
 
     public NewsAdapter(Context context, NewsInterface newsInterface) {
         this.context = context;
@@ -41,7 +43,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.newsTitle.setText(newsModelList.get(position).getTitle());
-        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/"+newsModelList.get(position).getImage()).into(holder.newsImage);
+        RequestOptions requestOptions = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + newsModelList.get(position).getImage()).apply(requestOptions).into(holder.newsImage);
         holder.itemView.setOnClickListener(v -> newsInterface.onItemClicked(newsModelList.get(position)));
 
     }
@@ -55,7 +59,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void updateNewsList(List<NewsModel> newsModels) {
         newsModelList.clear();
         newsModelList.addAll(newsModels);
-        Collections.reverse(newsModelList);
         notifyDataSetChanged();
     }
 
@@ -67,11 +70,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView newsTitle;
         ImageView newsImage;
+        SwitchMaterial switchMaterial;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             newsTitle = itemView.findViewById(R.id.yojanaTitle);
             newsImage = itemView.findViewById(R.id.yojnaImage);
+            switchMaterial = itemView.findViewById(R.id.pin_switch);
+            switchMaterial.setVisibility(View.GONE);
         }
     }
 }

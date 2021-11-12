@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PMKisanYojana"
         tools:ignore="AllowBackup">
         <activity
+            android:name=".activities.ShowItemActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.EditActivity"
             android:exported="false" />
         <activity

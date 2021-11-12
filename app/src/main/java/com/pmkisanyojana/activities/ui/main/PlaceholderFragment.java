@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,12 +35,12 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+    public static Dialog dialog;
     int pos = 1;
     RecyclerView homeRV, pinnedRv;
     YojanaAdapter yojanaAdapter;
     NewsAdapter newsAdapter;
-    Dialog dialog;
-    String yojanaId = "12";
+    String yojanaId = "true";
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
 
@@ -72,6 +73,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
+
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -110,12 +112,14 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         return root;
     }
 
+
     private void setOthersData(Context context) {
         YojanaAdapter adapter = new YojanaAdapter(context, this);
         homeRV.setAdapter(adapter);
+        pinnedRv.setVisibility(View.VISIBLE);
 
         pageViewModel.getOthersData().observe(requireActivity(), othersData -> {
-            if (othersData.getData() != null) {
+            if (!othersData.getData().isEmpty()) {
                 adapter.updateYojanaList(othersData.getData());
             } else {
                 Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
@@ -128,9 +132,11 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     private void setNewsData(Context context) {
         newsAdapter = new NewsAdapter(context, this);
         homeRV.setAdapter(newsAdapter);
+        pinnedRv.setVisibility(View.VISIBLE);
+
         pageViewModel.getNews().observe(requireActivity(), newsModelList -> {
 
-            if (newsModelList.getData() != null) {
+            if (!newsModelList.getData().isEmpty()) {
                 newsAdapter.updateNewsList(newsModelList.getData());
             } else {
                 Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
@@ -150,14 +156,14 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         pinnedRv.setVisibility(View.VISIBLE);
 
         pageViewModel.geYojanaList().observe(requireActivity(), yojanaModel -> {
-
-            if (yojanaModel.getData() != null) {
-                yojanaModelList.clear();
+            Log.d("yojana", yojanaModel.getData().toString());
+            yojanaModelList.clear();
+            yojanaModels.clear();
+            if (!yojanaModel.getData().isEmpty()) {
                 yojanaModelList.addAll(yojanaModel.getData());
                 for (int i = 0; i < yojanaModel.getData().size(); i++) {
-                    if (yojanaId.equals(yojanaModel.getData().get(i).getId())) {
-                        yojanaModels.clear();
-                        yojanaModels.add(new YojanaModel(yojanaModel.getData().get(i).getId(), yojanaModel.getData().get(i).getImage(), yojanaModel.getData().get(i).getTitle(), yojanaModel.getData().get(i).getDate(), yojanaModel.getData().get(i).getTime(), yojanaModel.getData().get(i).getUrl()));
+                    if (yojanaId.equals(yojanaModelList.get(i).getPinned())) {
+                        yojanaModels.add(new YojanaModel(yojanaModel.getData().get(i).getId(), yojanaModel.getData().get(i).getImage(), yojanaModel.getData().get(i).getTitle(), yojanaModel.getData().get(i).getDate(), yojanaModel.getData().get(i).getTime(), yojanaModel.getData().get(i).getUrl(), yojanaModel.getData().get(i).getPinned()));
                         yojanaModelList.remove(i);
                         break;
                     }
@@ -203,4 +209,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         intent.putExtra("img", newsModel.getImage());
         startActivity(intent);
     }
+
+
 }

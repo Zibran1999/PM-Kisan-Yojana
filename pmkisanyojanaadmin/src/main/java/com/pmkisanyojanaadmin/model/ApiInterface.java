@@ -54,4 +54,8 @@ public interface ApiInterface {
     @POST("update_preview_api.php")
     Call<MessageModel> updatePreview(@FieldMap Map<String, String> map);
 
+    @FormUrlEncoded
+    @POST("upload_pin_status.php")
+    Call<MessageModel> uploadPinStatus(@FieldMap Map<String, String> map);
+
 }

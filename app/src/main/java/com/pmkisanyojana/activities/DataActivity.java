@@ -91,8 +91,7 @@ public class DataActivity extends AppCompatActivity {
         lottieAnimationView.setVisibility(View.GONE);
 
         visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
-        if (getIntent().getStringExtra("url").equals("null"))
-            visitSiteBtn.setVisibility(View.GONE);
+
         visitSiteBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
             intent.putExtra("url", getIntent().getStringExtra("url"));
@@ -188,6 +187,9 @@ public class DataActivity extends AppCompatActivity {
             if (finalHindiString!=null || finalEnglishString!=null){
                 dialog.dismiss();
                 lottieAnimationView.setVisibility(View.GONE);
+                if (getIntent().getStringExtra("url").equals("null")){
+                    visitSiteBtn.setVisibility(View.GONE);
+                }else
                 visitSiteBtn.setVisibility(View.VISIBLE);
             }else {
                 lottieAnimationView.setVisibility(View.VISIBLE);

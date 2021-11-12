@@ -236,6 +236,7 @@ public class EditActivity extends AppCompatActivity {
         cancelPreview.setOnClickListener(v -> {
             editDialog.dismiss();
         });
+        Log.d("preivew id",id);
 
         Map<String, String> mapId = new HashMap<>();
         mapId.put("previewId", id.trim());
@@ -289,15 +290,17 @@ public class EditActivity extends AppCompatActivity {
                 String finalHindiString = hindiString;
                 if (finalHindiString != null) {
                     editData.setText(finalHindiString);
+                    uploadDataBtn.setOnClickListener(v -> updatePreview(hindiPreviewId, editData.getText().toString().trim()));
 
                 } else {
                     editData.setText(finalEnglishString);
                     materialButtonToggleGroup.setVisibility(View.GONE);
+                    uploadDataBtn.setOnClickListener(v -> updatePreview(englishPreviewId, editData.getText().toString().trim()));
+
                 }
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
-                uploadDataBtn.setOnClickListener(v -> updatePreview(hindiPreviewId, editData.getText().toString().trim()));
                 materialButtonToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
 
                     switch (checkedId) {

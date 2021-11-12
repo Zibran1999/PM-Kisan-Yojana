@@ -1,9 +1,7 @@
 package com.pmkisanyojanaadmin.activities;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -60,7 +58,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
-    Button  cancelBtn, uploadBtn,
+    Button cancelBtn, uploadBtn,
             cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn;
     Dialog uploadDialog, adYojanaDialog;
     RadioButton immediateBtn, scheduleBtn;
@@ -84,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
-
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -155,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         textInputLayout = uploadDialog.findViewById(R.id.textInputLayout2);
         yojanaLink = uploadDialog.findViewById(R.id.yojana_link);
 
+        radioGroup.setVisibility(View.GONE);
         if (title.equals("Upload Yojana")) {
             textInputLayout.setVisibility(View.VISIBLE);
 
@@ -220,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     map.put("time", time);
                     map.put("date", date);
                     map.put("url", url);
+                    map.put("pinned", String.valueOf(false));
                     uploadYojana(map);
                 }
             } else if (title.equals("Upload News")) {
@@ -273,192 +272,194 @@ public class MainActivity extends AppCompatActivity {
                     map.put("time", time);
                     map.put("date", date);
                     map.put("url", url);
+                    map.put("pinned", String.valueOf(false));
                     uploadOthers(map);
                 }
             }
         });
 
 
-        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
-            int buttonId = group.getCheckedRadioButtonId();
-            switch (buttonId) {
-                case R.id.immediate:
-                    scheduleLayout.setVisibility(View.GONE);
-                    uploadBtn.setOnClickListener(v -> {
-                        loadingDialog.show();
-                        Date c = Calendar.getInstance().getTime();
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-                        String formattedDate = df.format(c);
-                        setDate.setText(formattedDate);
-
-                        SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-                        String stime = mdformat.format(c);
-                        @SuppressLint("SimpleDateFormat") SimpleDateFormat currentTimeFormate = new SimpleDateFormat("HH:mm");
-                        Date currentDate = null;
-                        try {
-                            currentDate = currentTimeFormate.parse(stime);
-                        } catch (ParseException e) {
-
-                            e.printStackTrace();
-                        }
-                        @SuppressLint("SimpleDateFormat") SimpleDateFormat CurrentfmtOut = new SimpleDateFormat("hh:mm aa");
-
-                        selectTime = CurrentfmtOut.format(currentDate);
-                        setTime.setText(selectTime);
-                        if (title.equals("Upload Yojana")) {
-                            String sTitle = selectTitle.getText().toString().trim();
-                            String url = yojanaLink.getText().toString();
-                            String date = setDate.getText().toString();
-                            String time = setTime.getText().toString();
-
-                            if (TextUtils.isEmpty(encodedImage)) {
-                                loadingDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(sTitle)) {
-                                loadingDialog.dismiss();
-
-                                selectTitle.setError("required field");
-                            } else if (TextUtils.isEmpty(url)) {
-                                yojanaLink.setError("required field");
-                                loadingDialog.dismiss();
-
-                            } else {
-                                map.put("id", randomId);
-                                map.put("img", encodedImage);
-                                map.put("title", sTitle);
-                                map.put("time", time);
-                                map.put("date", date);
-                                map.put("url", url);
-                                uploadYojana(map);
-                            }
-                        } else if (title.equals("Upload News")) {
-
-                            String sTitle = selectTitle.getText().toString().trim();
-                            String date = setDate.getText().toString();
-                            String time = setTime.getText().toString();
-
-                            if (TextUtils.isEmpty(encodedImage)) {
-                                loadingDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(sTitle)) {
-                                loadingDialog.dismiss();
-                                selectTitle.setError("required field");
-                            } else if (TextUtils.isEmpty(selectDate)) {
-                                loadingDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Please select Date!", Toast.LENGTH_SHORT).show();
-
-                            } else if (TextUtils.isEmpty(selectTime)) {
-                                loadingDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                map.put("id", randomId);
-                                map.put("img", encodedImage);
-                                map.put("title", sTitle);
-                                map.put("time", time);
-                                map.put("date", date);
-                                uploadNewsData(map);
-                            }
-                        }
-                    });
-
-                    break;
-                case R.id.schedule:
-
-                    scheduleLayout.setVisibility(View.VISIBLE);
-                    setDate.setOnClickListener(v -> {
-                        Calendar myCalendar = Calendar.getInstance();
-                        int month = myCalendar.get(Calendar.MONTH);
-                        int day = myCalendar.get(Calendar.DAY_OF_MONTH);
-                        int year = myCalendar.get(Calendar.YEAR);
-                        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(
-                                MainActivity.this, (view, year1, month1, dayOfMonth) -> {
-                            selectDate = dayOfMonth + " - " + (month1 + 1) + " - " + year1;
-                            setDate.setText(selectDate);
-                        }, year, month, day);
-
-                        datePickerDialog.show();
-                    });
-                    setTime.setOnClickListener(v -> {
-                        int mHour = 0, mMinute = 0;
-                        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(
-                                MainActivity.this, (view, hourOfDay, minute) -> {
-                            String time = hourOfDay + ":" + minute;
-
-                            @SuppressLint("SimpleDateFormat") SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
-                            Date date = null;
-                            try {
-                                date = fmt.parse(time);
-                            } catch (ParseException e) {
-
-                                e.printStackTrace();
-                            }
-
-                            @SuppressLint("SimpleDateFormat") SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm aa");
-
-                            selectTime = fmtOut.format(date);
-                            setTime.setText(selectTime);
-                        }, mHour, mMinute, false);
-                        timePickerDialog.show();
-                    });
-
-                    uploadBtn.setOnClickListener(v -> {
-                        loadingDialog.show();
-                        if (title.equals("Upload Yojana")) {
-                            String sTitle = selectTitle.getText().toString().trim();
-                            String url = yojanaLink.getText().toString();
-                            String date = setDate.getText().toString();
-                            String time = setTime.getText().toString();
-
-                            if (TextUtils.isEmpty(encodedImage)) {
-                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(sTitle)) {
-                                selectTitle.setError("required field!");
-                            } else if (TextUtils.isEmpty(url)) {
-                                yojanaLink.setError("required field!");
-                            } else if (TextUtils.isEmpty(selectDate)) {
-                                loadingDialog.dismiss();
-
-                                Toast.makeText(getApplicationContext(), "Please select Date!", Toast.LENGTH_SHORT).show();
-
-                            } else if (TextUtils.isEmpty(selectTime)) {
-                                loadingDialog.dismiss();
-                                Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                map.put("id", randomId);
-                                map.put("img", encodedImage);
-                                map.put("title", sTitle);
-                                map.put("time", time);
-                                map.put("date", date);
-                                map.put("url", url);
-                                uploadYojana(map);
-                            }
-                        } else if (title.equals("Upload News")) {
-
-                            String sTitle = selectTitle.getText().toString().trim();
-                            String date = setDate.getText().toString();
-                            String time = setTime.getText().toString();
-
-                            if (TextUtils.isEmpty(encodedImage)) {
-                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
-                            } else if (TextUtils.isEmpty(sTitle)) {
-                                selectTitle.setError("required field!");
-                            } else {
-                                map.put("id", randomId);
-                                map.put("img", encodedImage);
-                                map.put("title", sTitle);
-                                map.put("time", time);
-                                map.put("date", date);
-                                uploadNewsData(map);
-                            }
-                        }
-
-                    });
-
-                    break;
-            }
-        });
+//        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+//            int buttonId = group.getCheckedRadioButtonId();
+//            switch (buttonId) {
+//                case R.id.immediate:
+//                    scheduleLayout.setVisibility(View.GONE);
+//                    uploadBtn.setOnClickListener(v -> {
+//                        loadingDialog.show();
+//                        Date c = Calendar.getInstance().getTime();
+//                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+//                        String formattedDate = df.format(c);
+//                        setDate.setText(formattedDate);
+//
+//                        SimpleDateFormat mdformat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+//                        String stime = mdformat.format(c);
+//                        @SuppressLint("SimpleDateFormat") SimpleDateFormat currentTimeFormate = new SimpleDateFormat("HH:mm");
+//                        Date currentDate = null;
+//                        try {
+//                            currentDate = currentTimeFormate.parse(stime);
+//                        } catch (ParseException e) {
+//
+//                            e.printStackTrace();
+//                        }
+//                        @SuppressLint("SimpleDateFormat") SimpleDateFormat CurrentfmtOut = new SimpleDateFormat("hh:mm aa");
+//
+//                        selectTime = CurrentfmtOut.format(currentDate);
+//                        setTime.setText(selectTime);
+//                        if (title.equals("Upload Yojana")) {
+//                            String sTitle = selectTitle.getText().toString().trim();
+//                            String url = yojanaLink.getText().toString();
+//                            String date = setDate.getText().toString();
+//                            String time = setTime.getText().toString();
+//
+//                            if (TextUtils.isEmpty(encodedImage)) {
+//                                loadingDialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
+//                            } else if (TextUtils.isEmpty(sTitle)) {
+//                                loadingDialog.dismiss();
+//
+//                                selectTitle.setError("required field");
+//                            } else if (TextUtils.isEmpty(url)) {
+//                                yojanaLink.setError("required field");
+//                                loadingDialog.dismiss();
+//
+//                            } else {
+//                                map.put("id", randomId);
+//                                map.put("img", encodedImage);
+//                                map.put("title", sTitle);
+//                                map.put("time", time);
+//                                map.put("date", date);
+//                                map.put("url", url);
+//                                map.put("pinned", String.valueOf(false));
+//                                uploadYojana(map);
+//                            }
+//                        } else if (title.equals("Upload News")) {
+//
+//                            String sTitle = selectTitle.getText().toString().trim();
+//                            String date = setDate.getText().toString();
+//                            String time = setTime.getText().toString();
+//
+//                            if (TextUtils.isEmpty(encodedImage)) {
+//                                loadingDialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
+//                            } else if (TextUtils.isEmpty(sTitle)) {
+//                                loadingDialog.dismiss();
+//                                selectTitle.setError("required field");
+//                            } else if (TextUtils.isEmpty(selectDate)) {
+//                                loadingDialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), "Please select Date!", Toast.LENGTH_SHORT).show();
+//
+//                            } else if (TextUtils.isEmpty(selectTime)) {
+//                                loadingDialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
+//
+//                            } else {
+//                                map.put("id", randomId);
+//                                map.put("img", encodedImage);
+//                                map.put("title", sTitle);
+//                                map.put("time", time);
+//                                map.put("date", date);
+//                                uploadNewsData(map);
+//                            }
+//                        }
+//                    });
+//
+//                    break;
+//                case R.id.schedule:
+//
+//                    scheduleLayout.setVisibility(View.VISIBLE);
+//                    setDate.setOnClickListener(v -> {
+//                        Calendar myCalendar = Calendar.getInstance();
+//                        int month = myCalendar.get(Calendar.MONTH);
+//                        int day = myCalendar.get(Calendar.DAY_OF_MONTH);
+//                        int year = myCalendar.get(Calendar.YEAR);
+//                        @SuppressLint("SetTextI18n") DatePickerDialog datePickerDialog = new DatePickerDialog(
+//                                MainActivity.this, (view, year1, month1, dayOfMonth) -> {
+//                            selectDate = dayOfMonth + " - " + (month1 + 1) + " - " + year1;
+//                            setDate.setText(selectDate);
+//                        }, year, month, day);
+//
+//                        datePickerDialog.show();
+//                    });
+//                    setTime.setOnClickListener(v -> {
+//                        int mHour = 0, mMinute = 0;
+//                        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(
+//                                MainActivity.this, (view, hourOfDay, minute) -> {
+//                            String time = hourOfDay + ":" + minute;
+//
+//                            @SuppressLint("SimpleDateFormat") SimpleDateFormat fmt = new SimpleDateFormat("HH:mm");
+//                            Date date = null;
+//                            try {
+//                                date = fmt.parse(time);
+//                            } catch (ParseException e) {
+//
+//                                e.printStackTrace();
+//                            }
+//
+//                            @SuppressLint("SimpleDateFormat") SimpleDateFormat fmtOut = new SimpleDateFormat("hh:mm aa");
+//
+//                            selectTime = fmtOut.format(date);
+//                            setTime.setText(selectTime);
+//                        }, mHour, mMinute, false);
+//                        timePickerDialog.show();
+//                    });
+//
+//                    uploadBtn.setOnClickListener(v -> {
+//                        loadingDialog.show();
+//                        if (title.equals("Upload Yojana")) {
+//                            String sTitle = selectTitle.getText().toString().trim();
+//                            String url = yojanaLink.getText().toString();
+//                            String date = setDate.getText().toString();
+//                            String time = setTime.getText().toString();
+//
+//                            if (TextUtils.isEmpty(encodedImage)) {
+//                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
+//                            } else if (TextUtils.isEmpty(sTitle)) {
+//                                selectTitle.setError("required field!");
+//                            } else if (TextUtils.isEmpty(url)) {
+//                                yojanaLink.setError("required field!");
+//                            } else if (TextUtils.isEmpty(selectDate)) {
+//                                loadingDialog.dismiss();
+//
+//                                Toast.makeText(getApplicationContext(), "Please select Date!", Toast.LENGTH_SHORT).show();
+//
+//                            } else if (TextUtils.isEmpty(selectTime)) {
+//                                loadingDialog.dismiss();
+//                                Toast.makeText(getApplicationContext(), "Please select Time!", Toast.LENGTH_SHORT).show();
+//
+//                            } else {
+//                                map.put("id", randomId);
+//                                map.put("img", encodedImage);
+//                                map.put("title", sTitle);
+//                                map.put("time", time);
+//                                map.put("date", date);
+//                                map.put("url", url);
+//                                uploadYojana(map);
+//                            }
+//                        } else if (title.equals("Upload News")) {
+//
+//                            String sTitle = selectTitle.getText().toString().trim();
+//                            String date = setDate.getText().toString();
+//                            String time = setTime.getText().toString();
+//
+//                            if (TextUtils.isEmpty(encodedImage)) {
+//                                Toast.makeText(getApplicationContext(), "Please select an Image!", Toast.LENGTH_SHORT).show();
+//                            } else if (TextUtils.isEmpty(sTitle)) {
+//                                selectTitle.setError("required field!");
+//                            } else {
+//                                map.put("id", randomId);
+//                                map.put("img", encodedImage);
+//                                map.put("title", sTitle);
+//                                map.put("time", time);
+//                                map.put("date", date);
+//                                uploadNewsData(map);
+//                            }
+//                        }
+//
+//                    });
+//
+//                    break;
+//            }
+//        });
 
 
     }
@@ -598,7 +599,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
     }
 
     private void uploadPreview(Map<String, String> map) {
@@ -702,7 +702,7 @@ public class MainActivity extends AppCompatActivity {
                         arrayList.add(yjm.getTitle());
                         yojanaModelList.addAll(response.body().getData());
                     }
-                    Log.d("ffffffff",response.body().getData().toString());
+                    Log.d("ffffffff", response.body().getData().toString());
                 } else {
                     Log.d("onResponse", response.message());
                 }
