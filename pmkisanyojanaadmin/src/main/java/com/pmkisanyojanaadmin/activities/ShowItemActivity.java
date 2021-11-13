@@ -1,15 +1,21 @@
 package com.pmkisanyojanaadmin.activities;
 
+import static android.media.CamcorderProfile.get;
+
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -19,13 +25,22 @@ import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.adapter.NewsAdapter;
 import com.pmkisanyojanaadmin.adapter.YojanaAdapter;
 import com.pmkisanyojanaadmin.databinding.ActivityShowItemBinding;
+import com.pmkisanyojanaadmin.model.ApiInterface;
+import com.pmkisanyojanaadmin.model.ApiWebServices;
+import com.pmkisanyojanaadmin.model.MessageModel;
 import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
 
@@ -35,22 +50,26 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
     YojanaAdapter yojanaAdapter;
     PageViewModel pageViewModel;
     RecyclerView recyclerView;
+    ItemTouchHelper.SimpleCallback simpleCallback;
     TextView title;
     MaterialAlertDialogBuilder builder;
     ImageView backIcon;
     NewsAdapter newsAdapter;
     Dialog loadingDialog;
     ActivityShowItemBinding binding;
-    String s;
+    String intentId,itemId,imgPath;
+    ApiInterface apiInterface;
+    Map<String,String> map = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityShowItemBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        s = getIntent().getStringExtra("title");
+        apiInterface = ApiWebServices.getApiInterface();
+        intentId = getIntent().getStringExtra("title");
 
-        Objects.requireNonNull(getSupportActionBar()).setTitle(s);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(intentId);
 
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         builder = new MaterialAlertDialogBuilder(this);
@@ -73,7 +92,61 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        if (s.equals("Yojana")) {
+        simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT|ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("ffffffffff",newsModels.get(viewHolder.getAdapterPosition()).getImage());
+                switch (intentId) {
+                    case "News":
+                        itemId = newsModels.get(viewHolder.getAdapterPosition()).getId();
+                        imgPath = newsModels.get(viewHolder.getAdapterPosition()).getImage();
+                        Log.d("ggggggggg",imgPath);
+                        newsModels.remove(viewHolder.getAdapterPosition());
+                        newsAdapter.updateNewsList(newsModels);
+
+                        map.put("id", itemId);
+                        map.put("title", "News");
+                        map.put("img", "News_Images/"+imgPath);
+                        deleteItem(map);
+
+                        break;
+                    case "Yojana":
+                        itemId = yojanaModels.get(viewHolder.getAdapterPosition()).getId();
+                        imgPath = yojanaModels.get(viewHolder.getAdapterPosition()).getImage();
+                        yojanaModels.remove(viewHolder.getAdapterPosition());
+                        yojanaAdapter.updateYojanaList(yojanaModels);
+
+                        map.put("id", itemId);
+                        map.put("title", "Yojana");
+                        map.put("img", "Kisan_Yojana_Images/"+imgPath);
+                        deleteItem(map);
+
+                        break;
+                    case "Others":
+                        itemId = yojanaModels.get(viewHolder.getAdapterPosition()).getId();
+                        imgPath = yojanaModels.get(viewHolder.getAdapterPosition()).getImage();
+                        yojanaModels.remove(viewHolder.getAdapterPosition());
+                        yojanaAdapter.updateYojanaList(yojanaModels);
+
+                        map.put("id", itemId);
+                        map.put("title", "Others");
+                        map.put("img", "Kisan_Yojana_Images/"+imgPath);
+                        deleteItem(map);
+
+                        break;
+                }
+            }
+        };
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+
+        if (intentId.equals("Yojana")) {
             loadingDialog.show();
             yojanaAdapter = new YojanaAdapter(this, "Yojana", this);
             recyclerView.setAdapter(yojanaAdapter);
@@ -83,7 +156,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
                 swipeRefreshLayout.setRefreshing(false);
             });
 
-        } else if (s.equals("News")) {
+        } else if (intentId.equals("News")) {
             loadingDialog.show();
             newsAdapter = new NewsAdapter(this, this);
             recyclerView.setAdapter(newsAdapter);
@@ -93,7 +166,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
                 swipeRefreshLayout.setRefreshing(false);
             });
 
-        } else if (s.equals("Others")) {
+        } else if (intentId.equals("Others")) {
 
             fetchOthers();
             swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -101,8 +174,6 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
                 swipeRefreshLayout.setRefreshing(false);
             });
         }
-
-
     }
 
     private void fetchOthers() {
@@ -192,5 +263,27 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
             startActivity(intent);
         });
         builder.show();
+    }
+
+    private void deleteItem(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.deleteItems(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+            }
+        });
     }
 }

@@ -43,6 +43,10 @@ public interface ApiInterface {
     Call<MessageModel> updateNews(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
+    @POST("Delete_api.php")
+    Call<MessageModel> deleteItems(@FieldMap Map<String, String> map);
+
+    @FormUrlEncoded
     @POST("update_yojana_api.php")
     Call<MessageModel> updateYojana(@FieldMap Map<String, String> map);
 

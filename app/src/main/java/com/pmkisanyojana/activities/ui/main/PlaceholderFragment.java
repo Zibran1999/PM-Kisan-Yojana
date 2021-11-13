@@ -35,7 +35,7 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-    public static Dialog dialog;
+    Dialog dialog;
     int pos = 1;
     RecyclerView homeRV, pinnedRv;
     YojanaAdapter yojanaAdapter;
