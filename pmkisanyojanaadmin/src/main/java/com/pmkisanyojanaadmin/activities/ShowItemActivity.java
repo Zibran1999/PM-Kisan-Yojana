@@ -1,15 +1,10 @@
 package com.pmkisanyojanaadmin.activities;
 
-import static android.media.CamcorderProfile.get;
-
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -51,15 +46,13 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
     PageViewModel pageViewModel;
     RecyclerView recyclerView;
     ItemTouchHelper.SimpleCallback simpleCallback;
-    TextView title;
     MaterialAlertDialogBuilder builder;
-    ImageView backIcon;
     NewsAdapter newsAdapter;
     Dialog loadingDialog;
     ActivityShowItemBinding binding;
-    String intentId,itemId,imgPath;
+    String intentId, itemId, imgPath;
     ApiInterface apiInterface;
-    Map<String,String> map = new HashMap<>();
+    Map<String, String> map = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +66,8 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
 
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle("What you want to do?")
-                .setMessage("Edit or Delete")
+        builder.setTitle("Edit your Item")
+                .setMessage("Edit")
                 .setNegativeButton("CANCEL", (dialog1, which) -> {
 
                 });
@@ -92,28 +85,25 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT|ItemTouchHelper.LEFT) {
+        simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
-
-            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Log.d("ffffffffff",newsModels.get(viewHolder.getAdapterPosition()).getImage());
                 switch (intentId) {
                     case "News":
                         itemId = newsModels.get(viewHolder.getAdapterPosition()).getId();
                         imgPath = newsModels.get(viewHolder.getAdapterPosition()).getImage();
-                        Log.d("ggggggggg",imgPath);
+                        Log.d("ggggggggg", imgPath);
                         newsModels.remove(viewHolder.getAdapterPosition());
                         newsAdapter.updateNewsList(newsModels);
 
                         map.put("id", itemId);
                         map.put("title", "News");
-                        map.put("img", "News_Images/"+imgPath);
+                        map.put("img", "News_Images/" + imgPath);
                         deleteItem(map);
 
                         break;
@@ -125,7 +115,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
 
                         map.put("id", itemId);
                         map.put("title", "Yojana");
-                        map.put("img", "Kisan_Yojana_Images/"+imgPath);
+                        map.put("img", "Kisan_Yojana_Images/" + imgPath);
                         deleteItem(map);
 
                         break;
@@ -137,7 +127,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
 
                         map.put("id", itemId);
                         map.put("title", "Others");
-                        map.put("img", "Kisan_Yojana_Images/"+imgPath);
+                        map.put("img", "Kisan_Yojana_Images/" + imgPath);
                         deleteItem(map);
 
                         break;
@@ -230,10 +220,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
-        builder.setPositiveButton("Delete", (dialog, which) -> {
-            Toast.makeText(this, "Yojana", Toast.LENGTH_SHORT).show();
-        });
-        builder.setNeutralButton("Edit", (dialog, which) -> {
+        builder.setPositiveButton("Edit", (dialog, which) -> {
             Intent intent = new Intent(getApplicationContext(), EditActivity.class);
             intent.putExtra("intentId", "yojana");
             intent.putExtra("id", yojanaModel.getId());
@@ -248,12 +235,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
 
     @Override
     public void onItemClicked(NewsModel newsModel) {
-        builder.setPositiveButton("Delete", (dialog, which) -> {
-            Toast.makeText(this, "News", Toast.LENGTH_SHORT).show();
-
-        });
-
-        builder.setNeutralButton("Edit", (dialog, which) -> {
+        builder.setPositiveButton("Edit", (dialog, which) -> {
             Intent intent = new Intent(getApplicationContext(), EditActivity.class);
             intent.putExtra("intentId", "news");
             intent.putExtra("id", newsModel.getId());

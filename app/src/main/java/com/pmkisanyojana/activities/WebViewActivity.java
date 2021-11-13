@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -37,6 +38,10 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
 
+        WebSettings webSettings = webView.getSettings();
+        webSettings.getLoadsImagesAutomatically();
+
+
         dialog = CommonMethod.getDialog(this);
         dialog.show();
 
@@ -59,7 +64,14 @@ public class WebViewActivity extends AppCompatActivity {
         }, 3000);
 
         webView.loadUrl(data);
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        if (webView.canGoBack()){
+            webView.goBack();
+        }else {
+            super.onBackPressed();
+        }
     }
 }
