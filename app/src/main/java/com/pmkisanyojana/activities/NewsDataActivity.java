@@ -58,7 +58,7 @@ public class NewsDataActivity extends AppCompatActivity {
         dialog = CommonMethod.getDialog(this);
         dialog.show();
 
-        map.put("previewIdId", id);
+        map.put("previewId", id);
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
         Button hindi, english;

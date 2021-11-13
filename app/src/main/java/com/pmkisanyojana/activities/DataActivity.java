@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
@@ -79,11 +80,15 @@ public class DataActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivityDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         webView = binding.webView;
+        WebSettings webSettings = webView.getSettings();
+        webSettings.getLoadsImagesAutomatically();
+        webSettings.setJavaScriptEnabled(true);
+
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
         lottieAnimationView = binding.lottieAnimationEmpty;
@@ -277,5 +282,10 @@ public class DataActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
         finish();
         overridePendingTransition(0, 0);
+        if (webView.canGoBack()){
+            webView.goBack();
+        }else {
+            super.onBackPressed();
+        }
     }
 }
