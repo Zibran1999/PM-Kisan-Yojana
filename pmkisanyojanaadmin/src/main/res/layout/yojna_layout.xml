@@ -18,23 +18,12 @@
         android:layout_height="wrap_content">
 
 
-        <ImageView
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:src="@drawable/ic_baseline_check_box_24"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/yojanaTitle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/yojanaTitle"
-            app:tint="@color/black" />
-
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/pin_switch"
             android:theme="@style/SwitchCompatTheme"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,7 +32,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="2dp"
             android:ellipsize="end"
             android:maxEms="31"
             android:maxLength="61"
@@ -53,8 +41,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/yojnaImage"
-            app:layout_constraintEnd_toStartOf="@+id/yojnaImage"
-            app:layout_constraintStart_toEndOf="@+id/checkbox"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pin_switch" />
 
         <ImageView

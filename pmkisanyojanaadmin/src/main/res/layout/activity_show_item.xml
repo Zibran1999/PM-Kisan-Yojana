@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activities.ShowItemActivity">
 
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"

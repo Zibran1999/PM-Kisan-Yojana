@@ -18,4 +18,6 @@
     <style name="SwitchCompatTheme">
         <item name="colorControlActivated">@color/purple_500</item>
     </style>
+
+
 </resources>

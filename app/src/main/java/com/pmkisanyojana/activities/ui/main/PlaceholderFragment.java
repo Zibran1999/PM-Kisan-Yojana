@@ -93,6 +93,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             });
 
         } else if (pos == 2) {
+            dialog.show();
             setNewsData(root.getContext());
             binding.swipeRefresh.setOnRefreshListener(() -> {
                 setNewsData(root.getContext());
@@ -101,6 +102,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             });
 
         } else if (pos == 3) {
+            dialog.show();
             setOthersData(root.getContext());
             binding.swipeRefresh.setOnRefreshListener(() -> {
                 setOthersData(root.getContext());
@@ -111,7 +113,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
         return root;
     }
-
 
     private void setOthersData(Context context) {
         YojanaAdapter adapter = new YojanaAdapter(context, this);

@@ -16,7 +16,8 @@
         tools:ignore="AllowBackup">
         <activity
             android:name=".activities.ShowItemActivity"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".activities.EditActivity"
             android:exported="false" />
