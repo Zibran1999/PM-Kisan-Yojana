@@ -107,6 +107,13 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navMenu = binding.navMenu;
         drawerLayout = binding.drawerLayout;
 
+        binding.lottieWhatsapp.setOnClickListener(view -> {
+            try {
+                CommonMethod.whatsApp(this);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        });
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastStringForAction);
         Intent serviceIntent = new Intent(this, MyReceiver.class);

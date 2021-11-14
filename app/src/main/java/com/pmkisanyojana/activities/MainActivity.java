@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -24,6 +27,7 @@ import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.pmkisanyojana.R;
 import com.pmkisanyojana.databinding.ActivityMainBinding;
 import com.pmkisanyojana.utils.MyReceiver;
 
@@ -81,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
     private void Set_Visibility_ON() {
         binding.tvNotConnected.setVisibility(View.GONE);
         binding.noNetwork.setVisibility(View.GONE);
+        binding.spIcon.setVisibility(View.VISIBLE);
+        binding.spBg.setBackground(ContextCompat.getDrawable(this,R.drawable.sp_bg));
         if (count == 2) {
             new Handler().postDelayed(() -> {
                 startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
@@ -92,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
     private void Set_Visibility_OFF() {
         binding.tvNotConnected.setVisibility(View.VISIBLE);
         binding.noNetwork.setVisibility(View.VISIBLE);
+        binding.spIcon.setVisibility(View.GONE);
+        binding.spBg.setBackgroundColor(0);
     }
 
     private void inAppUpdate() {

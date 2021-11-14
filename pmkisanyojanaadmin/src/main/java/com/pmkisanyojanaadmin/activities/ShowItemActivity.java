@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,7 +69,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle("Edit your Item")
                 .setMessage("Edit")
-                .setNegativeButton("CANCEL", (dialog1, which) -> {
+                .setNeutralButton("CANCEL", (dialog1, which) -> {
 
                 });
 
@@ -76,7 +77,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         loadingDialog = new Dialog(this);
         loadingDialog.setContentView(R.layout.loading);
         loadingDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
+        loadingDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(this,R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         //**Loading Dialog****/
         swipeRefreshLayout = findViewById(R.id.swipe_refresh);
@@ -85,7 +86,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+        simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
@@ -142,7 +143,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
             recyclerView.setAdapter(yojanaAdapter);
             fetchYojana();
             swipeRefreshLayout.setOnRefreshListener(() -> {
-                fetchYojana();
+//                fetchYojana();
                 swipeRefreshLayout.setRefreshing(false);
             });
 
@@ -169,7 +170,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
     private void fetchOthers() {
         loadingDialog.show();
         yojanaAdapter = new YojanaAdapter(this, "others", yojanaModel -> {
-            builder.setNeutralButton("Edit", (dialog, which) -> {
+            builder.setPositiveButton("Edit", (dialog, which) -> {
                 Intent intent = new Intent(getApplicationContext(), EditActivity.class);
                 intent.putExtra("intentId", "others");
                 intent.putExtra("id", yojanaModel.getId());
