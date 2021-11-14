@@ -64,28 +64,27 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
         boolean isCheck = Boolean.parseBoolean(yojanaModelList.get(position).getPinned());
         if (isCheck) {
             holder.switchMaterial.setChecked(true);
+        } else {
+            holder.switchMaterial.setChecked(false);
         }
         if (adapterName.equals("others")) {
             holder.switchMaterial.setVisibility(View.GONE);
-        } else
+        } else {
             holder.switchMaterial.setVisibility(View.VISIBLE);
 
-        holder.switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            boolean pinnedItem = isChecked;
-            String pinStatus;
-            if (pinnedItem) {
-                pinStatus = "Item Pinned";
+            holder.switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                String pinStatus;
+                if (isChecked) {
+                    pinStatus = "Item Pinned";
 
-            } else {
-                pinStatus = "Item not Pin";
+                } else {
+                    pinStatus = "Item not Pin";
+                }
+                uploadPinStatus(pinStatus, isChecked, yojanaModelList.get(position).getId());
+            });
+            holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
 
-
-            }
-            uploadPinStatus(pinStatus, pinnedItem, yojanaModelList.get(position).getId());
-        });
-        holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
-
-
+        }
     }
 
     private void uploadPinStatus(String pinStatus, boolean pinnedItem, String id) {

@@ -33,12 +33,13 @@ public class CommonMethod {
     }
 
     public static void whatsApp(Context context) throws UnsupportedEncodingException {
-        String contact = "+91 8979854946"; // use country code with your phone number
+        String contact = "+91 7579613147"; // use country code with your phone number
         String url = "https://api.whatsapp.com/send?phone=" + contact + "&text=" + URLEncoder.encode("Hello, I need some help regarding ", "UTF-8");
         try {
             PackageManager pm = context.getPackageManager();
             pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES);
             Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.setData(Uri.parse(url));
             context.startActivity(i);
         } catch (PackageManager.NameNotFoundException e) {

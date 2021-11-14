@@ -92,8 +92,7 @@ public class DataActivity extends AppCompatActivity {
         lottieAnimationView = binding.lottieAnimationEmpty;
         dialog = CommonMethod.getDialog(this);
         lottieAnimationView.setVisibility(View.GONE);
-
-        visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
+      //  visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
 
         visitSiteBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
@@ -101,7 +100,7 @@ public class DataActivity extends AppCompatActivity {
             startActivity(intent);
         });
         binding.backIcon.setOnClickListener(v -> onBackPressed());
-        title.setText(getIntent().getStringExtra("title"));
+       // title.setText(getIntent().getStringExtra("title"));
         id = getIntent().getStringExtra("id");
         map.put("previewId", id);
         Log.d("previewIds", id);
@@ -149,7 +148,8 @@ public class DataActivity extends AppCompatActivity {
                         }
                     }
                 }
-                 finalEnglishString = englishString;
+                binding.titleTv.setText( getIntent().getStringExtra("title"));
+                finalEnglishString = englishString;
                  finalHindiString = hindiString;
                 webView.setVisibility(View.VISIBLE);
                 if (finalHindiString != null) {
@@ -190,6 +190,7 @@ public class DataActivity extends AppCompatActivity {
             if (finalHindiString!=null || finalEnglishString!=null){
                 dialog.dismiss();
                 lottieAnimationView.setVisibility(View.GONE);
+                binding.titleTv.setVisibility(View.VISIBLE);
                 if (getIntent().getStringExtra("url").equals("null")){
                     visitSiteBtn.setVisibility(View.GONE);
                 }else
@@ -197,6 +198,8 @@ public class DataActivity extends AppCompatActivity {
             }else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
                 visitSiteBtn.setVisibility(View.GONE);
+                binding.titleTv.setVisibility(View.GONE);
+
                 dialog.dismiss();
 
             }

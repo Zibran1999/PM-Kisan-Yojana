@@ -42,6 +42,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.newsTitle.setText(newsModelList.get(position).getTitle());
+        holder.newsTitle.setTextSize(17);
         RequestOptions requestOptions = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + newsModelList.get(position).getImage()).apply(requestOptions).into(holder.newsImage);

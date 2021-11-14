@@ -122,8 +122,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         pageViewModel.getOthersData().observe(requireActivity(), othersData -> {
             if (!othersData.getData().isEmpty()) {
                 adapter.updateYojanaList(othersData.getData());
-            } else {
-                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
             }
             dialog.dismiss();
         });
@@ -139,8 +137,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
             if (!newsModelList.getData().isEmpty()) {
                 newsAdapter.updateNewsList(newsModelList.getData());
-            } else {
-                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
             }
             dialog.dismiss();
         });
@@ -174,8 +170,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
                 yojanaAdapter.updateYojanaList(yojanaModelList);
 
 
-            } else {
-                Toast.makeText(getActivity(), "Data not found", Toast.LENGTH_SHORT).show();
             }
             dialog.dismiss();
         });
