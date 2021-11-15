@@ -24,7 +24,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
             finish();
         });
 
-        binding.shareBtn.setOnClickListener(v -> CommonMethod.rateApp(this));
+        binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));
 
         binding.privacyBtn.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PrivacyPolicyActivity.class)));
     }
