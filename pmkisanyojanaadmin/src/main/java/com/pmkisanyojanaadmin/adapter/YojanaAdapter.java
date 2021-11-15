@@ -1,6 +1,8 @@
 package com.pmkisanyojanaadmin.adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.activities.ShowItemActivity;
 import com.pmkisanyojanaadmin.model.ApiInterface;
@@ -67,24 +69,52 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
         } else {
             holder.switchMaterial.setChecked(false);
         }
+
+//        SharedPreferences preferences = showItemActivity.getSharedPreferences(
+//                "save", Context.MODE_PRIVATE);
+//        holder.switchMaterial.setChecked(preferences.getBoolean("value", false));
+
+        holder.switchMaterial.setOnClickListener(v -> {
+            String pinStatus;
+
+            if (holder.switchMaterial.isChecked()) {
+                pinStatus = "Item Pinned";
+                SharedPreferences.Editor editor = showItemActivity.getSharedPreferences("save", Context.MODE_PRIVATE).edit();
+                editor.putBoolean("value", true);
+                editor.apply();
+                holder.switchMaterial.setChecked(true);
+                uploadPinStatus(pinStatus, true, yojanaModelList.get(position).getId());
+
+
+            } else {
+                pinStatus = "Item not Pin";
+                SharedPreferences.Editor editor = showItemActivity.getSharedPreferences("save", Context.MODE_PRIVATE).edit();
+                editor.putBoolean("value", false);
+                editor.apply();
+                holder.switchMaterial.setChecked(false);
+                uploadPinStatus(pinStatus, false, yojanaModelList.get(position).getId());
+
+            }
+
+        });
         if (adapterName.equals("others")) {
             holder.switchMaterial.setVisibility(View.GONE);
-        } else {
+        } else
             holder.switchMaterial.setVisibility(View.VISIBLE);
 
-            holder.switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                String pinStatus;
-                if (isChecked) {
-                    pinStatus = "Item Pinned";
 
-                } else {
-                    pinStatus = "Item not Pin";
-                }
-                uploadPinStatus(pinStatus, isChecked, yojanaModelList.get(position).getId());
-            });
+//            holder.switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//                if (isChecked) {
+//
+//
+//                } else {
+//                }
+//                uploadPinStatus(pinStatus, isChecked, yojanaModelList.get(position).getId());
+//            });
+
             holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
 
-        }
+
     }
 
     private void uploadPinStatus(String pinStatus, boolean pinnedItem, String id) {
@@ -136,7 +166,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        SwitchMaterial switchMaterial;
+        SwitchCompat switchMaterial;
         TextView yojanaTitle;
         ImageView yojanaImage;
 

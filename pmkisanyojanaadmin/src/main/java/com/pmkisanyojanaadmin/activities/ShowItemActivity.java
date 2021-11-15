@@ -137,33 +137,37 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         };
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
 
-        if (intentId.equals("Yojana")) {
-            loadingDialog.show();
-            yojanaAdapter = new YojanaAdapter(this, "Yojana", this);
-            recyclerView.setAdapter(yojanaAdapter);
-            fetchYojana();
-            swipeRefreshLayout.setOnRefreshListener(() -> {
-//                fetchYojana();
-                swipeRefreshLayout.setRefreshing(false);
-            });
+        switch (intentId) {
+            case "Yojana":
+                loadingDialog.show();
+                yojanaAdapter = new YojanaAdapter(this, "Yojana", this);
+                recyclerView.setAdapter(yojanaAdapter);
+                fetchYojana();
+                swipeRefreshLayout.setOnRefreshListener(() -> {
+                    fetchYojana();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
 
-        } else if (intentId.equals("News")) {
-            loadingDialog.show();
-            newsAdapter = new NewsAdapter(this, this);
-            recyclerView.setAdapter(newsAdapter);
-            fetchNews();
-            swipeRefreshLayout.setOnRefreshListener(() -> {
+                break;
+            case "News":
+                loadingDialog.show();
+                newsAdapter = new NewsAdapter(this, this);
+                recyclerView.setAdapter(newsAdapter);
                 fetchNews();
-                swipeRefreshLayout.setRefreshing(false);
-            });
+                swipeRefreshLayout.setOnRefreshListener(() -> {
+                    fetchNews();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
 
-        } else if (intentId.equals("Others")) {
+                break;
+            case "Others":
 
-            fetchOthers();
-            swipeRefreshLayout.setOnRefreshListener(() -> {
                 fetchOthers();
-                swipeRefreshLayout.setRefreshing(false);
-            });
+                swipeRefreshLayout.setOnRefreshListener(() -> {
+                    fetchOthers();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
+                break;
         }
     }
 

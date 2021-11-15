@@ -15,6 +15,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PMKisanYojana">
+
         <activity
             android:name=".activities.WebViewActivity"
             android:exported="false" />

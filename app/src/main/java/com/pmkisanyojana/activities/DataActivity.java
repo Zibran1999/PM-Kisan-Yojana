@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -51,8 +50,7 @@ public class DataActivity extends AppCompatActivity {
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
-    String finalEnglishString,finalHindiString;
-
+    String finalEnglishString, finalHindiString;
 
     MaterialButton visitSiteBtn;
     ActivityDataBinding binding;
@@ -82,17 +80,17 @@ public class DataActivity extends AppCompatActivity {
 
         binding = ActivityDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        dialog = CommonMethod.getDialog(this);
         webView = binding.webView;
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
         webSettings.setJavaScriptEnabled(true);
+        dialog.show();
 
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
         lottieAnimationView = binding.lottieAnimationEmpty;
-        dialog = CommonMethod.getDialog(this);
         lottieAnimationView.setVisibility(View.GONE);
-      //  visitSiteBtn.setText(String.format("%s visit Site", getIntent().getStringExtra("title")));
 
         visitSiteBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
@@ -100,24 +98,23 @@ public class DataActivity extends AppCompatActivity {
             startActivity(intent);
         });
         binding.backIcon.setOnClickListener(v -> onBackPressed());
-       // title.setText(getIntent().getStringExtra("title"));
+
         id = getIntent().getStringExtra("id");
         map.put("previewId", id);
-        Log.d("previewIds", id);
-        Log.d("ccccc", id);
+
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
         materialButtonToggleGroup.setVisibility(View.GONE);
         Button hindi, english;
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
-        List<PreviewModel> previewModels =new ArrayList<>();
+        List<PreviewModel> previewModels = new ArrayList<>();
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getPreviewData().observe(this, previewModelList -> {
-            dialog.show();
             previewModels.clear();
             previewModels.addAll(previewModelList.getData());
             if (!previewModels.isEmpty()) {
+                lottieAnimationView.setVisibility(View.GONE);
                 String hindiString = null;
                 String englishString = null;
                 for (PreviewModel m : previewModelList.getData()) {
@@ -127,18 +124,15 @@ public class DataActivity extends AppCompatActivity {
 
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
                         String removeNumeric = replaceString.replaceAll("[0-9]", "");
-                        Log.d("both data", removeNumeric.trim());
 
                         for (char c : removeNumeric.trim().toCharArray()) {
                             if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.DEVANAGARI) {
                                 hindiString = m.getDesc();
-                                Log.d("hindi", hindiString);
                                 break;
                             } else {
 
                                 if (englishString == null) {
                                     englishString = m.getDesc();
-                                    Log.d("english", englishString);
                                     materialButtonToggleGroup.setVisibility(View.VISIBLE);
 
                                 }
@@ -148,9 +142,9 @@ public class DataActivity extends AppCompatActivity {
                         }
                     }
                 }
-                binding.titleTv.setText( getIntent().getStringExtra("title"));
+
                 finalEnglishString = englishString;
-                 finalHindiString = hindiString;
+                finalHindiString = hindiString;
                 webView.setVisibility(View.VISIBLE);
                 if (finalHindiString != null) {
                     webView.loadData(finalHindiString, "text/html", "UTF-8");
@@ -159,7 +153,14 @@ public class DataActivity extends AppCompatActivity {
                     webView.loadData(finalEnglishString, "text/html", "UTF-8");
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
+                binding.titleTv.setText(getIntent().getStringExtra("title"));
                 dialog.dismiss();
+
+                binding.titleTv.setVisibility(View.VISIBLE);
+                if (getIntent().getStringExtra("url").equals("null")) {
+                    visitSiteBtn.setVisibility(View.GONE);
+                } else
+                    visitSiteBtn.setVisibility(View.VISIBLE);
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
@@ -186,24 +187,33 @@ public class DataActivity extends AppCompatActivity {
                     }
                 });
 
-            }
-            if (finalHindiString!=null || finalEnglishString!=null){
-                dialog.dismiss();
-                lottieAnimationView.setVisibility(View.GONE);
-                binding.titleTv.setVisibility(View.VISIBLE);
-                if (getIntent().getStringExtra("url").equals("null")){
-                    visitSiteBtn.setVisibility(View.GONE);
-                }else
-                visitSiteBtn.setVisibility(View.VISIBLE);
             }else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
                 visitSiteBtn.setVisibility(View.GONE);
                 binding.titleTv.setVisibility(View.GONE);
+                webView.setVisibility(View.GONE);
 
                 dialog.dismiss();
-
             }
 
+//
+//            if (finalHindiString != null || finalEnglishString != null) {
+//                dialog.dismiss();
+//                lottieAnimationView.setVisibility(View.GONE);
+//                binding.titleTv.setVisibility(View.VISIBLE);
+//                if (getIntent().getStringExtra("url").equals("null")) {
+//                    visitSiteBtn.setVisibility(View.GONE);
+//                } else
+//                    visitSiteBtn.setVisibility(View.VISIBLE);
+//            } else {
+//                lottieAnimationView.setVisibility(View.VISIBLE);
+//                visitSiteBtn.setVisibility(View.GONE);
+//                binding.titleTv.setVisibility(View.GONE);
+//                webView.setVisibility(View.GONE);
+//
+//                dialog.dismiss();
+//
+//            }
 
         });
 
@@ -283,9 +293,9 @@ public class DataActivity extends AppCompatActivity {
         overridePendingTransition(0, 0);
         finish();
         overridePendingTransition(0, 0);
-        if (webView.canGoBack()){
+        if (webView.canGoBack()) {
             webView.goBack();
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

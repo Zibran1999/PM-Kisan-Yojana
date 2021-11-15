@@ -18,7 +18,7 @@
         android:layout_height="wrap_content">
 
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/pin_switch"
             android:theme="@style/SwitchCompatTheme"
             android:layout_width="wrap_content"
