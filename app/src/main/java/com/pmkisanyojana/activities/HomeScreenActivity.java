@@ -31,6 +31,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PlaceholderFragment;
 import com.pmkisanyojana.activities.ui.main.SectionsPagerAdapter;
@@ -214,7 +215,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                 startActivity(new Intent(HomeScreenActivity.this, PrivacyPolicyActivity.class));
                 break;
             case R.id.nav_share:
-               CommonMethod.shareApp(getApplicationContext());
+               shareApp(this);
                 break;
             default:
         }
@@ -238,7 +239,20 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         MenuItem nav_contact = navMenu.findItem(R.id.nav_contact);
         nav_contact.setEnabled(false);
     }
-
+    public static void shareApp(Context context) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
+            String shareMessage = "\nLet me recommend you this application\n\n";
+            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            context.startActivity(Intent.createChooser(shareIntent, "choose one"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void enableNavItems() {
         Menu navMenu = navigationView.getMenu();
         MenuItem nav_insta = navMenu.findItem(R.id.nav_share);
