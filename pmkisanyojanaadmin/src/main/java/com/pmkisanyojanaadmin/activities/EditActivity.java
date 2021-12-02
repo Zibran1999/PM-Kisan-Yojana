@@ -236,7 +236,10 @@ public class EditActivity extends AppCompatActivity {
         cancelPreview.setOnClickListener(v -> {
             editDialog.dismiss();
         });
-        Log.d("preivew id",id);
+        Log.d("preivew id", id);
+
+        dialogTitle.setText(intentId);
+
 
         Map<String, String> mapId = new HashMap<>();
         mapId.put("previewId", id.trim());
@@ -246,6 +249,10 @@ public class EditActivity extends AppCompatActivity {
         Button hindi, english;
         hindi = editDialog.findViewById(R.id.hindiPreview);
         english = editDialog.findViewById(R.id.englishPreview);
+
+        if (intentId.equals("news")) {
+            materialButtonToggleGroup.setVisibility(View.GONE);
+        }
 
         YojanaViewModel viewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), mapId)).get(YojanaViewModel.class);
         viewModel.getPreviewData().observe(this, yojanaPreviewModelList -> {

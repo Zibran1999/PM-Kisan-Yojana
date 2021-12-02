@@ -33,6 +33,19 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:adSize="BANNER"
+            android:background="@color/white"
+            android:visibility="gone"
+            app:adUnitId="@string/banner_id"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"/>
     <ImageView
         android:id="@+id/start_btn"
         android:layout_width="150sp"
@@ -42,29 +55,29 @@
         android:src="@drawable/start"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/adView" />
 
 
     <ImageView
-        android:id="@+id/privacy_btn"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:id="@+id/contact_btn"
+        android:layout_width="148dp"
+        android:layout_height="148dp"
         android:layout_marginStart="25sp"
         android:background="@android:color/transparent"
-        android:src="@drawable/privacy"
+        android:src="@drawable/contact"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/start_btn" />
 
-    <ImageView
-        android:id="@+id/share_btn"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginEnd="25dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/share"
-        app:layout_constraintBottom_toBottomOf="@+id/privacy_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/privacy_btn" />
+        <ImageView
+            android:id="@+id/share_btn"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginEnd="25dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/share"
+            app:layout_constraintBottom_toBottomOf="@+id/contact_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/contact_btn" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,13 +1,13 @@
 package com.pmkisanyojana.utils;
 
-import android.app.Application;
-import android.content.Intent;
+        import android.app.Application;
+        import android.content.Intent;
 
-import com.onesignal.OSNotificationOpenedResult;
-import com.onesignal.OneSignal;
-import com.pmkisanyojana.activities.MainActivity;
+        import com.onesignal.OSNotificationOpenedResult;
+        import com.onesignal.OneSignal;
+        import com.pmkisanyojana.activities.MainActivity;
 
-public class MyApp extends Application {
+public class MyApp extends  Application {
 
     private static final String ONESIGNAL_APP_ID = "9a77bdda-945f-4f86-bf6a-5c564559c350";
 

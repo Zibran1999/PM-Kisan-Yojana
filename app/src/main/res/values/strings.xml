@@ -14,4 +14,20 @@
     <string name="share_app">Share App</string>
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
+
+    <!--ads ids-->
+<!--    <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
+<!--    <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>-->
+<!--    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>-->
+
+ <string name="banner_id">ca-app-pub-1247850544347178/5208823053</string>
+    <string name="interstitial_id">ca-app-pub-1247850544347178/3704169692</string>
+    <string name="app_id">ca-app-pub-1247850544347178~8424522643</string>
+
+
+<!--    admob ad unit - Banner - ca-app-pub-1247850544347178/5208823053-->
+
+<!--    admob ad unit -Interstitial - ca-app-pub-1247850544347178/3704169692-->
+
+<!--    Admob app id - ca-app-pub-1247850544347178~8424522643-->
 </resources>

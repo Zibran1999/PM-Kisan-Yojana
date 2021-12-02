@@ -59,7 +59,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     public void updateNewsList(List<NewsModel> newsModels) {
         newsModelList.clear();
         newsModelList.addAll(newsModels);
-        Collections.reverse(newsModelList);
         notifyDataSetChanged();
     }
 

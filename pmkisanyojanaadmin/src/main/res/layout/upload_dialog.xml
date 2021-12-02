@@ -54,7 +54,7 @@
             <EditText
                 android:id="@+id/item_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:textColor="@color/black" />
@@ -64,22 +64,21 @@
             android:id="@+id/textInputLayout2"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_margin="8dp"
             android:hint="@string/enter_link"
             android:textColorHint="@color/black"
-            android:visibility="gone"
+            android:visibility="visible"
             app:boxStrokeColor="@color/black"
-            app:endIconMode="clear_text"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-            tools:layout_editor_absoluteX="8dp">
+            tools:layout_editor_absoluteX="13dp">
 
             <EditText
                 android:id="@+id/yojana_link"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:importantForAutofill="no"
-                android:inputType="text"
+                android:gravity="start"
                 android:textColor="@color/black"
                 tools:ignore="LabelFor,SpeakableTextPresentCheck" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -157,6 +156,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

@@ -50,20 +50,20 @@
         app:layout_constraintStart_toStartOf="@+id/upload_other_data"
         app:layout_constraintTop_toBottomOf="@+id/upload_other_data" />
 
-    <Button
-        android:id="@+id/add_news_btn"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_width="match_parent"
-        android:padding="10dp"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Add News Preview"
-        android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/add_yojana_btn"
-        app:layout_constraintStart_toStartOf="@+id/add_yojana_btn"
-        app:layout_constraintTop_toBottomOf="@+id/add_yojana_btn" />
+<!--    <Button-->
+<!--        android:id="@+id/add_news_btn"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:padding="10dp"-->
+<!--        android:textSize="20sp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:text="Add News Preview"-->
+<!--        android:textAllCaps="false"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/add_yojana_btn"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/add_yojana_btn"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/add_yojana_btn" />-->
 
     <Button
         android:id="@+id/add_others_btn"
@@ -76,9 +76,9 @@
         android:layout_marginTop="8dp"
         android:text="Add Others Preview"
         android:textAllCaps="false"
-        app:layout_constraintEnd_toEndOf="@+id/add_news_btn"
-        app:layout_constraintStart_toStartOf="@+id/add_news_btn"
-        app:layout_constraintTop_toBottomOf="@+id/add_news_btn" />
+        app:layout_constraintEnd_toEndOf="@+id/add_yojana_btn"
+        app:layout_constraintStart_toStartOf="@+id/add_yojana_btn"
+        app:layout_constraintTop_toBottomOf="@+id/add_yojana_btn" />
 
     <Button
         android:id="@+id/edit_delete_btn"

@@ -115,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
             arrayList.clear();
             addPreviewData(this, "Yojana");
         });
-        binding.addNewsBtn.setOnClickListener(v -> {
-            arrayList.clear();
-            addPreviewData(this, "News");
-        });
+//        binding.addNewsBtn.setOnClickListener(v -> {
+//            arrayList.clear();
+//            addPreviewData(this, "News");
+//        });
         binding.addOthersBtn.setOnClickListener(v -> {
             addPreviewData(this, "Others");
         });
@@ -157,8 +157,9 @@ public class MainActivity extends AppCompatActivity {
             textInputLayout.setVisibility(View.VISIBLE);
 
         } else if (title.equals("Upload News")) {
-            textInputLayout.setVisibility(View.GONE);
-
+            textInputLayout.setVisibility(View.VISIBLE);
+            textInputLayout.setHint("Enter Description");
+            yojanaLink.setHeight(450);
         } else if (title.equals("Upload Others")) {
             textInputLayout.setVisibility(View.VISIBLE);
 
@@ -224,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (title.equals("Upload News")) {
 
                 String sTitle = selectTitle.getText().toString().trim();
+                String desc = yojanaLink.getText().toString();
                 String date = setDate.getText().toString();
                 String time = setTime.getText().toString();
 
@@ -241,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
                     map.put("id", randomId);
                     map.put("img", encodedImage);
                     map.put("title", sTitle);
+                    map.put("desc", desc);
                     map.put("time", time);
                     map.put("date", date);
                     uploadNewsData(map);
@@ -546,32 +549,34 @@ public class MainActivity extends AppCompatActivity {
                     uploadPreview(map);
                 }
             });
-        } else if (title.equals("News")) {
-            arrayList.clear();
-            newsModelList.clear();
-            fetchNewsDetails();
-            uploadYojanaBtn.setOnClickListener(v -> {
-                loadingDialog.show();
-                String desc = yojanaData.getText().toString();
-                if (TextUtils.isEmpty(getYojanaName)) {
-                    loadingDialog.dismiss();
-                    Toast.makeText(getApplicationContext(), "Please select a Category!", Toast.LENGTH_SHORT).show();
-                } else if (TextUtils.isEmpty(desc)) {
-                    yojanaData.setError("field required!");
-                    loadingDialog.dismiss();
-                } else {
-                    for (NewsModel m : newsModelList) {
-                        if (m.getTitle().equals(getYojanaName)) {
-                            previewId = m.getId();
-                            break;
-                        }
-                    }
-                    map.put("previewId", previewId);
-                    map.put("desc", desc);
-                    uploadPreview(map);
-                }
-            });
-        } else if (title.equals("Others")) {
+        }
+//        else if (title.equals("News")) {
+//            arrayList.clear();
+//            newsModelList.clear();
+//            fetchNewsDetails();
+//            uploadYojanaBtn.setOnClickListener(v -> {
+//                loadingDialog.show();
+//                String desc = yojanaData.getText().toString();
+//                if (TextUtils.isEmpty(getYojanaName)) {
+//                    loadingDialog.dismiss();
+//                    Toast.makeText(getApplicationContext(), "Please select a Category!", Toast.LENGTH_SHORT).show();
+//                } else if (TextUtils.isEmpty(desc)) {
+//                    yojanaData.setError("field required!");
+//                    loadingDialog.dismiss();
+//                } else {
+//                    for (NewsModel m : newsModelList) {
+//                        if (m.getTitle().equals(getYojanaName)) {
+//                            previewId = m.getId();
+//                            break;
+//                        }
+//                    }
+//                    map.put("previewId", previewId);
+//                    map.put("desc", desc);
+//                    uploadPreview(map);
+//                }
+//            });
+//        }
+        else if (title.equals("Others")) {
             arrayList.clear();
             yojanaModelList.clear();
             fetchOthersDetails();

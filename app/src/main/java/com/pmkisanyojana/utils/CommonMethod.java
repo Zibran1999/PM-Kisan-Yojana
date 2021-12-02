@@ -7,9 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 
@@ -17,6 +25,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class CommonMethod {
+    public static InterstitialAd mInterstitialAd;
 
     public static void shareApp(Context context) {
         try {
@@ -33,7 +42,8 @@ public class CommonMethod {
         }
     }
 
-    public static void whatsApp(Context context) throws UnsupportedEncodingException {
+    public static void whatsApp(Context context) throws UnsupportedEncodingException, PackageManager.NameNotFoundException {
+
         String contact = "+91 7579613147"; // use country code with your phone number
         String url = "https://api.whatsapp.com/send?phone=" + contact + "&text=" + URLEncoder.encode("Hello, I need some help regarding ", "UTF-8");
         try {
@@ -43,9 +53,22 @@ public class CommonMethod {
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             i.setData(Uri.parse(url));
             context.startActivity(i);
+
         } catch (PackageManager.NameNotFoundException e) {
-            Toast.makeText(context, "Whatsapp app not installed in your phone", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
+            try {
+                PackageManager pm = context.getPackageManager();
+                pm.getPackageInfo("com.whatsapp.w4b", PackageManager.GET_ACTIVITIES);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.setData(Uri.parse(url));
+                context.startActivity(i);
+            } catch (PackageManager.NameNotFoundException exception) {
+                e.printStackTrace();
+                Toast.makeText(context, "WhatsApp is not installed on this Device.", Toast.LENGTH_SHORT).show();
+
+            }
+
+//            whatsApp(context, "com.whatsapp.w4b");
         }
 
 
@@ -63,7 +86,7 @@ public class CommonMethod {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public static Dialog getDialog(Context context){
+    public static Dialog getDialog(Context context) {
         Dialog loadingDialog;
         loadingDialog = new Dialog(context);
         loadingDialog.setContentView(R.layout.loading);
@@ -71,5 +94,30 @@ public class CommonMethod {
         loadingDialog.getWindow().setBackgroundDrawable(context.getDrawable(R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         return loadingDialog;
+    }
+
+    public static void interstitialAds(Context context) {
+
+        MobileAds.initialize(context);
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(context, context.getString(R.string.interstitial_id), adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        mInterstitialAd = interstitialAd;
+                        Log.i("TAG", "InteronAdLoaded");
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        Log.i("TAG", loadAdError.getMessage());
+                        mInterstitialAd = null;
+                    }
+                });
     }
 }

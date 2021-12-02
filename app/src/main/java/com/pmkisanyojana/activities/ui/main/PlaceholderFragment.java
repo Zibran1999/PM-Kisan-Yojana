@@ -1,14 +1,16 @@
 package com.pmkisanyojana.activities.ui.main;
 
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
@@ -17,8 +19,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.pmkisanyojana.activities.DataActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
+import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
@@ -43,6 +49,11 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     String yojanaId = "true";
     private PageViewModel pageViewModel;
     private FragmentHomeScreenBinding binding;
+    /*ads variable*/
+    AdView adView;
+    AdRequest adRequest;
+    /*ads variable*/
+
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -73,7 +84,21 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         View root = binding.getRoot();
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
+        MobileAds.initialize(root.getContext());
+        adRequest = new AdRequest.Builder().build();
+        adView = binding.adViewHome;
+        adView.loadAd(adRequest);
 
+        new Handler().postDelayed(() -> {
+            if (WelcomeScreenActivity.count == 1) {
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.show(requireActivity());
+                } else {
+                    Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                }
+                WelcomeScreenActivity.count++;
+            }
+        }, 2000);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -82,6 +107,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
         pinnedRv.setLayoutManager(layoutManager1);
+
 
 
         if (pos == 1) {
@@ -102,7 +128,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             });
 
         } else if (pos == 3) {
-            dialog.show();
+
             setOthersData(root.getContext());
             binding.swipeRefresh.setOnRefreshListener(() -> {
                 setOthersData(root.getContext());
@@ -123,7 +149,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
             if (!othersData.getData().isEmpty()) {
                 adapter.updateYojanaList(othersData.getData());
             }
-            dialog.dismiss();
         });
 
     }

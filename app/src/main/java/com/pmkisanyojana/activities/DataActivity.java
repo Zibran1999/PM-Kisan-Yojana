@@ -1,6 +1,7 @@
 package com.pmkisanyojana.activities;
 
 import static com.pmkisanyojana.activities.HomeScreenActivity.BroadCastStringForAction;
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -13,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -26,6 +28,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
@@ -51,6 +56,10 @@ public class DataActivity extends AppCompatActivity {
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
     String finalEnglishString, finalHindiString;
+    /*ads variable*/
+    AdView adView;
+    AdRequest adRequest;
+    /*ads variable*/
 
     MaterialButton visitSiteBtn;
     ActivityDataBinding binding;
@@ -86,6 +95,7 @@ public class DataActivity extends AppCompatActivity {
         webSettings.getLoadsImagesAutomatically();
         webSettings.setJavaScriptEnabled(true);
         dialog.show();
+        CommonMethod.interstitialAds(this);
 
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
@@ -108,6 +118,21 @@ public class DataActivity extends AppCompatActivity {
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
+        MobileAds.initialize(this);
+        adRequest = new AdRequest.Builder().build();
+        adView = binding.adViewData;
+        adView.loadAd(adRequest);
+        adView.setVisibility(View.VISIBLE);
+
+
+
+        new Handler().postDelayed(() -> {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(this);
+            } else {
+                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+            }
+        }, 2000);
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getPreviewData().observe(this, previewModelList -> {

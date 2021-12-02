@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     int REQUEST_CODE = 11;
     int count = 1;
     ActivityMainBinding binding;
+   public static AdRequest adRequest;
+
 
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         inAppUpdate();
+        adRequest = new AdRequest.Builder().build();
+
 
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastStringForAction);
@@ -91,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(() -> {
                 startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
                 finish();
-            }, 2000);
+            }, 1000);
         }
     }
 

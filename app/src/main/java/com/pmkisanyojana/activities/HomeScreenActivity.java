@@ -47,6 +47,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     ActivityHomeScreenBinding binding;
     private static final float END_SCALE = 0.7f;
     int count = 1;
+    public static int count_ad = 1;
+
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -111,7 +113,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         binding.lottieWhatsapp.setOnClickListener(view -> {
             try {
                 CommonMethod.whatsApp(this);
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         });
@@ -204,7 +206,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_contact:
                 try {
                     CommonMethod.whatsApp(getApplicationContext());
-                } catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
                 break;
