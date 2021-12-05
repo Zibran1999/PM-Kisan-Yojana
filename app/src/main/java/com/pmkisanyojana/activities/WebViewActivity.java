@@ -4,10 +4,12 @@ import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -51,22 +53,22 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setBuiltInZoomControls(true);
         webView.getSettings().setDisplayZoomControls(false);
 
+
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
 
 
 
         adView = binding.adViewWebView;
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
 
-        new Handler().postDelayed(() -> {
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(this);
-            } else {
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-        }, 3000);
+
+//        new Handler().postDelayed(() -> {
+//            if (mInterstitialAd != null) {
+//                mInterstitialAd.show(this);
+//            } else {
+//                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+//            }
+//        }, 3000);
 
 
         dialog = CommonMethod.getDialog(this);
@@ -76,10 +78,18 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i("TAG", "Processing webview url click...");
                 view.loadUrl(url);
+                adView.loadAd(adRequest);
+                adView.setVisibility(View.VISIBLE);
                 return true;
+            }
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                //super.onReceivedSslError(view, handler, error);
+                handler.proceed();//skip ssl error
             }
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+
                 Log.e("TAG", "Error: " + description);
                 Toast.makeText(getApplicationContext(), "Oh no! " + description, Toast.LENGTH_SHORT).show();
 
