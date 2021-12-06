@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,13 +46,12 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     YojanaAdapter yojanaAdapter;
     NewsAdapter newsAdapter;
     String yojanaId = "true";
-    private PageViewModel pageViewModel;
-    private FragmentHomeScreenBinding binding;
     /*ads variable*/
     AdView adView;
     AdRequest adRequest;
+    private PageViewModel pageViewModel;
+    private FragmentHomeScreenBinding binding;
     /*ads variable*/
-
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -88,17 +86,8 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         adRequest = new AdRequest.Builder().build();
         adView = binding.adViewHome;
         adView.loadAd(adRequest);
+        adView.setVisibility(View.VISIBLE);
 
-        new Handler().postDelayed(() -> {
-            if (WelcomeScreenActivity.count == 1) {
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.show(requireActivity());
-                } else {
-                    Log.d("TAG", "The interstitial ad wasn't ready yet.");
-                }
-                WelcomeScreenActivity.count++;
-            }
-        }, 2000);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -107,7 +96,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
         pinnedRv.setLayoutManager(layoutManager1);
-
 
 
         if (pos == 1) {
@@ -195,6 +183,16 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
                 yojanaAdapter.updateYojanaList(yojanaModelList);
 
 
+                if (WelcomeScreenActivity.count == 1) {
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.show(requireActivity());
+                    } else {
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                    }
+                    WelcomeScreenActivity.count++;
+                }
+
+
             }
             dialog.dismiss();
         });
@@ -218,6 +216,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());
         startActivity(intent);
+
 
     }
 

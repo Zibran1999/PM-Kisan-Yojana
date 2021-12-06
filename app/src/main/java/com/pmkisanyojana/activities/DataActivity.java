@@ -86,8 +86,9 @@ public class DataActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityDataBinding.inflate(getLayoutInflater());
+        CommonMethod.interstitialAds(this);
+
         setContentView(binding.getRoot());
         dialog = CommonMethod.getDialog(this);
         webView = binding.webView;
@@ -95,7 +96,6 @@ public class DataActivity extends AppCompatActivity {
         webSettings.getLoadsImagesAutomatically();
         webSettings.setJavaScriptEnabled(true);
         dialog.show();
-        CommonMethod.interstitialAds(this);
 
         title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
@@ -124,15 +124,6 @@ public class DataActivity extends AppCompatActivity {
         adView.loadAd(adRequest);
         adView.setVisibility(View.VISIBLE);
 
-
-
-        new Handler().postDelayed(() -> {
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(this);
-            } else {
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-        }, 2000);
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getPreviewData().observe(this, previewModelList -> {
@@ -178,6 +169,13 @@ public class DataActivity extends AppCompatActivity {
                     webView.loadData(finalEnglishString, "text/html", "UTF-8");
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
+                new Handler().postDelayed(() -> {
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.show(this);
+                    } else {
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                    }
+                }, 2000);
                 binding.titleTv.setText(getIntent().getStringExtra("title"));
                 dialog.dismiss();
 
@@ -212,6 +210,7 @@ public class DataActivity extends AppCompatActivity {
                     }
                 });
 
+
             }else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
                 visitSiteBtn.setVisibility(View.GONE);
@@ -220,25 +219,6 @@ public class DataActivity extends AppCompatActivity {
 
                 dialog.dismiss();
             }
-
-//
-//            if (finalHindiString != null || finalEnglishString != null) {
-//                dialog.dismiss();
-//                lottieAnimationView.setVisibility(View.GONE);
-//                binding.titleTv.setVisibility(View.VISIBLE);
-//                if (getIntent().getStringExtra("url").equals("null")) {
-//                    visitSiteBtn.setVisibility(View.GONE);
-//                } else
-//                    visitSiteBtn.setVisibility(View.VISIBLE);
-//            } else {
-//                lottieAnimationView.setVisibility(View.VISIBLE);
-//                visitSiteBtn.setVisibility(View.GONE);
-//                binding.titleTv.setVisibility(View.GONE);
-//                webView.setVisibility(View.GONE);
-//
-//                dialog.dismiss();
-//
-//            }
 
         });
 

@@ -32,8 +32,8 @@ public class WebViewActivity extends AppCompatActivity {
     Dialog dialog;
 
     /*ads variable*/
-    AdView adView;
-    AdRequest adRequest;
+//    AdView adView;
+//    AdRequest adRequest;
     /*ads variable*/
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -44,7 +44,7 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         MobileAds.initialize(this);
         CommonMethod.interstitialAds(this);
-        adRequest = new AdRequest.Builder().build();
+//        adRequest = new AdRequest.Builder().build();
         webView = binding.webView;
         title = binding.title;
         binding.backIcon.setOnClickListener(v -> onBackPressed());
@@ -59,8 +59,9 @@ public class WebViewActivity extends AppCompatActivity {
 
 
 
-        adView = binding.adViewWebView;
-
+//        adView = binding.adViewWebView;
+//        adView.loadAd(adRequest);
+//        adView.setVisibility(View.VISIBLE);
 
 //        new Handler().postDelayed(() -> {
 //            if (mInterstitialAd != null) {
@@ -78,8 +79,6 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.i("TAG", "Processing webview url click...");
                 view.loadUrl(url);
-                adView.loadAd(adRequest);
-                adView.setVisibility(View.VISIBLE);
                 return true;
             }
             @Override

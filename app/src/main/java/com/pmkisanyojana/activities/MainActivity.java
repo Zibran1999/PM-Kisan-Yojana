@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             new Handler().postDelayed(() -> {
                 startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
                 finish();
-            }, 1000);
+            }, 2000);
         }
     }
 
