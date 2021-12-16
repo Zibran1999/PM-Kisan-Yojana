@@ -96,23 +96,21 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
         pinnedRv.setLayoutManager(layoutManager1);
-
-
         if (pos == 1) {
-            dialog.show();
-            setYojanaData(root.getContext());
-            binding.swipeRefresh.setOnRefreshListener(() -> {
-                setYojanaData(root.getContext());
-                binding.swipeRefresh.setRefreshing(false);
-            });
-
-        } else if (pos == 2) {
             dialog.show();
             setNewsData(root.getContext());
             binding.swipeRefresh.setOnRefreshListener(() -> {
                 setNewsData(root.getContext());
                 binding.swipeRefresh.setRefreshing(false);
 
+            });
+
+        } else if (pos == 2) {
+            dialog.show();
+            setYojanaData(root.getContext());
+            binding.swipeRefresh.setOnRefreshListener(() -> {
+                setYojanaData(root.getContext());
+                binding.swipeRefresh.setRefreshing(false);
             });
 
         } else if (pos == 3) {
@@ -216,8 +214,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());
         startActivity(intent);
-
-
     }
 
     @Override

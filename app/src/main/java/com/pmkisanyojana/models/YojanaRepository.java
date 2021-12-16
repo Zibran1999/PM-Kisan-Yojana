@@ -110,6 +110,7 @@ public class YojanaRepository {
                     otherLiveData.setValue(response.body());
                 } else {
                     Log.d("onResponse", response.message());
+
                 }
             }
 
