@@ -24,6 +24,7 @@
     <style name="Theme.PMKisanYojana.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.PMKisanYojana.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="circleImageView" parent="">
         <item name="cornerSize">8%</item>
     </style>

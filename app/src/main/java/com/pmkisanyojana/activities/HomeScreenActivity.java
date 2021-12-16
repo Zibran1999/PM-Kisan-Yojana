@@ -1,5 +1,7 @@
 package com.pmkisanyojana.activities;
 
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,7 +17,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,7 +34,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
-import com.pmkisanyojana.activities.ui.main.PlaceholderFragment;
 import com.pmkisanyojana.activities.ui.main.SectionsPagerAdapter;
 import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
 import com.pmkisanyojana.utils.CommonMethod;
@@ -43,12 +43,17 @@ import java.io.UnsupportedEncodingException;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
+    private static final float END_SCALE = 0.7f;
+    public static int count_ad = 1;
     TextView versionCode;
     ActivityHomeScreenBinding binding;
-    private static final float END_SCALE = 0.7f;
     int count = 1;
-    public static int count_ad = 1;
-
+    ImageView navMenu;
+    DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    ConstraintLayout categoryContainer;
+    SectionsPagerAdapter sectionsPagerAdapter;
+    ViewPager viewPager;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -64,13 +69,22 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
         }
     };
-    ImageView navMenu;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    ConstraintLayout categoryContainer;
-    SectionsPagerAdapter sectionsPagerAdapter;
-    ViewPager viewPager;
     private IntentFilter intentFilter;
+
+    public static void shareApp(Context context) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
+            String shareMessage = "\nLet me recommend you this application\n\n";
+            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            context.startActivity(Intent.createChooser(shareIntent, "choose one"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void Set_Visibility_ON() {
@@ -95,16 +109,15 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         disableNavItems();
     }
 
-
     @SuppressLint("SetTextI18n")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-             binding = ActivityHomeScreenBinding.inflate(getLayoutInflater());
+        binding = ActivityHomeScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         versionCode = binding.versionCode;
-        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager = binding.viewPager;
         navigationView = binding.navigation;
         navMenu = binding.navMenu;
@@ -129,8 +142,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             Set_Visibility_OFF();
         }
 
-
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = binding.tabs;
@@ -217,7 +228,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                 startActivity(new Intent(HomeScreenActivity.this, PrivacyPolicyActivity.class));
                 break;
             case R.id.nav_share:
-               shareApp(this);
+                shareApp(this);
                 break;
             default:
         }
@@ -241,20 +252,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         MenuItem nav_contact = navMenu.findItem(R.id.nav_contact);
         nav_contact.setEnabled(false);
     }
-    public static void shareApp(Context context) {
-        try {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
-            String shareMessage = "\nLet me recommend you this application\n\n";
-            shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
-            shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-            context.startActivity(Intent.createChooser(shareIntent, "choose one"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
     public void enableNavItems() {
         Menu navMenu = navigationView.getMenu();
         MenuItem nav_insta = navMenu.findItem(R.id.nav_share);

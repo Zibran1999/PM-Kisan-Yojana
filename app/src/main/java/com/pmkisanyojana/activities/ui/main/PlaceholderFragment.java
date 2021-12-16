@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.pmkisanyojana.activities.DataActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.WelcomeScreenActivity;
+import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
@@ -209,7 +209,7 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
 
-        Intent intent = new Intent(getContext(), DataActivity.class);
+        Intent intent = new Intent(getContext(), YojanaDataActivity.class);
         intent.putExtra("id", yojanaModel.getId());
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());

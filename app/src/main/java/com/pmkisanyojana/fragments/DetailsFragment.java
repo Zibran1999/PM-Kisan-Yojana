@@ -1,30 +1,25 @@
-package com.pmkisanyojana.activities;
+package com.pmkisanyojana.fragments;
 
-import static com.pmkisanyojana.activities.HomeScreenActivity.BroadCastStringForAction;
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -34,82 +29,102 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.activities.WebViewActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
-import com.pmkisanyojana.databinding.ActivityDataBinding;
+import com.pmkisanyojana.databinding.FragmentDetailsBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.MyReceiver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DataActivity extends AppCompatActivity {
-
+/**
+ * A simple {@link Fragment} subclass.
+ * Use the {@link DetailsFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class DetailsFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     WebView webView;
-    TextView title;
     int count = 1;
     String id;
     PageViewModel pageViewModel;
+    MaterialButton visitSiteBtn;
     Map<String, String> map = new HashMap<>();
     String finalEnglishString, finalHindiString;
+    FragmentDetailsBinding binding;
+    Dialog dialog;
     LottieAnimationView lottieAnimationView;
     /*ads variable*/
     AdView adView;
     AdRequest adRequest;
     /*ads variable*/
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
-    MaterialButton visitSiteBtn;
-    ActivityDataBinding binding;
-    public BroadcastReceiver receiver = new BroadcastReceiver() {
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BroadCastStringForAction)) {
-                if (intent.getStringExtra("online_status").equals("true")) {
+    public DetailsFragment() {
+        // Required empty public constructor
+    }
 
-                    Set_Visibility_ON();
-                    count++;
-                } else {
-                    Set_Visibility_OFF();
-                }
-            }
-        }
-    };
-    Dialog dialog;
-    private IntentFilter intentFilter;
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment DetailsFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static DetailsFragment newInstance(String param1, String param2) {
+        DetailsFragment fragment = new DetailsFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    @SuppressLint({"SetJavaScriptEnabled", "NonConstantResourceId"})
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityDataBinding.inflate(getLayoutInflater());
-        CommonMethod.interstitialAds(this);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
 
-        setContentView(binding.getRoot());
-        dialog = CommonMethod.getDialog(this);
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        binding = FragmentDetailsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        dialog = CommonMethod.getDialog(requireActivity());
+
         webView = binding.webView;
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
         webSettings.setJavaScriptEnabled(true);
         dialog.show();
 
-        title = binding.title;
         visitSiteBtn = binding.visitSiteBtn;
         lottieAnimationView = binding.lottieAnimationEmpty;
         lottieAnimationView.setVisibility(View.GONE);
 
         visitSiteBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
-            intent.putExtra("url", getIntent().getStringExtra("url"));
+            Intent intent = new Intent(requireActivity(), WebViewActivity.class);
+            intent.putExtra("url", requireActivity().getIntent().getStringExtra("url"));
             startActivity(intent);
         });
-        binding.backIcon.setOnClickListener(v -> onBackPressed());
 
-        id = getIntent().getStringExtra("id");
+        id = requireActivity().getIntent().getStringExtra("id");
         map.put("previewId", id);
 
         MaterialButtonToggleGroup materialButtonToggleGroup = binding.materialButtonToggleGroup;
@@ -118,15 +133,15 @@ public class DataActivity extends AppCompatActivity {
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
-        MobileAds.initialize(this);
+        MobileAds.initialize(requireActivity());
         adRequest = new AdRequest.Builder().build();
         adView = binding.adViewData;
         adView.loadAd(adRequest);
         adView.setVisibility(View.VISIBLE);
 
 
-        pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
-        pageViewModel.getPreviewData().observe(this, previewModelList -> {
+        pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
+        pageViewModel.getPreviewData().observe(requireActivity(), previewModelList -> {
             previewModels.clear();
             previewModels.addAll(previewModelList.getData());
             if (!previewModels.isEmpty()) {
@@ -171,16 +186,16 @@ public class DataActivity extends AppCompatActivity {
                 }
                 new Handler().postDelayed(() -> {
                     if (mInterstitialAd != null) {
-                        mInterstitialAd.show(this);
+                        mInterstitialAd.show(requireActivity());
                     } else {
                         Log.d("TAG", "The interstitial ad wasn't ready yet.");
                     }
                 }, 2000);
-                binding.titleTv.setText(getIntent().getStringExtra("title"));
+                binding.titleTv.setText(requireActivity().getIntent().getStringExtra("title"));
                 dialog.dismiss();
 
                 binding.titleTv.setVisibility(View.VISIBLE);
-                if (getIntent().getStringExtra("url").equals("null")) {
+                if (requireActivity().getIntent().getStringExtra("url").equals("null")) {
                     visitSiteBtn.setVisibility(View.GONE);
                 } else
                     visitSiteBtn.setVisibility(View.VISIBLE);
@@ -234,74 +249,12 @@ public class DataActivity extends AppCompatActivity {
                 WebView.HitTestResult result = view.getHitTestResult();
                 String data = result.getExtra();
                 Context context = view.getContext();
-                Intent browserIntent = new Intent(getApplicationContext(), WebViewActivity.class);
+                Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
                 browserIntent.putExtra("url", data);
                 context.startActivity(browserIntent);
                 return false;
             }
         });
-
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(BroadCastStringForAction);
-        Intent serviceIntent = new Intent(this, MyReceiver.class);
-        startService(serviceIntent);
-        if (isOnline(getApplicationContext())) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Set_Visibility_ON();
-            }
-        } else {
-            Set_Visibility_OFF();
-        }
-    }
-
-    public boolean isOnline(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnectedOrConnecting();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    private void Set_Visibility_ON() {
-        binding.lottieHome.setVisibility(View.GONE);
-        binding.tvNotConnected.setVisibility(View.GONE);
-
-    }
-
-    private void Set_Visibility_OFF() {
-        binding.lottieHome.setVisibility(View.VISIBLE);
-        binding.tvNotConnected.setVisibility(View.VISIBLE);
-
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        registerReceiver(receiver, intentFilter);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(receiver, intentFilter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(0, 0);
-        finish();
-        overridePendingTransition(0, 0);
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        return root;
     }
 }
