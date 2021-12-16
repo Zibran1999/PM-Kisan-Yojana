@@ -42,10 +42,9 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RequestOptions requestOptions = new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
+
         holder.yojanaTitle.setText(yojanaModelList.get(position).getTitle());
-        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/"+yojanaModelList.get(position).getImage()).apply(requestOptions).into(holder.yojanaImage);
+        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/"+yojanaModelList.get(position).getImage()).into(holder.yojanaImage);
         holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
 
     }

@@ -15,11 +15,12 @@
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
 
-    <!--ads ids-->
+    <!--Test ads ids-->
 <!--    <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
 <!--    <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>-->
 <!--    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>-->
 
+    <!--Real ads ids-->
     <string name="app_id">ca-app-pub-1247850544347178~2799712755</string>
     <string name="banner_id">ca-app-pub-1247850544347178/8965665855</string>
     <string name="interstitial_id">ca-app-pub-1247850544347178/8926137402</string>
