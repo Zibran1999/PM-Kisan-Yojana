@@ -54,8 +54,8 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         });
 
         adView = binding.adView;
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
+        CommonMethod.getBannerAds(this, adView);
+
 
     }
 

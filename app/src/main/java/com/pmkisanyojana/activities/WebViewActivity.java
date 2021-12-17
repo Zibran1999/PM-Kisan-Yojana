@@ -31,7 +31,6 @@ public class WebViewActivity extends AppCompatActivity {
 
     /*ads variable*/
     AdView adView;
-    AdRequest adRequest;
     /*ads variable*/
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -42,7 +41,6 @@ public class WebViewActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         MobileAds.initialize(this);
         CommonMethod.interstitialAds(this);
-        adRequest = new AdRequest.Builder().build();
         webView = binding.webView;
         title = binding.title;
         binding.backIcon.setOnClickListener(v -> onBackPressed());
@@ -52,20 +50,9 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setDisplayZoomControls(false);
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
-
-
         adView = binding.adViewWebView;
-        adView.loadAd(adRequest);
+        CommonMethod.getBannerAds(this, adView);
 
-
-
-//        new Handler().postDelayed(() -> {
-//            if (mInterstitialAd != null) {
-//                mInterstitialAd.show(this);
-//            } else {
-//                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-//            }
-//        }, 3000);
 
 
         dialog = CommonMethod.getDialog(this);
@@ -85,12 +72,15 @@ public class WebViewActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Oh no! " + description, Toast.LENGTH_SHORT).show();
 
             }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // TODO Auto-generated method stub
+                dialog.dismiss();
+
+                super.onPageFinished(view, url);
+            }
         });
 
-        new Handler().postDelayed(() -> {
-            dialog.dismiss();
-
-        }, 3000);
 
         webView.loadUrl(data);
         webView.setVisibility(View.VISIBLE);

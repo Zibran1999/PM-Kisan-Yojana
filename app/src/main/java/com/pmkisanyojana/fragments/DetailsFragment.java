@@ -2,6 +2,7 @@ package com.pmkisanyojana.fragments;
 
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -63,7 +64,6 @@ public class DetailsFragment extends Fragment {
     LottieAnimationView lottieAnimationView;
     /*ads variable*/
     AdView adView;
-    AdRequest adRequest;
     /*ads variable*/
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -100,6 +100,7 @@ public class DetailsFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,10 +135,10 @@ public class DetailsFragment extends Fragment {
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
         MobileAds.initialize(requireActivity());
-        adRequest = new AdRequest.Builder().build();
+
         adView = binding.adViewData;
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
+        CommonMethod.getBannerAds(requireActivity(), adView);
+
 
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);

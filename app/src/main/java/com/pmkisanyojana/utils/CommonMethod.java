@@ -8,12 +8,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
@@ -26,6 +28,8 @@ import java.net.URLEncoder;
 
 public class CommonMethod {
     public static InterstitialAd mInterstitialAd;
+    public static AdRequest adRequest = new AdRequest.Builder().build();
+
 
     public static void shareApp(Context context) {
         try {
@@ -99,9 +103,6 @@ public class CommonMethod {
     public static void interstitialAds(Context context) {
 
         MobileAds.initialize(context);
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-
         InterstitialAd.load(context, context.getString(R.string.interstitial_id), adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
@@ -119,5 +120,13 @@ public class CommonMethod {
                         mInterstitialAd = null;
                     }
                 });
+    }
+
+    public static void getBannerAds(Context context, AdView adView) {
+        MobileAds.initialize(context);
+        adView.loadAd(adRequest);
+        adView.setVisibility(View.VISIBLE);
+
+
     }
 }

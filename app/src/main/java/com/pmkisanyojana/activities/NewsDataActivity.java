@@ -43,7 +43,6 @@ public class NewsDataActivity extends AppCompatActivity {
 
     /*ads variable*/
     AdView adView;
-    AdRequest adRequest;
     /*ads variable*/
 
     @SuppressLint("NonConstantResourceId")
@@ -63,11 +62,7 @@ public class NewsDataActivity extends AppCompatActivity {
         dialog = CommonMethod.getDialog(this);
         dialog.show();
         MobileAds.initialize(this);
-        adRequest = new AdRequest.Builder().build();
         adView = binding.adViewNews;
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
-
 
         map.put("previewId", id);
 
@@ -84,6 +79,8 @@ public class NewsDataActivity extends AppCompatActivity {
                 img = getIntent().getStringExtra("img");
                 Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
                 newsTitle.setText(title);
+                CommonMethod.getBannerAds(this, adView);
+
 
                 for (PreviewModel m : previewModelList.getData()) {
                     if (m.getPreviewId().equals(id)) {

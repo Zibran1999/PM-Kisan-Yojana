@@ -1,4 +1,4 @@
-package com.pmkisanyojana.activities.ui.main;
+package com.pmkisanyojana.fragments;
 
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,13 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
-import com.pmkisanyojana.adapters.NewsAdapter;
+import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.YojanaAdapter;
-import com.pmkisanyojana.databinding.FragmentHomeScreenBinding;
-import com.pmkisanyojana.models.NewsModel;
+import com.pmkisanyojana.databinding.FragmentYojanaBinding;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
@@ -35,29 +32,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A simple {@link Fragment} subclass.
+ * Use the {@link YojanaFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class PlaceholderFragment extends Fragment implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
+public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInterface {
 
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    Dialog dialog;
-    int pos = 1;
+
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     RecyclerView homeRV, pinnedRv;
-    NewsAdapter newsAdapter;
-    YojanaAdapter yojanaAdapter;
     String yojanaId = "true";
-    /*ads variable*/
+    YojanaAdapter yojanaAdapter;
     AdView adView;
-    AdRequest adRequest;
-    private PageViewModel pageViewModel;
-    private FragmentHomeScreenBinding binding;
-    /*ads variable*/
+    FragmentYojanaBinding binding;
+    PageViewModel pageViewModel;
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
-    public static PlaceholderFragment newInstance(int index) {
-        PlaceholderFragment fragment = new PlaceholderFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(ARG_SECTION_NUMBER, index);
-        fragment.setArguments(bundle);
+    public YojanaFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment YojanaFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static YojanaFragment newInstance(String param1, String param2) {
+        YojanaFragment fragment = new YojanaFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -65,30 +77,23 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
-        int index = 1;
         if (getArguments() != null) {
-            index = getArguments().getInt(ARG_SECTION_NUMBER);
-            pos = index;
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        dialog = CommonMethod.getDialog(getContext());
     }
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-
-        binding = FragmentHomeScreenBinding.inflate(inflater, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        binding = FragmentYojanaBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
         MobileAds.initialize(root.getContext());
-        adRequest = new AdRequest.Builder().build();
         adView = binding.adViewHome;
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
-
-
+        CommonMethod.getBannerAds(requireActivity(), adView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
@@ -96,63 +101,13 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
         pinnedRv.setLayoutManager(layoutManager1);
-
-        if (pos == 1) {
-            dialog.show();
-            setNewsData(root.getContext());
-            binding.swipeRefresh.setOnRefreshListener(() -> {
-                setNewsData(root.getContext());
-                binding.swipeRefresh.setRefreshing(false);
-
-            });
-
-        } else if (pos == 2) {
-            dialog.show();
+        setYojanaData(root.getContext());
+        binding.swipeRefresh.setOnRefreshListener(() -> {
             setYojanaData(root.getContext());
-            binding.swipeRefresh.setOnRefreshListener(() -> {
-                setYojanaData(root.getContext());
-                binding.swipeRefresh.setRefreshing(false);
-            });
+            binding.swipeRefresh.setRefreshing(false);
 
-        } else if (pos == 3) {
-
-            setOthersData(root.getContext());
-            binding.swipeRefresh.setOnRefreshListener(() -> {
-                setOthersData(root.getContext());
-                binding.swipeRefresh.setRefreshing(false);
-
-            });
-        }
-
-        return root;
-    }
-
-    private void setOthersData(Context context) {
-        YojanaAdapter adapter = new YojanaAdapter(context, this);
-        homeRV.setAdapter(adapter);
-        pinnedRv.setVisibility(View.VISIBLE);
-
-        pageViewModel.getOthersData().observe(requireActivity(), othersData -> {
-            if (!othersData.getData().isEmpty()) {
-                adapter.updateYojanaList(othersData.getData());
-            }
         });
-
-    }
-
-    private void setNewsData(Context context) {
-        newsAdapter = new NewsAdapter(context, this);
-        homeRV.setAdapter(newsAdapter);
-        pinnedRv.setVisibility(View.VISIBLE);
-
-        pageViewModel.getNews().observe(requireActivity(), newsModelList -> {
-
-            if (!newsModelList.getData().isEmpty()) {
-                newsAdapter.updateNewsList(newsModelList.getData());
-            }
-            dialog.dismiss();
-        });
-
+        return binding.getRoot();
     }
 
     private void setYojanaData(Context context) {
@@ -193,7 +148,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
 
             }
-            dialog.dismiss();
         });
 
         ViewCompat.setNestedScrollingEnabled(homeRV, false);
@@ -201,11 +155,6 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
 
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
@@ -216,15 +165,4 @@ public class PlaceholderFragment extends Fragment implements YojanaAdapter.Yojan
         intent.putExtra("url", yojanaModel.getUrl());
         startActivity(intent);
     }
-
-    @Override
-    public void onItemClicked(NewsModel newsModel) {
-        Intent intent = new Intent(getContext(), NewsDataActivity.class);
-        intent.putExtra("id", newsModel.getId());
-        intent.putExtra("title", newsModel.getTitle());
-        intent.putExtra("img", newsModel.getImage());
-        startActivity(intent);
-    }
-
-
 }

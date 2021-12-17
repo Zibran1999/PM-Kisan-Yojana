@@ -37,6 +37,9 @@ import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.SectionsPagerAdapter;
 import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
+import com.pmkisanyojana.fragments.NewsFragment;
+import com.pmkisanyojana.fragments.OthersFragment;
+import com.pmkisanyojana.fragments.YojanaFragment;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
 
@@ -119,7 +122,10 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         binding = ActivityHomeScreenBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         versionCode = binding.versionCode;
-        sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        sectionsPagerAdapter.addFragment(new NewsFragment(), getString(R.string.tab_text_2));
+        sectionsPagerAdapter.addFragment(new YojanaFragment(), getString(R.string.tab_text_1));
+        sectionsPagerAdapter.addFragment(new OthersFragment(), getString(R.string.tab_text_3));
         viewPager = binding.viewPager;
         navigationView = binding.navigation;
         navMenu = binding.navMenu;
