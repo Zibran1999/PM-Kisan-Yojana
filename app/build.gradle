@@ -75,6 +75,9 @@ dependencies {
     // OneSignal
     implementation 'com.onesignal:OneSignal:[4.0.0, 4.99.99]'
 
+    // Circle ImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
