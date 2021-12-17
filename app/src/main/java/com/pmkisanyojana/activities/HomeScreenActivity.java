@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     private static final float END_SCALE = 0.7f;
     public static int count_ad = 1;
     TextView versionCode;
+    ImageButton updateProfileBtn;
     ActivityHomeScreenBinding binding;
     int count = 1;
     ImageView navMenu;
@@ -167,8 +169,11 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(HomeScreenActivity.this);
         navigationView.setCheckedItem(R.id.nav_home);
         categoryContainer = findViewById(R.id.container_lay);
-
+        updateProfileBtn = navigationView.findViewById(R.id.update_profile_btn);
         navigationView.setCheckedItem(R.id.nav_home);
+        updateProfileBtn.setOnClickListener(v->{
+            startActivity(new Intent(HomeScreenActivity.this,UpdateProfile.class));
+        });
         navMenu.setOnClickListener(v -> {
             if (drawerLayout.isDrawerVisible(GravityCompat.START))
                 drawerLayout.closeDrawer(GravityCompat.START);

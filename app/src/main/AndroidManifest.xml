@@ -33,7 +33,9 @@
             android:name=".utils.MyReceiver"
             android:enabled="true"
             android:exported="false" />
-
+        <activity
+            android:name=".activities.UpdateProfile"
+            android:exported="false" />
         <activity
             android:name=".activities.PrivacyPolicyActivity"
             android:exported="false" />
