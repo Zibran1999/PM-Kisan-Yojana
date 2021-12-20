@@ -14,10 +14,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,29 +28,40 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.activities.ui.main.SectionsPagerAdapter;
 import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
 import com.pmkisanyojana.fragments.NewsFragment;
 import com.pmkisanyojana.fragments.OthersFragment;
 import com.pmkisanyojana.fragments.YojanaFragment;
+import com.pmkisanyojana.models.ModelFactory;
+import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
+import com.pmkisanyojana.utils.Prevalent;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import io.paperdb.Paper;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
     private static final float END_SCALE = 0.7f;
     public static int count_ad = 1;
     TextView versionCode;
-    ImageButton updateProfileBtn;
+    CircleImageView userProfileImg;
     ActivityHomeScreenBinding binding;
     int count = 1;
     ImageView navMenu;
@@ -59,6 +70,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     ConstraintLayout categoryContainer;
     SectionsPagerAdapter sectionsPagerAdapter;
     ViewPager viewPager;
+    String id;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -74,6 +86,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
         }
     };
+
+    PageViewModel pageViewModel;
     private IntentFilter intentFilter;
 
     public static void shareApp(Context context) {
@@ -102,7 +116,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
-            navigationDrawer();
+            navigationDrawer(this);
         }
     }
 
@@ -130,6 +144,16 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView = binding.navigation;
         navMenu = binding.navMenu;
         drawerLayout = binding.drawerLayout;
+        Paper.init(this);
+
+
+        id = Paper.book().read(Prevalent.userId);
+
+        if (id!= null) {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", id);
+            pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
+        }
 
         binding.lottieWhatsapp.setOnClickListener(view -> {
             try {
@@ -164,7 +188,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    private void navigationDrawer() {
+
+    private void navigationDrawer(HomeScreenActivity homeScreenActivity) {
         navigationView = findViewById(R.id.navigation);
         navigationView.bringToFront();
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -175,10 +200,17 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(HomeScreenActivity.this);
         navigationView.setCheckedItem(R.id.nav_home);
         categoryContainer = findViewById(R.id.container_lay);
-        updateProfileBtn = navigationView.findViewById(R.id.update_profile_btn);
+        userProfileImg = navigationView.findViewById(R.id.user_profile_img);
         navigationView.setCheckedItem(R.id.nav_home);
-        updateProfileBtn.setOnClickListener(v->{
-            startActivity(new Intent(HomeScreenActivity.this,UpdateProfile.class));
+
+
+        if (id!=null) {
+            setImage(userProfileImg);
+        }else {
+
+        }
+        userProfileImg.setOnClickListener(v -> {
+            startActivity(new Intent(HomeScreenActivity.this, UpdateProfile.class));
         });
         navMenu.setOnClickListener(v -> {
             if (drawerLayout.isDrawerVisible(GravityCompat.START))
@@ -186,6 +218,22 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             else drawerLayout.openDrawer(GravityCompat.START);
         });
         animateNavigationDrawer();
+    }
+
+    private void setImage(CircleImageView userProfileImg) {
+        pageViewModel.getUserData().observe(this, profileModelList -> {
+            if (!profileModelList.getData().isEmpty()) {
+                for (ProfileModel pm : profileModelList.getData()) {
+                    Log.d("profile data", pm.getUserId() + " " + pm.getUserName());
+
+                    Glide.with(this).load(
+                            "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
+                                    + pm.getUserImage()).into(userProfileImg);
+
+                }
+            }
+        });
+
     }
 
     private void animateNavigationDrawer() {
