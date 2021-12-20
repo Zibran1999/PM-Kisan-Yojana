@@ -2,6 +2,7 @@ package com.pmkisanyojana.models;
 
 public class NewsModel {
 
+
     private final String id;
     private final String Image;
     private final String Title;

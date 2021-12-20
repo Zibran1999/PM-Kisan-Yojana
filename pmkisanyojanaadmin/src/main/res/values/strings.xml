@@ -9,4 +9,15 @@
     <string name="enter_title">Enter Name</string>
     <string name="hin">Hin</string>
     <string name="eng">Eng</string>
+    <string name="upload_quiz_questions">Upload Quiz Question</string>
+    <string name="enter_question">Enter Question</string>
+    <string name="option_1">Option 1</string>
+    <string name="option_2">Option 2</string>
+    <string name="option_3">Option 3</string>
+    <string name="answer">answer</string>
+    <string name="upload">upload</string>
+    <string name="edit_and_delete_quiz">Edit and Delete Quiz</string>
+    <string name="edit_and_delete_others">Edit and Delete Others</string>
+    <string name="edit_and_delete_news">Edit and Delete News</string>
+    <string name="edit_and_delete_yojana">Edit and Delete Yojana</string>
 </resources>

@@ -1,27 +1,56 @@
 package com.pmkisanyojana.fragments;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.activities.ui.main.PageViewModel;
+import com.pmkisanyojana.databinding.FragmentQuizBinding;
+import com.pmkisanyojana.models.QuizModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Random;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link QuizFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class QuizFragment extends Fragment {
+
+public class QuizFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+
+    FragmentQuizBinding binding;
+    PageViewModel pageViewModel;
+    MaterialButton op1, op2, op3, op4;
+    TextView question, questionNo;
+    List<QuizModel> quizModelList = new ArrayList<>();
+    Random random;
+    int currentPos, questionAttemted = 1, currentScore = 0;
+
+
+    ScrollView quiz;
+    MaterialCardView score;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -61,6 +90,161 @@ public class QuizFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_quiz, container, false);
+        binding = FragmentQuizBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        question = binding.question;
+        op1 = binding.optOneCard;
+        op2 = binding.optTwoCard;
+        op3 = binding.optThreeCard;
+        op4 = binding.optFourCard;
+        questionNo = binding.questionNo;
+        quiz = binding.quiz;
+        score = binding.score;
+
+        pageViewModel = new ViewModelProvider(requireActivity()).get(PageViewModel.class);
+        pageViewModel.getquizQuestions().observe(requireActivity(), quizModelList1 -> {
+            quizModelList.clear();
+            if (!quizModelList1.getData().isEmpty()) {
+                quiz.setVisibility(View.VISIBLE);
+                quizModelList.addAll(quizModelList1.getData());
+                random = new Random();
+                currentPos = random.nextInt(quizModelList.size());
+                setDataToViews(currentPos);
+            }else {
+                quiz.setVisibility(View.GONE);
+            }
+        });
+
+        op1.setOnClickListener(this);
+        op2.setOnClickListener(this);
+        op3.setOnClickListener(this);
+        op4.setOnClickListener(this);
+
+
+        return root;
     }
+
+    @SuppressLint("SetTextI18n")
+    private void setDataToViews(int currentPos) {
+
+        if (questionAttemted <= 10) {
+            questionNo.setText(questionAttemted + "/10");
+            question.setText(quizModelList.get(currentPos).getQues());
+            op1.setText(quizModelList.get(currentPos).getOp1());
+            op2.setText(quizModelList.get(currentPos).getOp2());
+            op3.setText(quizModelList.get(currentPos).getOp3());
+            op4.setText(quizModelList.get(currentPos).getOp4());
+
+        } else {
+            quiz.setVisibility(View.GONE);
+            showScore();
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showScore() {
+        score.setVisibility(View.VISIBLE);
+        MaterialButton nextBtn;
+        TextView scoreResult, cong;
+        scoreResult = binding.scoreResult;
+        nextBtn = binding.nextBtn;
+        cong = binding.cong;
+        if (currentScore < 5) {
+            cong.setText("Try again!");
+            nextBtn.setText("Play Again");
+        } else if (currentScore > 5 && currentScore < 8) {
+            cong.setText("Good!");
+
+        } else if (currentScore > 8 && currentScore <= 10) {
+            cong.setText("Great!");
+        }
+        scoreResult.setText(currentScore + "/10");
+        nextBtn.setOnClickListener(v -> {
+            quiz.setVisibility(View.VISIBLE);
+            score.setVisibility(View.GONE);
+            currentPos = random.nextInt(quizModelList.size());
+            setDataToViews(currentPos);
+            questionAttemted = 1;
+            currentScore = 0;
+        });
+
+
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.opt_one_card:
+            case R.id.opt_two_card:
+            case R.id.opt_three_card:
+            case R.id.opt_four_card:
+
+                MaterialButton button = (MaterialButton) v;
+                checkAns(button);
+                break;
+        }
+    }
+
+    private void checkAns(MaterialButton button) {
+        if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(button.getText().toString().trim().toLowerCase(Locale.ROOT))) {
+            currentScore++;
+            button.setBackgroundColor(Color.parseColor("#009637"));
+
+        } else {
+            showAnswer();
+            button.setBackgroundColor(Color.parseColor("#ff0000"));
+        }
+        button.setTextColor(Color.parseColor("#ffffff"));
+        questionAttemted++;
+        new Handler().postDelayed(() -> {
+            currentPos = random.nextInt(quizModelList.size());
+            resetButtonColor();
+            setDataToViews(currentPos);
+        }, 800);
+    }
+
+    private void showAnswer() {
+        if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(op1.getText().toString().trim().toLowerCase(Locale.ROOT))) {
+
+            op1.setBackgroundColor(Color.parseColor("#009637"));
+            op1.setTextColor(Color.parseColor("#ffffff"));
+
+        } else if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(op2.getText().toString().trim().toLowerCase(Locale.ROOT))) {
+
+            op2.setBackgroundColor(Color.parseColor("#009637"));
+            op2.setTextColor(Color.parseColor("#ffffff"));
+
+
+        } else if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(op3.getText().toString().trim().toLowerCase(Locale.ROOT))) {
+
+            op3.setBackgroundColor(Color.parseColor("#009637"));
+            op3.setTextColor(Color.parseColor("#ffffff"));
+
+
+        } else if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(op4.getText().toString().trim().toLowerCase(Locale.ROOT))) {
+            op4.setBackgroundColor(Color.parseColor("#009637"));
+            op4.setTextColor(Color.parseColor("#ffffff"));
+
+
+        }
+
+    }
+
+    private void resetButtonColor() {
+        op1.setBackgroundColor(Color.parseColor("#ffffff"));
+        op2.setBackgroundColor(Color.parseColor("#ffffff"));
+        op3.setBackgroundColor(Color.parseColor("#ffffff"));
+        op4.setBackgroundColor(Color.parseColor("#ffffff"));
+        op1.setTextColor(Color.parseColor("#000000"));
+        op2.setTextColor(Color.parseColor("#000000"));
+        op3.setTextColor(Color.parseColor("#000000"));
+        op4.setTextColor(Color.parseColor("#000000"));
+
+    }
+
+
 }

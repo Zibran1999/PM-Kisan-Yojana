@@ -58,11 +58,9 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        RequestOptions requestOptions = new RequestOptions()
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
 
         holder.yojanaTitle.setText(yojanaModelList.get(position).getTitle());
-        Glide.with(showItemActivity).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModelList.get(position).getImage()).apply(requestOptions).into(holder.yojanaImage);
+        Glide.with(showItemActivity).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModelList.get(position).getImage()).into(holder.yojanaImage);
         boolean isCheck = Boolean.parseBoolean(yojanaModelList.get(position).getPinned());
         if (isCheck) {
             holder.switchMaterial.setChecked(true);
@@ -83,7 +81,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
                 editor.putBoolean("value", true);
                 editor.apply();
                 holder.switchMaterial.setChecked(true);
-                uploadPinStatus(pinStatus, true, yojanaModelList.get(position).getId());
+                uploadPinStatus(pinStatus, true, yojanaModelList.get(position).getId(),adapterName);
 
 
             } else {
@@ -92,15 +90,12 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
                 editor.putBoolean("value", false);
                 editor.apply();
                 holder.switchMaterial.setChecked(false);
-                uploadPinStatus(pinStatus, false, yojanaModelList.get(position).getId());
+                uploadPinStatus(pinStatus, false, yojanaModelList.get(position).getId(),adapterName);
 
             }
 
         });
-        if (adapterName.equals("others")) {
-            holder.switchMaterial.setVisibility(View.GONE);
-        } else
-            holder.switchMaterial.setVisibility(View.VISIBLE);
+        holder.switchMaterial.setVisibility(View.VISIBLE);
 
 
 //            holder.switchMaterial.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -117,10 +112,11 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
 
     }
 
-    private void uploadPinStatus(String pinStatus, boolean pinnedItem, String id) {
+    private void uploadPinStatus(String pinStatus, boolean pinnedItem, String id,String table) {
         Map<String, String> map = new HashMap<>();
         map.put("pinStatus", String.valueOf(pinnedItem));
         map.put("id", id);
+        map.put("table", table);
         apiInterface = ApiWebServices.getApiInterface();
         Call<MessageModel> call = apiInterface.uploadPinStatus(map);
         call.enqueue(new Callback<MessageModel>() {

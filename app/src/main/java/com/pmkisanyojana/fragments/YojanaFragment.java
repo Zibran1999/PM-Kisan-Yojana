@@ -2,7 +2,6 @@ package com.pmkisanyojana.fragments;
 
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,9 +16,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -29,6 +28,7 @@ import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,7 +46,9 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
     YojanaAdapter yojanaAdapter;
     AdView adView;
     FragmentYojanaBinding binding;
+    FirebaseAnalytics mFirebaseAnalytics;
     PageViewModel pageViewModel;
+    List<YojanaModel> models = new ArrayList<>();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -123,18 +125,18 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
             Log.d("yojana", yojanaModel.getData().toString());
             yojanaModelList.clear();
             yojanaModels.clear();
+            models.clear();
             if (!yojanaModel.getData().isEmpty()) {
                 yojanaModelList.addAll(yojanaModel.getData());
-                for (int i = 0; i < yojanaModel.getData().size(); i++) {
-                    if (yojanaId.equals(yojanaModelList.get(i).getPinned())) {
-                        yojanaModels.add(new YojanaModel(yojanaModel.getData().get(i).getId(), yojanaModel.getData().get(i).getImage(), yojanaModel.getData().get(i).getTitle(), yojanaModel.getData().get(i).getDate(), yojanaModel.getData().get(i).getTime(), yojanaModel.getData().get(i).getUrl(), yojanaModel.getData().get(i).getPinned()));
-                        yojanaModelList.remove(i);
-                        break;
+                models.addAll(yojanaModel.getData());
+                for (YojanaModel model : yojanaModelList) {
+                    if (yojanaId.equals(model.getPinned())) {
+                        yojanaModels.add(new YojanaModel(model.getId(), model.getImage(), model.getTitle(), model.getDate(), model.getTime(), model.getUrl(), model.getPinned()));
+                        models.remove(model);
                     }
-
                 }
                 adapter.updateYojanaList(yojanaModels);
-                yojanaAdapter.updateYojanaList(yojanaModelList);
+                yojanaAdapter.updateYojanaList(models);
 
 
                 if (WelcomeScreenActivity.count == 1) {
@@ -158,11 +160,20 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, yojanaModel.getImage());
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         Intent intent = new Intent(getContext(), YojanaDataActivity.class);
         intent.putExtra("id", yojanaModel.getId());
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());
         startActivity(intent);
+
+
     }
 }

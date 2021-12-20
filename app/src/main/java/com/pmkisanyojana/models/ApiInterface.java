@@ -19,6 +19,9 @@ public interface ApiInterface {
     @POST("fetch_others_api.php")
     Call<YojanaModelList> getOthersData();
 
+    @POST("fetch_quiz_questions.php")
+    Call<QuizModelList> fetchQuizQuestions();
+
     @FormUrlEncoded
     @POST("fetch_preview_data.php")
     Call<PreviewModelList> getPreview(@FieldMap Map<String, String> map);
@@ -30,4 +33,5 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("fetch_user_profile_api.php")
     Call<ProfileModelList> getProfileData(@FieldMap Map<String, String> map);
+
 }

@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Button cancelBtn, uploadBtn,
             cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn;
-    Dialog uploadDialog, adYojanaDialog;
+    Dialog uploadDialog, adYojanaDialog, addQuizDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
     LinearLayout scheduleLayout;
@@ -82,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
-
+    Button uploadQuizQuestionBtn;
+    TextView question, op1, op2, op3, op4, ans;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -127,6 +128,95 @@ public class MainActivity extends AppCompatActivity {
         });
         binding.uploadOtherData.setOnClickListener(v -> {
             showYojanaUploadDialog(this, "Upload Others");
+        });
+
+        binding.uploadQuiz.setOnClickListener(v -> showUploadQuizQuestionDialog());
+    }
+
+    private void showUploadQuizQuestionDialog() {
+
+        addQuizDialog = new Dialog(this);
+        addQuizDialog.setContentView(R.layout.quiz_layout);
+        addQuizDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        addQuizDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
+        addQuizDialog.setCancelable(false);
+        addQuizDialog.show();
+
+
+        question = addQuizDialog.findViewById(R.id.question);
+        op1 = addQuizDialog.findViewById(R.id.option);
+        op2 = addQuizDialog.findViewById(R.id.option2);
+        op3 = addQuizDialog.findViewById(R.id.option3);
+        op4 = addQuizDialog.findViewById(R.id.option4);
+        ans = addQuizDialog.findViewById(R.id.answer);
+        uploadQuizQuestionBtn = addQuizDialog.findViewById(R.id.upload_quiz);
+
+        addQuizDialog.findViewById(R.id.cancel).setOnClickListener(v -> addQuizDialog.dismiss());
+        uploadQuizQuestionBtn.setOnClickListener(v -> {
+
+            String ques, opt1, opt2, opt3, opt4, answer;
+
+            ques = question.getText().toString().trim();
+            opt1 = op1.getText().toString().trim();
+            opt2 = op2.getText().toString().trim();
+            opt3 = op3.getText().toString().trim();
+            opt4 = op4.getText().toString().trim();
+            answer = ans.getText().toString().trim();
+            if (TextUtils.isEmpty(ques)) {
+                question.setError("field required");
+            } else if (TextUtils.isEmpty(opt1)) {
+                op1.setError("field required");
+            } else if (TextUtils.isEmpty(opt2)) {
+                op2.setError("field required");
+            } else if (TextUtils.isEmpty(opt3)) {
+                op3.setError("field required");
+            } else if (TextUtils.isEmpty(opt4)) {
+                op4.setError("field required");
+            } else if (TextUtils.isEmpty(answer)) {
+                ans.setError("field required");
+            } else {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("ques", ques);
+                map.put("op1", opt1);
+                map.put("op2", opt2);
+                map.put("op3", opt3);
+                map.put("op4", opt4);
+                map.put("ans", answer);
+                uploadQuiz(map);
+            }
+        });
+
+    }
+
+    private void uploadQuiz(Map<String, String> map) {
+        loadingDialog.show();
+        Call<MessageModel> call = apiInterface.uploadQuizQuestions(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
+                    addQuizDialog.dismiss();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+
+
+            }
         });
 
     }

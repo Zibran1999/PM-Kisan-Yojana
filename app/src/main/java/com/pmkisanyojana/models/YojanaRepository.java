@@ -20,7 +20,9 @@ public class YojanaRepository {
     private final MutableLiveData<NewsModelList> newsModelLiveData = new MutableLiveData<>();
     private final MutableLiveData<PreviewModelList> previewModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<YojanaModelList> otherLiveData = new MutableLiveData<>();
+    private final MutableLiveData<QuizModelList> quizModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<ProfileModelList> profileLiveData = new MutableLiveData<>();
+
 
 
     public YojanaRepository() {
@@ -55,27 +57,6 @@ public class YojanaRepository {
             }
         });
         return yojanaModelLiveData;
-    }
-
-    public LiveData<ProfileModelList> getProfileLiveData(Map<String,String> map) {
-        Call<ProfileModelList> call = apiInterface.getProfileData(map);
-        call.enqueue(new Callback<ProfileModelList>() {
-            @Override
-            public void onResponse(@NonNull Call<ProfileModelList> call, @NonNull Response<ProfileModelList> response) {
-                if (response.isSuccessful()) {
-                    profileLiveData.setValue(response.body());
-                } else {
-                    Log.d("onResponse", response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ProfileModelList> call, @NonNull Throwable t) {
-                Log.d("onResponse error", t.getMessage());
-            }
-        });
-
-        return profileLiveData;
     }
 
     public LiveData<NewsModelList> getNewsLiveData() {
@@ -143,6 +124,50 @@ public class YojanaRepository {
             }
         });
         return otherLiveData;
+    }
+
+    public LiveData<QuizModelList> getQuizQuestions(){
+        Call<QuizModelList> call = apiInterface.fetchQuizQuestions();
+        call.enqueue(new Callback<QuizModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<QuizModelList> call, @NonNull Response<QuizModelList> response) {
+                if (response.isSuccessful()) {
+                    quizModelListMutableLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<QuizModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+
+            }
+        });
+
+        return quizModelListMutableLiveData;
+    }
+
+    public LiveData<ProfileModelList> getProfileLiveData(Map<String,String> map) {
+        Call<ProfileModelList> call = apiInterface.getProfileData(map);
+        call.enqueue(new Callback<ProfileModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<ProfileModelList> call, @NonNull Response<ProfileModelList> response) {
+                if (response.isSuccessful()) {
+                    profileLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ProfileModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+            }
+        });
+
+        return profileLiveData;
     }
 
 }

@@ -7,9 +7,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.pmkisanyojana.models.NewsModelList;
-import com.pmkisanyojana.models.ProfileModelList;
-import com.pmkisanyojana.models.YojanaModelList;
 import com.pmkisanyojana.models.PreviewModelList;
+import com.pmkisanyojana.models.ProfileModelList;
+import com.pmkisanyojana.models.QuizModelList;
+import com.pmkisanyojana.models.YojanaModelList;
 import com.pmkisanyojana.models.YojanaRepository;
 
 import java.util.Map;
@@ -46,8 +47,12 @@ public class PageViewModel extends AndroidViewModel {
         return yojanaRepository.getPreviewLiveData(map);
     }
 
+    public LiveData<QuizModelList> getquizQuestions() {
+        return yojanaRepository.getQuizQuestions();
+    }
     public LiveData<ProfileModelList> getUserData(){
         return yojanaRepository.getProfileLiveData(map);
     }
+
 
 }

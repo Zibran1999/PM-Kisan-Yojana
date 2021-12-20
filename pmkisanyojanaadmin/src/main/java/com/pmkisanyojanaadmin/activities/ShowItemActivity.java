@@ -1,10 +1,14 @@
 package com.pmkisanyojanaadmin.activities;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +23,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.adapter.NewsAdapter;
+import com.pmkisanyojanaadmin.adapter.QuizAdapter;
+import com.pmkisanyojanaadmin.adapter.QuizInterface;
 import com.pmkisanyojanaadmin.adapter.YojanaAdapter;
 import com.pmkisanyojanaadmin.databinding.ActivityShowItemBinding;
 import com.pmkisanyojanaadmin.model.ApiInterface;
@@ -26,6 +32,7 @@ import com.pmkisanyojanaadmin.model.ApiWebServices;
 import com.pmkisanyojanaadmin.model.MessageModel;
 import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.PageViewModel;
+import com.pmkisanyojanaadmin.model.QuizModel;
 import com.pmkisanyojanaadmin.model.YojanaModel;
 
 import java.util.ArrayList;
@@ -38,22 +45,27 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface {
+public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter.YojanaInterface, NewsAdapter.NewsInterface, QuizInterface {
 
     SwipeRefreshLayout swipeRefreshLayout;
     List<YojanaModel> yojanaModels = new ArrayList<>();
     List<NewsModel> newsModels = new ArrayList<>();
+    List<QuizModel> quizModelList = new ArrayList<>();
     YojanaAdapter yojanaAdapter;
     PageViewModel pageViewModel;
     RecyclerView recyclerView;
     ItemTouchHelper.SimpleCallback simpleCallback;
     MaterialAlertDialogBuilder builder;
     NewsAdapter newsAdapter;
-    Dialog loadingDialog;
+    Dialog loadingDialog, addQuizDialog;
     ActivityShowItemBinding binding;
     String intentId, itemId, imgPath;
     ApiInterface apiInterface;
     Map<String, String> map = new HashMap<>();
+    QuizAdapter quizAdapter;
+    Button uploadQuizQuestionBtn;
+    TextView question, op1, op2, op3, op4, ans;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +89,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         loadingDialog = new Dialog(this);
         loadingDialog.setContentView(R.layout.loading);
         loadingDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        loadingDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(this,R.drawable.item_bg));
+        loadingDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         //**Loading Dialog****/
         swipeRefreshLayout = findViewById(R.id.swipe_refresh);
@@ -132,6 +144,15 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
                         deleteItem(map);
 
                         break;
+                    case "Quiz":
+                        itemId = quizModelList.get(viewHolder.getAdapterPosition()).getId();
+                        quizModelList.remove(viewHolder.getAdapterPosition());
+                        quizAdapter.updateQuizQuestions(quizModelList);
+
+                        map.put("id", itemId);
+                        deleteQuizItem(map);
+
+                        break;
                 }
             }
         };
@@ -140,7 +161,7 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
         switch (intentId) {
             case "Yojana":
                 loadingDialog.show();
-                yojanaAdapter = new YojanaAdapter(this, "Yojana", this);
+                yojanaAdapter = new YojanaAdapter(this, "Kisan_Yojana", this);
                 recyclerView.setAdapter(yojanaAdapter);
                 fetchYojana();
                 swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -168,12 +189,55 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
                     swipeRefreshLayout.setRefreshing(false);
                 });
                 break;
+            case "Quiz":
+                fetchQuiz();
+                swipeRefreshLayout.setOnRefreshListener(() -> {
+                    fetchQuiz();
+                    swipeRefreshLayout.setRefreshing(false);
+                });
+                break;
         }
+    }
+
+    private void deleteQuizItem(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.deleteQuizItems(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+//                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+            }
+        });
+    }
+
+    private void fetchQuiz() {
+        loadingDialog.show();
+        quizAdapter = new QuizAdapter(this);
+        pageViewModel.getquizQuestions().observe(this, quizModelList1 -> {
+            quizModelList.clear();
+            if (!quizModelList1.getData().isEmpty()) {
+                quizModelList.addAll(quizModelList1.getData());
+            }
+            loadingDialog.dismiss();
+            quizAdapter.updateQuizQuestions(quizModelList);
+            recyclerView.setAdapter(quizAdapter);
+        });
     }
 
     private void fetchOthers() {
         loadingDialog.show();
-        yojanaAdapter = new YojanaAdapter(this, "others", yojanaModel -> {
+        yojanaAdapter = new YojanaAdapter(this, "Others_data", yojanaModel -> {
             builder.setPositiveButton("Edit", (dialog, which) -> {
                 Intent intent = new Intent(getApplicationContext(), EditActivity.class);
                 intent.putExtra("intentId", "others");
@@ -273,4 +337,111 @@ public class ShowItemActivity extends AppCompatActivity implements YojanaAdapter
             }
         });
     }
+
+    @Override
+    public void onItemClicked(QuizModel quizModel) {
+
+        builder.setPositiveButton("Edit", (dialog, which) -> {
+            showUploadQuizQuestionDialog(quizModel);
+        });
+        builder.show();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showUploadQuizQuestionDialog(QuizModel quizModel) {
+
+        addQuizDialog = new Dialog(this);
+        addQuizDialog.setContentView(R.layout.quiz_layout);
+        addQuizDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        addQuizDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
+        addQuizDialog.setCancelable(false);
+        addQuizDialog.show();
+        TextView textView = addQuizDialog.findViewById(R.id.textView);
+        textView.setText("Update Quiz");
+
+
+        question = addQuizDialog.findViewById(R.id.question);
+        op1 = addQuizDialog.findViewById(R.id.option);
+        op2 = addQuizDialog.findViewById(R.id.option2);
+        op3 = addQuizDialog.findViewById(R.id.option3);
+        op4 = addQuizDialog.findViewById(R.id.option4);
+        ans = addQuizDialog.findViewById(R.id.answer);
+        uploadQuizQuestionBtn = addQuizDialog.findViewById(R.id.upload_quiz);
+
+        addQuizDialog.findViewById(R.id.cancel).setOnClickListener(v -> addQuizDialog.dismiss());
+
+        question.setText(quizModel.getQues());
+        op1.setText(quizModel.getOp1());
+        op2.setText(quizModel.getOp2());
+        op3.setText(quizModel.getOp3());
+        op4.setText(quizModel.getOp4());
+        ans.setText(quizModel.getAns());
+
+        uploadQuizQuestionBtn.setOnClickListener(v -> {
+
+            String ques, opt1, opt2, opt3, opt4, answer;
+
+            ques = question.getText().toString().trim();
+            opt1 = op1.getText().toString().trim();
+            opt2 = op2.getText().toString().trim();
+            opt3 = op3.getText().toString().trim();
+            opt4 = op4.getText().toString().trim();
+            answer = ans.getText().toString().trim();
+            if (TextUtils.isEmpty(ques)) {
+                question.setError("field required");
+            } else if (TextUtils.isEmpty(opt1)) {
+                op1.setError("field required");
+            } else if (TextUtils.isEmpty(opt2)) {
+                op2.setError("field required");
+            } else if (TextUtils.isEmpty(opt3)) {
+                op3.setError("field required");
+            } else if (TextUtils.isEmpty(opt4)) {
+                op4.setError("field required");
+            } else if (TextUtils.isEmpty(answer)) {
+                ans.setError("field required");
+            } else {
+
+                Map<String, String> map = new HashMap<>();
+                map.put("id", quizModel.getId());
+                map.put("ques", ques);
+                map.put("op1", opt1);
+                map.put("op2", opt2);
+                map.put("op3", opt3);
+                map.put("op4", opt4);
+                map.put("ans", answer);
+                updateQuiz(map);
+            }
+        });
+
+    }
+
+    private void updateQuiz(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.updateQuiz(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
+                    fetchQuiz();
+                    addQuizDialog.dismiss();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+            }
+        });
+
+    }
+
 }

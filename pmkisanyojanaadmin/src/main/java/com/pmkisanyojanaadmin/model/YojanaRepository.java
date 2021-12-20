@@ -19,6 +19,7 @@ public class YojanaRepository {
     private final MutableLiveData<YojanaModelList> yojanaModelLiveData = new MutableLiveData<>();
     private final MutableLiveData<NewsModelList> newsModelLiveData = new MutableLiveData<>();
     private final MutableLiveData<PreviewModelList> previewLiveData = new MutableLiveData<>();
+    private final MutableLiveData<QuizModelList> quizModelListMutableLiveData = new MutableLiveData<>();
 
 
     public YojanaRepository() {
@@ -119,6 +120,28 @@ public class YojanaRepository {
         return previewLiveData;
     }
 
+    public LiveData<QuizModelList> getQuizQuestions() {
+        Call<QuizModelList> call = apiInterface.fetchQuizQuestions();
+        call.enqueue(new Callback<QuizModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<QuizModelList> call, @NonNull Response<QuizModelList> response) {
+                if (response.isSuccessful()) {
+                    quizModelListMutableLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<QuizModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+
+            }
+        });
+
+        return quizModelListMutableLiveData;
+    }
 
 
 }

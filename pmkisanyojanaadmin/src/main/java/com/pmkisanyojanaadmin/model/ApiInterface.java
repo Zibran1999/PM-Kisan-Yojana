@@ -62,4 +62,20 @@ public interface ApiInterface {
     @POST("upload_pin_status.php")
     Call<MessageModel> uploadPinStatus(@FieldMap Map<String, String> map);
 
+    @FormUrlEncoded
+    @POST("upload_quiz_questions.php")
+    Call<MessageModel> uploadQuizQuestions(@FieldMap Map<String, String> map);
+
+    @POST("fetch_quiz_questions.php")
+    Call<QuizModelList> fetchQuizQuestions();
+    @FormUrlEncoded
+    @POST("Delete_quiz_api.php")
+    Call<MessageModel> deleteQuizItems(@FieldMap Map<String, String> map);
+
+    @FormUrlEncoded
+    @POST("update_quiz_api.php")
+    Call<MessageModel> updateQuiz(@FieldMap Map<String, String> map);
+
+
+
 }

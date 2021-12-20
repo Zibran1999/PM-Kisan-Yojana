@@ -1,31 +1,30 @@
 package com.pmkisanyojana.fragments;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.pmkisanyojana.R;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
-import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.adapters.YojanaAdapter;
-import com.pmkisanyojana.databinding.FragmentNewsBinding;
 import com.pmkisanyojana.databinding.FragmentOthersBinding;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,19 +34,16 @@ import com.pmkisanyojana.utils.CommonMethod;
 public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInterface {
 
 
-
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+    FirebaseAnalytics mFirebaseAnalytics;
     RecyclerView homeRV, pinnedRv;
-    YojanaAdapter adapter;
+    YojanaAdapter othersAdapter, pinnedAdapter;
     AdView adView;
     FragmentOthersBinding binding;
     PageViewModel pageViewModel;
-
-
-
-
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    List<YojanaModel> models = new ArrayList<>();
+    String yojanaId = "true";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -98,10 +94,13 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
         CommonMethod.getBannerAds(requireActivity(), adView);
 
 
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
+
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
+        layoutManager1.setOrientation(RecyclerView.VERTICAL);
+        pinnedRv.setLayoutManager(layoutManager1);
 
         setOthersData(root.getContext());
         binding.swipeRefresh.setOnRefreshListener(() -> {
@@ -113,13 +112,34 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
     }
 
     private void setOthersData(Context context) {
-         adapter = new YojanaAdapter(context, this);
-        homeRV.setAdapter(adapter);
+        List<YojanaModel> pinnedModels = new ArrayList<>();
+        List<YojanaModel> othersModelList = new ArrayList<>();
+
+        othersAdapter = new YojanaAdapter(context, this);
+        pinnedAdapter = new YojanaAdapter(context, this);
+
+        homeRV.setAdapter(othersAdapter);
+        pinnedRv.setAdapter(pinnedAdapter);
         pinnedRv.setVisibility(View.VISIBLE);
 
         pageViewModel.getOthersData().observe(requireActivity(), othersData -> {
+            othersModelList.clear();
+            pinnedModels.clear();
+            models.clear();
             if (!othersData.getData().isEmpty()) {
-                adapter.updateYojanaList(othersData.getData());
+                othersModelList.addAll(othersData.getData());
+                models.addAll(othersData.getData());
+                for (YojanaModel model : othersModelList) {
+                    if (yojanaId.equals(model.getPinned())) {
+                        pinnedModels.add(new YojanaModel(model.getId(), model.getImage(), model.getTitle(), model.getDate(), model.getTime(), model.getUrl(), model.getPinned()));
+                        models.remove(model);
+                        Log.d("piined ", pinnedModels.toString());
+                    }
+                }
+                pinnedAdapter.updateYojanaList(pinnedModels);
+                othersAdapter.updateYojanaList(models);
+
+
             }
         });
 
@@ -127,6 +147,13 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel) {
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, yojanaModel.getImage());
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         Intent intent = new Intent(getContext(), YojanaDataActivity.class);
         intent.putExtra("id", yojanaModel.getId());

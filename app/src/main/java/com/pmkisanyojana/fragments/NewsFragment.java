@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.NewsAdapter;
@@ -34,6 +34,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    FirebaseAnalytics mFirebaseAnalytics;
 
     Dialog dialog;
     RecyclerView homeRV;
@@ -127,5 +128,12 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         intent.putExtra("title", newsModel.getTitle());
         intent.putExtra("img", newsModel.getImage());
         startActivity(intent);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, newsModel.getImage());
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }
