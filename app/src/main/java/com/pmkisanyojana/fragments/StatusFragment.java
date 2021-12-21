@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -79,6 +80,7 @@ public class StatusFragment extends Fragment {
     Dialog loadingDialog;
     PageViewModel pageViewModel;
     String mParam1,mParam2,id;
+  public   static ConstraintLayout constraintLayout;
 
 
     public StatusFragment() {
@@ -106,6 +108,27 @@ public class StatusFragment extends Fragment {
             e.printStackTrace();
         }
         Log.d("encodedImage",encodedImage);
+
+    }
+    public static void setStatusImage(Uri uri, YojanaDataActivity yojanaDataActivity) {
+        imageuri = uri;
+
+        try {
+            InputStream inputStream = yojanaDataActivity.getContentResolver().openInputStream(uri);
+            bitmap = BitmapFactory.decodeStream(inputStream);
+            chooseImg.setImageBitmap(bitmap);
+            encodedImage = imageStore(bitmap);
+            uploadStatus(encodedImage);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Log.d("encodedImage",encodedImage);
+
+    }
+
+    private static void uploadStatus(String encodedImage) {
+
+        Log.d("encodedStatusImage" , encodedImage);
 
     }
 
@@ -162,11 +185,13 @@ public class StatusFragment extends Fragment {
             binding.uploadStatusLayout.setVisibility(View.GONE);
             binding.createAcBtn.setVisibility(View.VISIBLE);
         }
-        binding.uploadStatusLayout.setOnClickListener(v -> {
-            showAddStatusDialog(requireActivity());
-        });
+        constraintLayout = binding.uploadStatusLayout;
+        binding.uploadStatusLayout.setOnClickListener(v -> pickFromGallery());
+
         return binding.getRoot();
     }
+
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private void uploadProfileDialog(Context context) {

@@ -14,6 +14,7 @@
     <string name="share_app">Share App</string>
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
+    <string name="camera_tip">Tap to Take a Photo,Hold to Record Video</string>
 
     <!--Test ads ids-->
         <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>

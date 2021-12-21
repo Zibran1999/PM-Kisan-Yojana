@@ -1,8 +1,8 @@
 package com.pmkisanyojana.activities;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
-
 import static com.pmkisanyojana.fragments.StatusFragment.setImage;
+import static com.pmkisanyojana.fragments.StatusFragment.setStatusImage;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,11 +32,11 @@ public class YojanaDataActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 100;
     private static final int STORAGE_REQUEST = 200;
+    public static Uri uri;
     ActivityYojanaDataBinding binding;
     YojanaDataActivity activity;
     String[] cameraPermission;
     String[] storagePermission;
-    public static Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +47,19 @@ public class YojanaDataActivity extends AppCompatActivity {
 
         initViews();
 
+
+
         // allowing permissions of gallery and camera
         cameraPermission = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
     }
 
+    private void PicImageFromGallery() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent,101);
+    }
     private void initViews() {
         setUpViewPager(binding.viewPager);
         binding.tabs.setupWithViewPager(binding.viewPager);
@@ -108,6 +116,7 @@ public class YojanaDataActivity extends AppCompatActivity {
     private void pickFromGallery() {
         CropImage.activity().start(this);
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -115,12 +124,15 @@ public class YojanaDataActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 uri = result.getUri();
-                setImage(uri,this);
+                setImage(uri, this);
                 Glide.with(this).load(uri).into(StatusFragment.chooseImg);
             }
+        } else if (requestCode == 101 && data.getData() != null && data != null && resultCode == RESULT_OK) {
+
+            Uri uri1 = data.getData();
+           setStatusImage(uri1,this);
         }
     }
-
 
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {
