@@ -14,9 +14,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,15 +28,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.card.MaterialCardView;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.YojanaDataActivity;
+import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentStatusBinding;
 import com.pmkisanyojana.models.ApiInterface;
 import com.pmkisanyojana.models.ApiWebServices;
 import com.pmkisanyojana.models.MessageModel;
+import com.pmkisanyojana.models.ModelFactory;
+import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -58,7 +64,7 @@ public class StatusFragment extends Fragment {
     private static final int CAMERA_REQUEST = 100;
     private static final int STORAGE_REQUEST = 200;
     public static Uri imageuri;
-    public static Dialog uploadProfileDialog;
+    public static Dialog uploadProfileDialog,addStatusDialog;
     public static ImageView chooseImg;
     static Bitmap bitmap;
     static String encodedImage;
@@ -71,8 +77,9 @@ public class StatusFragment extends Fragment {
     Map<String, String> map = new HashMap<>();
     ApiInterface apiInterface;
     Dialog loadingDialog;
-    String mParam1;
-    String mParam2;
+    PageViewModel pageViewModel;
+    String mParam1,mParam2,id;
+
 
     public StatusFragment() {
         // Required empty public constructor
@@ -118,14 +125,6 @@ public class StatusFragment extends Fragment {
         }
     }
 
-    //    private void FileChooser() {
-//        Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//        intent.setType("image/*");
-//        startActivityForResult(intent, 100);
-//    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -150,6 +149,22 @@ public class StatusFragment extends Fragment {
         });
         Paper.init(requireActivity());
 
+        id = Paper.book().read(Prevalent.userId);
+
+        if (id != null) {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", id);
+            pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
+            setStatusProfile();
+            binding.uploadStatusLayout.setVisibility(View.VISIBLE);
+            binding.createAcBtn.setVisibility(View.GONE);
+        }else {
+            binding.uploadStatusLayout.setVisibility(View.GONE);
+            binding.createAcBtn.setVisibility(View.VISIBLE);
+        }
+        binding.uploadStatusLayout.setOnClickListener(v -> {
+            showAddStatusDialog(requireActivity());
+        });
         return binding.getRoot();
     }
 
@@ -197,6 +212,24 @@ public class StatusFragment extends Fragment {
         });
     }
 
+    private void showAddStatusDialog(Context context) {
+        addStatusDialog = new Dialog(context);
+        addStatusDialog.setContentView(R.layout.add_status_layout);
+        addStatusDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        addStatusDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.item_bg));
+        addStatusDialog.getWindow().setGravity(Gravity.TOP|Gravity.END);
+        WindowManager.LayoutParams layoutParams = addStatusDialog.getWindow().getAttributes();
+       // layoutParams.x = 100; // right margin
+        layoutParams.y = 170; // top margin
+        addStatusDialog.getWindow().setAttributes(layoutParams);
+
+        addStatusDialog.setCancelable(true);
+        addStatusDialog.show();
+
+
+
+    }
+
     private void uploadProfile(Map<String, String> map) {
         Call<MessageModel> call = apiInterface.uploadProfile(map);
         call.enqueue(new Callback<MessageModel>() {
@@ -222,6 +255,20 @@ public class StatusFragment extends Fragment {
                 Log.d("onResponse", t.getMessage());
 
 
+            }
+        });
+    }
+
+    public void setStatusProfile(){
+        pageViewModel.getUserData().observe(requireActivity(), profileModelList -> {
+            if (!profileModelList.getData().isEmpty()) {
+                for (ProfileModel pm : profileModelList.getData()) {
+                    //txtUserName.setText(pm.getUserName().toString().trim());
+                    Glide.with(this).load(
+                            "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
+                                    + pm.getUserImage()).into(binding.userStatusImg);
+
+                }
             }
         });
     }

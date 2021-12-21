@@ -14,7 +14,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,8 +68,12 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     NavigationView navigationView;
     ConstraintLayout categoryContainer;
     SectionsPagerAdapter sectionsPagerAdapter;
+    ConstraintLayout userProfileLayout;
+    TextView txtUserName;
+    ImageView headerImage;
     ViewPager viewPager;
     String id;
+    PageViewModel pageViewModel;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -86,8 +89,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
         }
     };
-
-    PageViewModel pageViewModel;
     private IntentFilter intentFilter;
 
     public static void shareApp(Context context) {
@@ -116,7 +117,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
-            navigationDrawer(this);
+            navigationDrawer();
         }
     }
 
@@ -149,7 +150,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
 
         id = Paper.book().read(Prevalent.userId);
 
-        if (id!= null) {
+        if (id != null) {
             Map<String, String> map = new HashMap<>();
             map.put("id", id);
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
@@ -189,7 +190,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     }
 
 
-    private void navigationDrawer(HomeScreenActivity homeScreenActivity) {
+    public void navigationDrawer() {
         navigationView = findViewById(R.id.navigation);
         navigationView.bringToFront();
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -201,13 +202,20 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView.setCheckedItem(R.id.nav_home);
         categoryContainer = findViewById(R.id.container_lay);
         userProfileImg = navigationView.findViewById(R.id.user_profile_img);
+        txtUserName = navigationView.findViewById(R.id.txt_user_name);
+        headerImage = navigationView.findViewById(R.id.header_image);
         navigationView.setCheckedItem(R.id.nav_home);
 
+        userProfileLayout = navigationView.findViewById(R.id.user_profile_layout);
 
-        if (id!=null) {
-            setImage(userProfileImg);
-        }else {
 
+        if (id != null) {
+            setImage(userProfileImg, txtUserName);
+            userProfileLayout.setVisibility(View.VISIBLE);
+            headerImage.setVisibility(View.GONE);
+        } else {
+            userProfileLayout.setVisibility(View.GONE);
+            headerImage.setVisibility(View.VISIBLE);
         }
         userProfileImg.setOnClickListener(v -> {
             startActivity(new Intent(HomeScreenActivity.this, UpdateProfile.class));
@@ -220,12 +228,11 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         animateNavigationDrawer();
     }
 
-    private void setImage(CircleImageView userProfileImg) {
+    private void setImage(CircleImageView userProfileImg, TextView txtUserName) {
         pageViewModel.getUserData().observe(this, profileModelList -> {
             if (!profileModelList.getData().isEmpty()) {
                 for (ProfileModel pm : profileModelList.getData()) {
-                    Log.d("profile data", pm.getUserId() + " " + pm.getUserName());
-
+                    txtUserName.setText(pm.getUserName().toString().trim());
                     Glide.with(this).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
                                     + pm.getUserImage()).into(userProfileImg);
