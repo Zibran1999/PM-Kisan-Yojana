@@ -7,7 +7,7 @@ import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 import com.pmkisanyojana.activities.MainActivity;
 
-public class MyApp extends Application {
+public class MyApp extends Application  {
 
     private static final String ONESIGNAL_APP_ID = "9a77bdda-945f-4f86-bf6a-5c564559c350";
     private static MyApp mInstance;
