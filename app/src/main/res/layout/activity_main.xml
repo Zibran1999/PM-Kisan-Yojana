@@ -47,7 +47,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie"
+        android:id="@+id/lottie_loading"
         android:layout_width="0dp"
         android:layout_height="140dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"

@@ -6,7 +6,7 @@
     android:background="@color/purple_700">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/header_image"
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:layout_marginTop="24dp"
@@ -16,17 +16,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_profile_img"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:src="@mipmap/ic_launcher_foreground"
-        app:civ_border_color="#64DD17"
-        app:civ_border_overlay="true"
-        app:civ_border_width="1dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/user_profile_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_profile_img"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginBottom="8dp"
+            android:src="@mipmap/ic_launcher_foreground"
+            app:civ_border_color="#64DD17"
+            app:civ_border_overlay="true"
+            app:civ_border_width="1dp"
+            app:layout_constraintBottom_toTopOf="@+id/txt_user_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/txt_user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="User Name"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
