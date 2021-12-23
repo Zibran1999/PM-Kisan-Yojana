@@ -23,6 +23,14 @@ public interface ApiInterface {
     Call<QuizModelList> fetchQuizQuestions();
 
     @FormUrlEncoded
+    @POST("fetch_my_status_api.php")
+    Call<MyStatusModelList> fetchMyStatus(@FieldMap Map<String, String> map);
+
+    @POST("fetch_status.php")
+    Call<StatusModelList> fetchStatus();
+
+
+    @FormUrlEncoded
     @POST("fetch_preview_data.php")
     Call<PreviewModelList> getPreview(@FieldMap Map<String, String> map);
 
@@ -33,5 +41,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("fetch_user_profile_api.php")
     Call<ProfileModelList> getProfileData(@FieldMap Map<String, String> map);
+
+    @FormUrlEncoded
+    @POST("upload_status_api.php")
+    Call<MessageModel> uploadStatus(@FieldMap Map<String, String> map);
+
 
 }

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="10dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/choose_img"
         android:elevation="1dp"
         android:layout_width="120dp"

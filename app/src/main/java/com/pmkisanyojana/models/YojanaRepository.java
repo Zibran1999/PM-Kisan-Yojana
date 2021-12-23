@@ -22,6 +22,8 @@ public class YojanaRepository {
     private final MutableLiveData<YojanaModelList> otherLiveData = new MutableLiveData<>();
     private final MutableLiveData<QuizModelList> quizModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<ProfileModelList> profileLiveData = new MutableLiveData<>();
+    private final MutableLiveData<MyStatusModelList> mystatusModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<StatusModelList> statusModelListMutableLiveData = new MutableLiveData<>();
 
 
 
@@ -168,6 +170,46 @@ public class YojanaRepository {
         });
 
         return profileLiveData;
+    }
+    public LiveData<MyStatusModelList> getMyStatus(Map<String,String> map) {
+        Call<MyStatusModelList> call = apiInterface.fetchMyStatus(map);
+        call.enqueue(new Callback<MyStatusModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<MyStatusModelList> call, @NonNull Response<MyStatusModelList> response) {
+                if (response.isSuccessful()) {
+                    mystatusModelListMutableLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MyStatusModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+            }
+        });
+
+        return mystatusModelListMutableLiveData;
+    }
+    public LiveData<StatusModelList> getStatus() {
+        Call<StatusModelList> call = apiInterface.fetchStatus();
+        call.enqueue(new Callback<StatusModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<StatusModelList> call, @NonNull Response<StatusModelList> response) {
+                if (response.isSuccessful()) {
+                    statusModelListMutableLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<StatusModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+            }
+        });
+
+        return statusModelListMutableLiveData;
     }
 
 }

@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.StatusFragment">
 
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/create_ac_btn"
         android:layout_width="wrap_content"
@@ -46,6 +47,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_status_img"
             android:layout_width="55dp"
@@ -56,9 +58,24 @@
             android:src="@mipmap/ic_launcher_foreground"
             app:civ_border_color="#E8E8E8"
             app:civ_border_width="1dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.devlomi.circularstatusview.CircularStatusView
+            android:id="@+id/circular_status_view"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/user_status_img"
+            app:layout_constraintEnd_toEndOf="@+id/user_status_img"
+            app:layout_constraintStart_toStartOf="@+id/user_status_img"
+            app:layout_constraintTop_toTopOf="@+id/user_status_img"
+            app:portion_spacing="5dp"
+            tools:ignore="MissingConstraints" />
+
 
         <TextView
             android:id="@+id/txt_status_title"
@@ -95,11 +112,30 @@
             app:layout_constraintBottom_toBottomOf="@+id/user_status_img"
             app:layout_constraintEnd_toEndOf="@+id/user_status_img" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+<LinearLayout
+    android:id="@+id/imageView4"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintBottom_toBottomOf="@+id/upload_status_layout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/upload_status_layout">
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="10sp"
+        android:src="@drawable/ic_baseline_more_vert_24"
+        android:visibility="gone"
+        app:tint="@color/black" />
+
+</LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/recentUpdateLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="gone"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,9 +156,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="409dp"
-            android:layout_height="616dp"
-            android:layout_marginStart="8dp"
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
@@ -130,6 +167,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

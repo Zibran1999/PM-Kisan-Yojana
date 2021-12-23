@@ -1,47 +1,70 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/upload_status_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="3dp">
+    android:layout_marginTop="8dp"
+    android:visibility="visible"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circleImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        app:civ_border_width="1dp"
-        app:civ_border_color="#B5B5B5"
+        android:id="@+id/user_status_img"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@mipmap/ic_launcher_foreground"
+        android:visibility="visible"
+        app:civ_border_color="#E8E8E8"
+        app:civ_border_width="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.devlomi.circularstatusview.CircularStatusView
+        android:id="@+id/circular_status_view"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_centerInParent="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/user_status_img"
+        app:layout_constraintEnd_toEndOf="@+id/user_status_img"
+        app:layout_constraintStart_toStartOf="@+id/user_status_img"
+        app:layout_constraintTop_toTopOf="@+id/user_status_img"
+        app:portion_spacing="5dp" />
+
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txt_status_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Gaurav kumar"
+        android:text="My Status"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView"
-        app:layout_constraintTop_toTopOf="@+id/circleImageView" />
+        app:layout_constraintStart_toEndOf="@+id/user_status_img"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txt_click_to_add"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
-        android:text="Today 15:32"
-        app:layout_constraintBottom_toBottomOf="@+id/circleImageView"
+        android:text="Click to add today's image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/circleImageView" />
+        app:layout_constraintStart_toEndOf="@+id/user_status_img"
+        app:layout_constraintTop_toBottomOf="@+id/txt_status_title" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

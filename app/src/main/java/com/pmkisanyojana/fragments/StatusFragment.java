@@ -3,7 +3,6 @@ package com.pmkisanyojana.fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,50 +13,63 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.devlomi.circularstatusview.CircularStatusView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.activities.ShowStatusActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
+import com.pmkisanyojana.adapters.StatusAdapter;
+import com.pmkisanyojana.adapters.StatusClickListener;
 import com.pmkisanyojana.databinding.FragmentStatusBinding;
 import com.pmkisanyojana.models.ApiInterface;
 import com.pmkisanyojana.models.ApiWebServices;
 import com.pmkisanyojana.models.MessageModel;
 import com.pmkisanyojana.models.ModelFactory;
+import com.pmkisanyojana.models.MyStatusModel;
 import com.pmkisanyojana.models.ProfileModel;
+import com.pmkisanyojana.models.StatusModel;
+import com.pmkisanyojana.models.TimeUtils;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StatusFragment extends Fragment {
+public class StatusFragment extends Fragment implements StatusClickListener {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -65,7 +77,7 @@ public class StatusFragment extends Fragment {
     private static final int CAMERA_REQUEST = 100;
     private static final int STORAGE_REQUEST = 200;
     public static Uri imageuri;
-    public static Dialog uploadProfileDialog,addStatusDialog;
+    public static Dialog uploadProfileDialog, addStatusDialog;
     public static ImageView chooseImg;
     static Bitmap bitmap;
     static String encodedImage;
@@ -79,9 +91,15 @@ public class StatusFragment extends Fragment {
     ApiInterface apiInterface;
     Dialog loadingDialog;
     PageViewModel pageViewModel;
-    String mParam1,mParam2,id;
-  public   static ConstraintLayout constraintLayout;
+    String mParam1, mParam2, id;
+    CircularStatusView circularStatusView;
 
+    ActivityResultLauncher<String> launcher;
+    ImageView imageView;
+    TextView statusTime;
+    String userImage, timeSt, img;
+
+    CircleImageView userProfileImage;
 
     public StatusFragment() {
         // Required empty public constructor
@@ -107,28 +125,7 @@ public class StatusFragment extends Fragment {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        Log.d("encodedImage",encodedImage);
-
-    }
-    public static void setStatusImage(Uri uri, YojanaDataActivity yojanaDataActivity) {
-        imageuri = uri;
-
-        try {
-            InputStream inputStream = yojanaDataActivity.getContentResolver().openInputStream(uri);
-            bitmap = BitmapFactory.decodeStream(inputStream);
-            chooseImg.setImageBitmap(bitmap);
-            encodedImage = imageStore(bitmap);
-            uploadStatus(encodedImage);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Log.d("encodedImage",encodedImage);
-
-    }
-
-    private static void uploadStatus(String encodedImage) {
-
-        Log.d("encodedStatusImage" , encodedImage);
+        Log.d("encodedImage", encodedImage);
 
     }
 
@@ -148,19 +145,28 @@ public class StatusFragment extends Fragment {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentStatusBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         createAccoutnBtn = binding.createAcBtn;
+        circularStatusView = binding.circularStatusView;
+        imageView = binding.imageView3;
+        statusTime = binding.txtClickToAdd;
+        userProfileImage = binding.userStatusImg;
         apiInterface = ApiWebServices.getApiInterface();
+
+        Paper.init(requireActivity());
+        id = Paper.book().read(Prevalent.userId);
+
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(requireActivity());
         loadingDialog.setContentView(R.layout.loading);
         loadingDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        loadingDialog.getWindow().setBackgroundDrawable(requireActivity().getDrawable(R.drawable.item_bg));
+        loadingDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         //**Loading Dialog****/
 
@@ -170,27 +176,138 @@ public class StatusFragment extends Fragment {
         createAccoutnBtn.setOnClickListener(v -> {
             uploadProfileDialog(root.getContext());
         });
-        Paper.init(requireActivity());
 
-        id = Paper.book().read(Prevalent.userId);
+        launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            try {
+                InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
+                bitmap = BitmapFactory.decodeStream(inputStream);
+                encodedImage = imageStore(bitmap);
+                uploadStatus(encodedImage, id);
+                binding.txtClickToAdd.setText("Sending...");
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        });
 
         if (id != null) {
-            Map<String, String> map = new HashMap<>();
             map.put("id", id);
-            pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
             setStatusProfile();
+            showAllStatus();
             binding.uploadStatusLayout.setVisibility(View.VISIBLE);
             binding.createAcBtn.setVisibility(View.GONE);
-        }else {
+        } else {
             binding.uploadStatusLayout.setVisibility(View.GONE);
             binding.createAcBtn.setVisibility(View.VISIBLE);
         }
-        constraintLayout = binding.uploadStatusLayout;
-        binding.uploadStatusLayout.setOnClickListener(v -> pickFromGallery());
+        binding.txtClickToAdd.setOnClickListener(v -> {
+            launcher.launch("image/*");
+        });
 
         return binding.getRoot();
     }
 
+    private void showAllStatus() {
+
+        List<StatusModel> statusModelLis = new ArrayList<>();
+        RecyclerView recyclerView = binding.recyclerview;
+        StatusAdapter statusAdapter = new StatusAdapter(this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireActivity());
+        layoutManager.setOrientation(RecyclerView.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(statusAdapter);
+        pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
+        pageViewModel.fetchStatus().observe(requireActivity(), statusModelList -> {
+            if (!statusModelList.getData().isEmpty()) {
+                statusModelLis.clear();
+                binding.textView6.setVisibility(View.VISIBLE);
+                binding.recentUpdateLayout.setVisibility(View.VISIBLE);
+                statusModelLis.addAll(statusModelList.getData());
+                for (StatusModel s : statusModelLis) {
+                    if (id.equals(s.getProfileID())) {
+                        statusModelLis.remove(s);
+                        break;
+                    }
+                }
+                statusAdapter.updateStatusList(statusModelLis);
+            }
+        });
+    }
+
+
+    private void uploadStatus(String encodedImage, String id) {
+        map.put("time", String.valueOf(System.currentTimeMillis()));
+        map.put("id", id);
+        map.put("statusImg", encodedImage);
+        Call<MessageModel> call = apiInterface.uploadStatus(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    setMyStatus();
+                    Toast.makeText(requireActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(requireActivity(), response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(requireActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+                Log.d("onResponse", t.getMessage());
+
+
+            }
+        });
+
+        Log.d("encodedStatusImage", encodedImage);
+
+    }
+
+    /* E0CF1AD5FB08*/
+    private void setMyStatus() {
+        String userName = Paper.book().read(Prevalent.userName);
+        map.put("userId", id);
+        Log.d("id", id);
+        pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
+        pageViewModel.fetchMyStatus().observe(requireActivity(), statusModelList -> {
+            if (!statusModelList.getData().isEmpty()) {
+                Log.d("statusList", statusModelList.getData().toString());
+                imageView.setVisibility(View.GONE);
+                circularStatusView.setVisibility(View.VISIBLE);
+                for (MyStatusModel m : statusModelList.getData()) {
+                    timeSt = String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(m.getTime())));
+                    statusTime.setText(timeSt);
+                    img = m.getImage();
+                    Glide.with(requireActivity()).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Status_Images/" + m.getImage()).into(userProfileImage);
+                }
+
+                userImage = Paper.book().read(Prevalent.userImage);
+                binding.txtClickToAdd.setClickable(false);
+                binding.uploadStatusLayout.setOnClickListener(v -> {
+                    Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+                    intent.putExtra("userImage", userImage);
+                    intent.putExtra("userName", userName);
+                    intent.putExtra("statusImage", img);
+                    intent.putExtra("time", timeSt);
+                    startActivity(intent);
+
+                });
+
+                binding.imageView4.setVisibility(View.VISIBLE);
+                binding.imageView4.setOnClickListener(v -> {
+
+
+                });
+
+            }
+        });
+
+
+    }
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -212,22 +329,22 @@ public class StatusFragment extends Fragment {
             UUID uuid = UUID.randomUUID();
             String randomId = String.valueOf(uuid);
 
-            if (TextUtils.isEmpty(encodedImage)){
+            if (TextUtils.isEmpty(encodedImage)) {
                 Toast.makeText(requireActivity(), "Please Select an Image", Toast.LENGTH_SHORT).show();
                 loadingDialog.dismiss();
-            }else  if (TextUtils.isEmpty(uName)){
+            } else if (TextUtils.isEmpty(uName)) {
                 userName.setError("required field");
                 loadingDialog.dismiss();
-            }else {
-                Paper.book().write(Prevalent.userId,randomId);
-                Paper.book().write(Prevalent.userName,uName);
-                Log.d("prevalent",Paper.book().read(Prevalent.userName)
-                        +" "+Paper.book().read(Prevalent.userId));
+            } else {
+                Paper.book().write(Prevalent.userId, randomId);
+                Paper.book().write(Prevalent.userName, uName);
+                Log.d("prevalent", Paper.book().read(Prevalent.userName)
+                        + " " + Paper.book().read(Prevalent.userId));
 
 
                 map.put("id", randomId);
                 map.put("img", encodedImage);
-                map.put("userName",uName);
+                map.put("userName", uName);
                 uploadProfile(map);
             }
         });
@@ -237,23 +354,6 @@ public class StatusFragment extends Fragment {
         });
     }
 
-    private void showAddStatusDialog(Context context) {
-        addStatusDialog = new Dialog(context);
-        addStatusDialog.setContentView(R.layout.add_status_layout);
-        addStatusDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
-        addStatusDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(),R.drawable.item_bg));
-        addStatusDialog.getWindow().setGravity(Gravity.TOP|Gravity.END);
-        WindowManager.LayoutParams layoutParams = addStatusDialog.getWindow().getAttributes();
-       // layoutParams.x = 100; // right margin
-        layoutParams.y = 170; // top margin
-        addStatusDialog.getWindow().setAttributes(layoutParams);
-
-        addStatusDialog.setCancelable(true);
-        addStatusDialog.show();
-
-
-
-    }
 
     private void uploadProfile(Map<String, String> map) {
         Call<MessageModel> call = apiInterface.uploadProfile(map);
@@ -266,6 +366,10 @@ public class StatusFragment extends Fragment {
                     Toast.makeText(requireActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     loadingDialog.dismiss();
                     uploadProfileDialog.dismiss();
+                    setStatusProfile();
+                    binding.createAcBtn.setVisibility(View.GONE);
+                    binding.uploadStatusLayout.setVisibility(View.VISIBLE);
+
 
                 } else {
                     Toast.makeText(requireActivity(), response.body().getError(), Toast.LENGTH_SHORT).show();
@@ -284,16 +388,25 @@ public class StatusFragment extends Fragment {
         });
     }
 
-    public void setStatusProfile(){
+    public void setStatusProfile() {
+        id = Paper.book().read(Prevalent.userId);
+        map.put("id", id);
+        pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getUserData().observe(requireActivity(), profileModelList -> {
             if (!profileModelList.getData().isEmpty()) {
                 for (ProfileModel pm : profileModelList.getData()) {
                     //txtUserName.setText(pm.getUserName().toString().trim());
                     Glide.with(this).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
-                                    + pm.getUserImage()).into(binding.userStatusImg);
+                                    + pm.getUserImage()).into(userProfileImage);
+                    binding.circularStatusView.setVisibility(View.GONE);
+
+                    Paper.book().write(Prevalent.userImage, pm.getUserImage());
+                    Paper.book().write(Prevalent.userName, pm.getUserName());
 
                 }
+                setMyStatus();
+                showAllStatus();
             }
         });
     }
@@ -320,6 +433,7 @@ public class StatusFragment extends Fragment {
         builder.create().show();
     }
 
+
     // checking storage permissions
     private Boolean checkStoragePermission() {
         return ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
@@ -337,104 +451,11 @@ public class StatusFragment extends Fragment {
         return result && result1;
     }
 
-    // Requesting camera and gallery
-    // permission if not given
-    //  @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode) {
-//            case CAMERA_REQUEST: {
-//                if (grantResults.length > 0) {
-//                    boolean camera_accepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-//                    boolean writeStorageaccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-//                    if (camera_accepted && writeStorageaccepted) {
-//                        pickFromGallery();
-//                    } else {
-//                        Toast.makeText(requireActivity(), "Please Enable Camera and Storage Permissions", Toast.LENGTH_LONG).show();
-//                    }
-//                }
-//            }
-//            break;
-//            case STORAGE_REQUEST: {
-//                if (grantResults.length > 0) {
-//                    boolean writeStorageaccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-//                    if (writeStorageaccepted) {
-//                        pickFromGallery();
-//                    } else {
-//                        Toast.makeText(requireActivity(), "Please Enable Storage Permissions", Toast.LENGTH_LONG).show();
-//                    }
-//                }
-//            }
-//            break;
-//        }
-//    }
-
     // Requesting camera permission
     private void requestCameraPermission() {
         requestPermissions(cameraPermission, CAMERA_REQUEST);
     }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            if (resultCode == RESULT_OK) {
-//                uri = result.getUri();
-//                chooseImg.setImageURI(uri);
-//                Glide.with(this).load(uri).into(chooseImg);
-//            }
-//        }
-//        Toast.makeText(requireActivity(), uri.toString(), Toast.LENGTH_SHORT).show();
-//    }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            uri = data.getData();
-//
-//            // start picker to get image for cropping and then use the image in cropping activity
-//            CropImage.activity()
-//                    .setGuidelines(CropImageView.Guidelines.ON)
-//                    .setAspectRatio(1,1)
-//                    .start(requireActivity());
-//
-//
-//        }
-//        if (requestCode== CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
-//            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-//            if (resultCode==RESULT_OK) {
-//                assert result != null;
-//                uri = result.getUri();
-//                try {
-//                    InputStream inputStream = requireActivity().getContentResolver().openInputStream(uri);
-//                    bitmap = BitmapFactory.decodeStream(inputStream);
-//                    chooseImg.setImageBitmap(bitmap);
-//                    encodedImage = imageStore(bitmap);
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//
-//    }
-
-    private void FileChooser() {
-        try {
-            Intent intent = new Intent("com.android.camera.action.CROP");
-            intent.setType("image/*");
-            intent.putExtra("crop", "true");
-            intent.putExtra("aspectX", 1);
-            intent.putExtra("aspectY", 1);
-            intent.putExtra("outputX", 96);
-            intent.putExtra("outputY", 96);
-            intent.putExtra("noFaceDetection", true);
-            intent.putExtra("return-data", true);
-            startActivityForResult(intent, 100);
-        } catch (ActivityNotFoundException e) {
-            Log.d("vvvvv", e.getMessage());
-        }
-    }
 
     // Here we will pick image from gallery or camera
     private void pickFromGallery() {
@@ -442,4 +463,20 @@ public class StatusFragment extends Fragment {
     }
 
 
+    @Override
+    public void onStatusClicked(StatusModel statusModel) {
+        Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+        intent.putExtra("userImage", statusModel.getProfileImage());
+        intent.putExtra("userName", statusModel.getProfileName());
+        intent.putExtra("statusImage", statusModel.getImage());
+        intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+        startActivity(intent);
+
+        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        Bundle bundle= new Bundle();
+        bundle.putString("userName",statusModel.getProfileName());
+        firebaseAnalytics.logEvent("Status_click_Event",bundle);
+
+
+    }
 }

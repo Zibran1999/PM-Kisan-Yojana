@@ -2,7 +2,6 @@ package com.pmkisanyojana.activities;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 import static com.pmkisanyojana.fragments.StatusFragment.setImage;
-import static com.pmkisanyojana.fragments.StatusFragment.setStatusImage;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,6 +36,7 @@ public class YojanaDataActivity extends AppCompatActivity {
     YojanaDataActivity activity;
     String[] cameraPermission;
     String[] storagePermission;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,10 +127,6 @@ public class YojanaDataActivity extends AppCompatActivity {
                 setImage(uri, this);
                 Glide.with(this).load(uri).into(StatusFragment.chooseImg);
             }
-        } else if (requestCode == 101 && data.getData() != null && data != null && resultCode == RESULT_OK) {
-
-            Uri uri1 = data.getData();
-           setStatusImage(uri1,this);
         }
     }
 

@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <application
         android:name=".utils.MyApp"
         android:allowBackup="true"
@@ -20,14 +19,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PMKisanYojana"
-        tools:targetApi="n"
-        tools:ignore="AllowBackup">
-
+        tools:ignore="AllowBackup"
+        tools:targetApi="n">
+        <activity
+            android:name=".activities.ShowStatusActivity"
+            android:exported="false" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-
-
         <activity
             android:name=".activities.YojanaDataActivity"
             android:exported="false" />
