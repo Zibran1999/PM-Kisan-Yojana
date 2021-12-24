@@ -24,6 +24,7 @@ public class YojanaRepository {
     private final MutableLiveData<ProfileModelList> profileLiveData = new MutableLiveData<>();
     private final MutableLiveData<MyStatusModelList> mystatusModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<StatusModelList> statusModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<StatusViewModelList> statusViewModelListMutableLiveData = new MutableLiveData<>();
 
 
 
@@ -210,6 +211,25 @@ public class YojanaRepository {
         });
 
         return statusModelListMutableLiveData;
+    }public LiveData<StatusViewModelList> getStatusViews(Map<String, String> map) {
+        Call<StatusViewModelList> call = apiInterface.fetchStatusViews(map);
+        call.enqueue(new Callback<StatusViewModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<StatusViewModelList> call, @NonNull Response<StatusViewModelList> response) {
+                if (response.isSuccessful()) {
+                    statusViewModelListMutableLiveData.setValue(response.body());
+                } else {
+                    Log.d("onResponse", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<StatusViewModelList> call, @NonNull Throwable t) {
+                Log.d("onResponse error", t.getMessage());
+            }
+        });
+
+        return statusViewModelListMutableLiveData;
     }
 
 }

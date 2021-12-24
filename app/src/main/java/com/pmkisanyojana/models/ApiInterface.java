@@ -29,6 +29,10 @@ public interface ApiInterface {
     @POST("fetch_status.php")
     Call<StatusModelList> fetchStatus();
 
+    @FormUrlEncoded
+    @POST("fetch_status_views.php")
+    Call<StatusViewModelList> fetchStatusViews(@FieldMap Map<String, String> map);
+
 
     @FormUrlEncoded
     @POST("fetch_preview_data.php")
@@ -45,6 +49,13 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("upload_status_api.php")
     Call<MessageModel> uploadStatus(@FieldMap Map<String, String> map);
+
+  @FormUrlEncoded
+    @POST("statusSeenBy.php")
+    Call<MessageModel> uploadSeenBy(@FieldMap Map<String, String> map);
+@FormUrlEncoded
+    @POST("deleteMyStatus.php")
+    Call<MessageModel> deleteMyStatus(@FieldMap Map<String, String> map);
 
 
 }

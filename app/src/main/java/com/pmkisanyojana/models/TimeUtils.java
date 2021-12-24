@@ -12,7 +12,7 @@ public class TimeUtils {
         if (time > now || time <= 0) {
             return null;
         }
-        Long diff = now - time;
+        long diff = now - time;
 
         if (diff < MINUTE_MILLIS) {
             return "just now";
@@ -26,10 +26,27 @@ public class TimeUtils {
             return "" + (diff / HOUR_MILLIS) + " hours ago";
 
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "yesterday";
+            return (diff / HOUR_MILLIS)+" yesterday";
 
         } else {
             return "" + (diff / DAY_MILLIS) + " days ago";
+        }
+    }
+
+    public static int getTimesAgo(Long time) {
+        Long now = System.currentTimeMillis();
+        if (time > now || time <= 0) {
+            return 0;
+        }
+        long diff = now - time;
+
+        if (diff < 50 * MINUTE_MILLIS) {
+            return (int) (diff / MINUTE_MILLIS);
+        } else if (diff < 24 * HOUR_MILLIS) {
+            return (int) (diff / HOUR_MILLIS);
+
+        } else {
+            return (int) (diff / DAY_MILLIS);
         }
     }
 }

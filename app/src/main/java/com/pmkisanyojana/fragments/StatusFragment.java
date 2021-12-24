@@ -58,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +98,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     ActivityResultLauncher<String> launcher;
     ImageView imageView;
     TextView statusTime;
-    String userImage, timeSt, img;
+    String userImage, timeSt, img, myStatusId;
 
     CircleImageView userProfileImage;
 
@@ -181,6 +182,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
             try {
                 InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
                 bitmap = BitmapFactory.decodeStream(inputStream);
+
                 encodedImage = imageStore(bitmap);
                 uploadStatus(encodedImage, id);
                 binding.txtClickToAdd.setText("Sending...");
@@ -228,6 +230,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                         break;
                     }
                 }
+                Collections.reverse(statusModelLis);
                 statusAdapter.updateStatusList(statusModelLis);
             }
         });
@@ -282,17 +285,39 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     timeSt = String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(m.getTime())));
                     statusTime.setText(timeSt);
                     img = m.getImage();
+                    myStatusId = m.getId();
                     Glide.with(requireActivity()).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Status_Images/" + m.getImage()).into(userProfileImage);
                 }
+
+                binding.imageView4.setVisibility(View.VISIBLE);
+                binding.menuClick.setOnClickListener(v -> {
+
+                    updateStatus(myStatusId);
+                });
+
+                if (timeSt.equals("just now") || timeSt.equals("a minute ago") || timeSt.equals("an hour ago")) {
+                    Log.d("timeString", timeSt);
+                } else {
+                    int time = Integer.parseInt(timeSt.replaceAll("[^0-9]", ""));
+                    if (time >= 24) {
+                        map.put("statusId", myStatusId);
+                        map.put("statusImg", "User_Status_Images/" + img);
+                        deleteMyStatus(map);
+                    }
+                }
+
 
                 userImage = Paper.book().read(Prevalent.userImage);
                 binding.txtClickToAdd.setClickable(false);
                 binding.uploadStatusLayout.setOnClickListener(v -> {
                     Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+                    intent.putExtra("status", "MyStatus");
+                    intent.putExtra("userImage", userImage);
                     intent.putExtra("userImage", userImage);
                     intent.putExtra("userName", userName);
                     intent.putExtra("statusImage", img);
                     intent.putExtra("time", timeSt);
+                    intent.putExtra("statusId", myStatusId);
                     startActivity(intent);
 
                 });
@@ -306,6 +331,39 @@ public class StatusFragment extends Fragment implements StatusClickListener {
             }
         });
 
+
+    }
+
+    private void updateStatus(String myStatusId) {
+
+    }
+
+    private void deleteMyStatus(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.deleteMyStatus(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Log.d("deleteStatus", response.body().getMessage());
+                    setMyStatus();
+
+                } else {
+                    Log.d("StatusError", response.body().getMessage());
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(requireActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("deleteStatusError", t.getMessage());
+
+
+            }
+        });
 
     }
 
@@ -466,17 +524,46 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     @Override
     public void onStatusClicked(StatusModel statusModel) {
         Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+        intent.putExtra("status", "allStatus");
         intent.putExtra("userImage", statusModel.getProfileImage());
         intent.putExtra("userName", statusModel.getProfileName());
         intent.putExtra("statusImage", statusModel.getImage());
         intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+
         startActivity(intent);
+        id = Paper.book().read(Prevalent.userId);
+        map.put("userId", id);
+        map.put("statusId", statusModel.getId());
+        map.put("statusTime", String.valueOf(System.currentTimeMillis()));
 
+        uploadSeenBy(map);
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-        Bundle bundle= new Bundle();
-        bundle.putString("userName",statusModel.getProfileName());
-        firebaseAnalytics.logEvent("Status_click_Event",bundle);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
+        firebaseAnalytics.logEvent("Status_click_Event", bundle);
 
 
+    }
+
+    private void uploadSeenBy(Map<String, String> map) {
+
+        Call<MessageModel> call = apiInterface.uploadSeenBy(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Log.d("statusSeenBy", response.body().getMessage());
+                } else {
+                    Log.d("statusSeenBy", response.body().getError());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Log.d("statusSeenByError", t.getMessage());
+
+            }
+        });
     }
 }
