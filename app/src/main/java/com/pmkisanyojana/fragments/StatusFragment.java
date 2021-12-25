@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.devlomi.circularstatusview.CircularStatusView;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ShowStatusActivity;
@@ -182,14 +183,13 @@ public class StatusFragment extends Fragment implements StatusClickListener {
             try {
                 InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
                 bitmap = BitmapFactory.decodeStream(inputStream);
-
                 encodedImage = imageStore(bitmap);
-                uploadStatus(encodedImage, id);
-                binding.txtClickToAdd.setText("Sending...");
+                showStatusBeforeUpload(result, id);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
         });
+
 
         if (id != null) {
             map.put("id", id);
@@ -206,6 +206,28 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         });
 
         return binding.getRoot();
+    }
+
+    private void showStatusBeforeUpload(Uri result, String id) {
+
+        addStatusDialog = new Dialog(requireActivity());
+        addStatusDialog.setContentView(R.layout.show_status_layout);
+        addStatusDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        addStatusDialog.setCancelable(true);
+        addStatusDialog.show();
+
+        ImageView showImage = addStatusDialog.findViewById(R.id.setStatusImg);
+        ImageView uploadBtn = addStatusDialog.findViewById(R.id.upload_status_btn);
+        ImageView cancelBtn = addStatusDialog.findViewById(R.id.cancel_button);
+
+        Glide.with(requireActivity()).load(result).into(showImage);
+        cancelBtn.setOnClickListener(v -> addStatusDialog.dismiss());
+        uploadBtn.setOnClickListener(v -> {
+            binding.txtClickToAdd.setText("Sending...");
+            uploadStatus(encodedImage, id);
+
+        });
+
     }
 
     private void showAllStatus() {
@@ -238,6 +260,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
 
     private void uploadStatus(String encodedImage, String id) {
+        loadingDialog.show();
         map.put("time", String.valueOf(System.currentTimeMillis()));
         map.put("id", id);
         map.put("statusImg", encodedImage);
@@ -248,10 +271,13 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
                 assert response.body() != null;
                 if (response.isSuccessful()) {
+                    addStatusDialog.dismiss();
+                    loadingDialog.dismiss();
                     setMyStatus();
                     Toast.makeText(requireActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
                 } else {
+                    loadingDialog.dismiss();
                     Toast.makeText(requireActivity(), response.body().getError(), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -272,6 +298,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
     /* E0CF1AD5FB08*/
     private void setMyStatus() {
+        userImage = Paper.book().read(Prevalent.userImage);
         String userName = Paper.book().read(Prevalent.userName);
         map.put("userId", id);
         Log.d("id", id);
@@ -291,8 +318,18 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
                 binding.imageView4.setVisibility(View.VISIBLE);
                 binding.menuClick.setOnClickListener(v -> {
-
-                    updateStatus(myStatusId);
+                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
+                    builder.setTitle("Delete")
+                            .setIcon(R.drawable.ic_baseline_report_problem_24)
+                            .setMessage("Do You Really Want To Delete Your status?")
+                            .setNeutralButton("NO", (dialog, which) -> {
+                            });
+                    builder.setPositiveButton("Yes", (dialog, which) -> {
+                        map.put("statusId", myStatusId);
+                        map.put("statusImg", "User_Status_Images/" + img);
+                        deleteMyStatus(map, userImage);
+                    });
+                    builder.show();
                 });
 
                 if (timeSt.equals("just now") || timeSt.equals("a minute ago") || timeSt.equals("an hour ago")) {
@@ -302,12 +339,10 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     if (time >= 24) {
                         map.put("statusId", myStatusId);
                         map.put("statusImg", "User_Status_Images/" + img);
-                        deleteMyStatus(map);
+                        deleteMyStatus(map, userImage);
                     }
                 }
 
-
-                userImage = Paper.book().read(Prevalent.userImage);
                 binding.txtClickToAdd.setClickable(false);
                 binding.uploadStatusLayout.setOnClickListener(v -> {
                     Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
@@ -334,11 +369,8 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
     }
 
-    private void updateStatus(String myStatusId) {
 
-    }
-
-    private void deleteMyStatus(Map<String, String> map) {
+    private void deleteMyStatus(Map<String, String> map, String userImage) {
         Call<MessageModel> call = apiInterface.deleteMyStatus(map);
         call.enqueue(new Callback<MessageModel>() {
             @Override
@@ -347,7 +379,19 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 assert response.body() != null;
                 if (response.isSuccessful()) {
                     Log.d("deleteStatus", response.body().getMessage());
-                    setMyStatus();
+                    imageView.setVisibility(View.VISIBLE);
+
+                    binding.txtClickToAdd.setText("Click to add today's image");
+                    Glide.with(requireActivity()).load(
+                            "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
+                                    + userImage).into(userProfileImage);
+                    binding.uploadStatusLayout.setOnClickListener(v -> {
+                    });
+                    binding.circularStatusView.setVisibility(View.GONE);
+                    binding.imageView4.setVisibility(View.GONE);
+                    binding.txtClickToAdd.setOnClickListener(v -> {
+                        launcher.launch("image/*");
+                    });
 
                 } else {
                     Log.d("StatusError", response.body().getMessage());
@@ -457,6 +501,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     Glide.with(this).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
                                     + pm.getUserImage()).into(userProfileImage);
+
                     binding.circularStatusView.setVisibility(View.GONE);
 
                     Paper.book().write(Prevalent.userImage, pm.getUserImage());

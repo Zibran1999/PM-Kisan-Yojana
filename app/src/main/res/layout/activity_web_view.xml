@@ -5,7 +5,7 @@
     android:id="@+id/pro"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.DataActivity">
+    tools:context=".activities.WebViewActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container_lay"

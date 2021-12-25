@@ -9,6 +9,7 @@
     tools:context=".fragments.StatusFragment">
 
 
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/create_ac_btn"
         android:layout_width="wrap_content"

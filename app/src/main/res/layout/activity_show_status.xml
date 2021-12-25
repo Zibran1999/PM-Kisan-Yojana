@@ -11,8 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@null"
-        android:scaleType="centerCrop"
-        tools:src="@drawable/sp_bg" />
+        android:tint="#1A000000"
+        android:scaleType="fitXY"
+        tools:src="@drawable/sp_bg"
+        tools:ignore="UseAppTint" />
 
     <LinearLayout
         android:layout_width="match_parent"

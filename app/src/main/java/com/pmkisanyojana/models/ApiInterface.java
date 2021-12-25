@@ -55,10 +55,11 @@ public interface ApiInterface {
     @POST("upload_status_api.php")
     Call<MessageModel> uploadStatus(@FieldMap Map<String, String> map);
 
-  @FormUrlEncoded
+    @FormUrlEncoded
     @POST("statusSeenBy.php")
     Call<MessageModel> uploadSeenBy(@FieldMap Map<String, String> map);
-@FormUrlEncoded
+
+    @FormUrlEncoded
     @POST("deleteMyStatus.php")
     Call<MessageModel> deleteMyStatus(@FieldMap Map<String, String> map);
 

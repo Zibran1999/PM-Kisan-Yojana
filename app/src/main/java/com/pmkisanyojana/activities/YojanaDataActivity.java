@@ -69,7 +69,7 @@ public class YojanaDataActivity extends AppCompatActivity {
                   //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Status Stories");
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Status Fragment");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    mFirebaseAnalytics.logEvent("Status", bundle);
 
                 } else if (position == 2) {
                     mFirebaseAnalytics = FirebaseAnalytics.getInstance(YojanaDataActivity.this);
@@ -77,7 +77,7 @@ public class YojanaDataActivity extends AppCompatActivity {
                     //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Quiz");
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Quiz Fragment");
-                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+                    mFirebaseAnalytics.logEvent("Quiz", bundle);
 
                 }
             }

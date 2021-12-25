@@ -153,7 +153,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
 
         Intent intent = new Intent(getContext(), YojanaDataActivity.class);
         intent.putExtra("id", yojanaModel.getId());

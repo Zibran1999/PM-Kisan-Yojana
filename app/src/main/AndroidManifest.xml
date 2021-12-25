@@ -36,10 +36,7 @@
         <activity
             android:name=".activities.NewsDataActivity"
             android:exported="false" />
-        <activity
-            android:name=".activities.DataActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true" />
+
 
         <service
             android:name=".utils.MyReceiver"

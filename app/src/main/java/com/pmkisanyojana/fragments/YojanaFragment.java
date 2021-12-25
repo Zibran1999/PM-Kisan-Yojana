@@ -28,7 +28,6 @@ import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -165,8 +164,8 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE,"YOJANA LIST");
-        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "YOJANA Fragment");
+        mFirebaseAnalytics.logEvent("Clicked_Yojana_Items", bundle);
 
         Intent intent = new Intent(getContext(), YojanaDataActivity.class);
         intent.putExtra("id", yojanaModel.getId());

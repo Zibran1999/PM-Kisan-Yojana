@@ -50,6 +50,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     private StoriesProgressView storiesProgressView;
     private ImageView image;
     private int counter = 0;
+    Map<String, String> map = new HashMap<>();
     List<StatusViewModel> statusViewModels = new ArrayList<>();
     RecyclerView statusViewsRV;
     StatusViewsAdapter statusViewsAdapter;
@@ -124,13 +125,12 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             statusViewsRV.setLayoutManager(layoutManager);
             statusViewsAdapter = new StatusViewsAdapter();
             statusViewsRV.setAdapter(statusViewsAdapter);
-            Map<String, String> map = new HashMap<>();
+
             map.put("statusId", getIntent().getStringExtra("statusId"));
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
             pageViewModel.fetchStatusViews().observe(this, statusViewModelList -> {
                 if (!statusViewModelList.getData().isEmpty()) {
                     statusViewModels.clear();
-                    Log.d("statusView",statusViewModelList.getData().get(1).getProfileName()+" "+getIntent().getStringExtra("statusId"));
                     seenBy.setText(""+statusViewModelList.getData().size());
                     textView.setText("Viewed  "+statusViewModelList.getData().size());
                     statusViewModels.addAll(statusViewModelList.getData());

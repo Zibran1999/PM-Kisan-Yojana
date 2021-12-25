@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -72,7 +73,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     TextView txtUserName;
     ImageView headerImage;
     ViewPager viewPager;
-    String id,userImage;
+    String id, userImage;
     PageViewModel pageViewModel;
 
     Map<String, String> map = new HashMap<>();
@@ -218,6 +219,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             headerImage.setVisibility(View.VISIBLE);
         }
         navMenu.setOnClickListener(v -> {
+            setImage(userProfileImg, txtUserName);
             if (drawerLayout.isDrawerVisible(GravityCompat.START))
                 drawerLayout.closeDrawer(GravityCompat.START);
             else drawerLayout.openDrawer(GravityCompat.START);
@@ -241,8 +243,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
         });
         userProfileImg.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeScreenActivity.this,UpdateProfile.class);
-            intent.putExtra("img",userImage);
+            Intent intent = new Intent(HomeScreenActivity.this, UpdateProfile.class);
+            intent.putExtra("img", userImage);
             startActivity(intent);
         });
     }
@@ -292,7 +294,12 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                 }
                 break;
             case R.id.nav_rate:
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
                 CommonMethod.rateApp(getApplicationContext());
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Rate");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Rate click");
+                mFirebaseAnalytics.logEvent("Selected_rate_menu_item", bundle);
                 break;
             case R.id.nav_privacy:
                 startActivity(new Intent(HomeScreenActivity.this, PrivacyPolicyActivity.class));
@@ -349,6 +356,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                 .setMessage("Do You Really Want To Exit?\nAlso Rate Us 5 Star.")
                 .setNeutralButton("CANCEL", (dialog, which) -> {
                 });
+
+
         builder.setNegativeButton("RATE APP", (dialog, which) -> CommonMethod.rateApp(getApplicationContext()))
                 .setPositiveButton("OK!!", (dialog, which) -> {
                     Intent intent = new Intent(Intent.ACTION_MAIN);
