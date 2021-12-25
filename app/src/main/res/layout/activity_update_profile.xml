@@ -23,7 +23,7 @@
         android:src="@mipmap/ic_launcher_foreground"/>
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -37,12 +37,12 @@
          />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/updateUserProfileBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Save Profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        app:layout_constraintTop_toBottomOf="@+id/editUserName" />
 </androidx.constraintlayout.widget.ConstraintLayout>

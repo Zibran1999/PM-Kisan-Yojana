@@ -165,7 +165,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, yojanaModel.getImage());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE,"YOJANA LIST");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         Intent intent = new Intent(getContext(), YojanaDataActivity.class);
