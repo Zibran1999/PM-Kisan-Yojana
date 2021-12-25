@@ -46,6 +46,11 @@ public interface ApiInterface {
     @POST("fetch_user_profile_api.php")
     Call<ProfileModelList> getProfileData(@FieldMap Map<String, String> map);
 
+
+    @FormUrlEncoded
+    @POST("update_profile.php")
+    Call<MessageModel> updateProfile(@FieldMap Map<String, String> map);
+
     @FormUrlEncoded
     @POST("upload_status_api.php")
     Call<MessageModel> uploadStatus(@FieldMap Map<String, String> map);

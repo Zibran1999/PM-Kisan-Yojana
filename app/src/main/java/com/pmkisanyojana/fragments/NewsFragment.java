@@ -133,7 +133,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, newsModel.getImage());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 }

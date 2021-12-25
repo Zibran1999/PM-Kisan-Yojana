@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.databinding.ActivityYojanaDataBinding;
 import com.pmkisanyojana.fragments.DetailsFragment;
 import com.pmkisanyojana.fragments.QuizFragment;
@@ -36,6 +38,7 @@ public class YojanaDataActivity extends AppCompatActivity {
     YojanaDataActivity activity;
     String[] cameraPermission;
     String[] storagePermission;
+    FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
@@ -48,18 +51,44 @@ public class YojanaDataActivity extends AppCompatActivity {
         initViews();
 
 
-
         // allowing permissions of gallery and camera
         cameraPermission = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        binding.viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 1) {
+                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(YojanaDataActivity.this);
+                    Bundle bundle = new Bundle();
+                  //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Status Stories");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Status Fragment");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+                } else if (position == 2) {
+                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(YojanaDataActivity.this);
+                    Bundle bundle = new Bundle();
+                    //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Quiz");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Quiz Fragment");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    private void PicImageFromGallery() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent,101);
-    }
     private void initViews() {
         setUpViewPager(binding.viewPager);
         binding.tabs.setupWithViewPager(binding.viewPager);
@@ -68,15 +97,12 @@ public class YojanaDataActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager(ViewPager viewPager) {
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(activity.getSupportFragmentManager(), BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         adapter.addFragment(new DetailsFragment(), "Details");
         adapter.addFragment(new StatusFragment(), "Status");
         adapter.addFragment(new QuizFragment(), "Quiz");
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(1);
-
-
     }
 
 
@@ -123,6 +149,7 @@ public class YojanaDataActivity extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                assert result != null;
                 uri = result.getUri();
                 setImage(uri, this);
                 Glide.with(this).load(uri).into(StatusFragment.chooseImg);

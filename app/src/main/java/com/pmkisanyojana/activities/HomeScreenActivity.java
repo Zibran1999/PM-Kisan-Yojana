@@ -72,8 +72,10 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     TextView txtUserName;
     ImageView headerImage;
     ViewPager viewPager;
-    String id;
+    String id,userImage;
     PageViewModel pageViewModel;
+
+    Map<String, String> map = new HashMap<>();
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -147,11 +149,9 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         drawerLayout = binding.drawerLayout;
         Paper.init(this);
 
-
         id = Paper.book().read(Prevalent.userId);
 
         if (id != null) {
-            Map<String, String> map = new HashMap<>();
             map.put("id", id);
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         }
@@ -217,9 +217,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             userProfileLayout.setVisibility(View.GONE);
             headerImage.setVisibility(View.VISIBLE);
         }
-        userProfileImg.setOnClickListener(v -> {
-            startActivity(new Intent(HomeScreenActivity.this, UpdateProfile.class));
-        });
         navMenu.setOnClickListener(v -> {
             if (drawerLayout.isDrawerVisible(GravityCompat.START))
                 drawerLayout.closeDrawer(GravityCompat.START);
@@ -228,19 +225,26 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         animateNavigationDrawer();
     }
 
-    private void setImage(CircleImageView userProfileImg, TextView txtUserName) {
+    private void setImage(CircleImageView userProfileImg, TextView uname) {
+        pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication()
+                , map)).get(PageViewModel.class);
         pageViewModel.getUserData().observe(this, profileModelList -> {
             if (!profileModelList.getData().isEmpty()) {
                 for (ProfileModel pm : profileModelList.getData()) {
-                    txtUserName.setText(pm.getUserName().toString().trim());
+                    uname.setText(pm.getUserName().trim());
+                    userImage = pm.getUserImage();
                     Glide.with(this).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
-                                    + pm.getUserImage()).into(userProfileImg);
+                                    + userImage).into(userProfileImg);
 
                 }
             }
         });
-
+        userProfileImg.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeScreenActivity.this,UpdateProfile.class);
+            intent.putExtra("img",userImage);
+            startActivity(intent);
+        });
     }
 
     private void animateNavigationDrawer() {
