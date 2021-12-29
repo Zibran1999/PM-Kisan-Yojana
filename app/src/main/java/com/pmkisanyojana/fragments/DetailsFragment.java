@@ -17,20 +17,19 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.WebViewActivity;
+import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentDetailsBinding;
 import com.pmkisanyojana.models.ModelFactory;
@@ -62,9 +61,7 @@ public class DetailsFragment extends Fragment {
     FragmentDetailsBinding binding;
     Dialog dialog;
     LottieAnimationView lottieAnimationView;
-    /*ads variable*/
-    AdView adView;
-    /*ads variable*/
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -108,6 +105,8 @@ public class DetailsFragment extends Fragment {
         binding = FragmentDetailsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         dialog = CommonMethod.getDialog(requireActivity());
+        MobileAds.initialize(requireActivity());
+        CommonMethod.interstitialAds(requireActivity());
 
         webView = binding.webView;
         WebSettings webSettings = webView.getSettings();
@@ -136,16 +135,13 @@ public class DetailsFragment extends Fragment {
         List<PreviewModel> previewModels = new ArrayList<>();
         MobileAds.initialize(requireActivity());
 
-        adView = binding.adViewData;
-        CommonMethod.getBannerAds(requireActivity(), adView);
-
-
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
         pageViewModel.getPreviewData().observe(requireActivity(), previewModelList -> {
             previewModels.clear();
             previewModels.addAll(previewModelList.getData());
             if (!previewModels.isEmpty()) {
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
                 lottieAnimationView.setVisibility(View.GONE);
                 String hindiString = null;
                 String englishString = null;
@@ -166,12 +162,11 @@ public class DetailsFragment extends Fragment {
                                 if (englishString == null) {
                                     englishString = m.getDesc();
                                     materialButtonToggleGroup.setVisibility(View.VISIBLE);
-
                                 }
-
                             }
-
                         }
+
+
                     }
                 }
 
@@ -185,13 +180,21 @@ public class DetailsFragment extends Fragment {
                     webView.loadData(finalEnglishString, "text/html", "UTF-8");
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
-                new Handler().postDelayed(() -> {
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.show(requireActivity());
-                    } else {
-                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
-                    }
-                }, 2000);
+                Log.d("pos", String.valueOf(YojanaDataActivity.count));
+                if (YojanaDataActivity.count == 1) {
+                    new Handler().postDelayed(() -> {
+
+                        if (YojanaDataActivity.pos % 2 == 1) {
+                            if (mInterstitialAd != null) {
+                                mInterstitialAd.show(requireActivity());
+                            } else {
+                                CommonMethod.interstitialAds(requireActivity());
+                                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                            }
+                        }
+                        YojanaDataActivity.count++;
+                    }, 2000);
+                }
                 binding.titleTv.setText(requireActivity().getIntent().getStringExtra("title"));
                 dialog.dismiss();
 
@@ -227,7 +230,7 @@ public class DetailsFragment extends Fragment {
                 });
 
 
-            }else {
+            } else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
                 visitSiteBtn.setVisibility(View.GONE);
                 binding.titleTv.setVisibility(View.GONE);
@@ -257,5 +260,12 @@ public class DetailsFragment extends Fragment {
             }
         });
         return root;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        YojanaDataActivity.count--;
     }
 }

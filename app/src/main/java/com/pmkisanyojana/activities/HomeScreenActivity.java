@@ -14,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -149,6 +150,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navMenu = binding.navMenu;
         drawerLayout = binding.drawerLayout;
         Paper.init(this);
+        CommonMethod.interstitialAds(this);
 
         id = Paper.book().read(Prevalent.userId);
 
@@ -211,7 +213,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
 
 
         if (id != null) {
-            setImage(userProfileImg, txtUserName);
+            setImage(userProfileImg, txtUserName, headerImage, userProfileLayout);
             userProfileLayout.setVisibility(View.VISIBLE);
             headerImage.setVisibility(View.GONE);
         } else {
@@ -219,15 +221,25 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             headerImage.setVisibility(View.VISIBLE);
         }
         navMenu.setOnClickListener(v -> {
-            setImage(userProfileImg, txtUserName);
-            if (drawerLayout.isDrawerVisible(GravityCompat.START))
+
+            id = Paper.book().read(Prevalent.userId);
+            Log.d("ids", id);
+            if (id != null) {
+                setImage(userProfileImg, txtUserName, headerImage, userProfileLayout);
+                userProfileLayout.setVisibility(View.VISIBLE);
+                headerImage.setVisibility(View.GONE);
+            } else {
+                userProfileLayout.setVisibility(View.GONE);
+                headerImage.setVisibility(View.VISIBLE);
+            }
+            if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
-            else drawerLayout.openDrawer(GravityCompat.START);
+            } else drawerLayout.openDrawer(GravityCompat.START);
         });
         animateNavigationDrawer();
     }
 
-    private void setImage(CircleImageView userProfileImg, TextView uname) {
+    private void setImage(CircleImageView userProfileImg, TextView uname, ImageView headerImage, ConstraintLayout userProfileLayout) {
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication()
                 , map)).get(PageViewModel.class);
         pageViewModel.getUserData().observe(this, profileModelList -> {
@@ -240,6 +252,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                                     + userImage).into(userProfileImg);
 
                 }
+                userProfileLayout.setVisibility(View.VISIBLE);
+                headerImage.setVisibility(View.GONE);
             }
         });
         userProfileImg.setOnClickListener(v -> {
@@ -380,6 +394,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onResume() {
         super.onResume();
+
         registerReceiver(receiver, intentFilter);
     }
 

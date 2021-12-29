@@ -1,7 +1,5 @@
 package com.pmkisanyojana.fragments;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,10 +14,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.YojanaAdapter;
@@ -43,7 +39,6 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
     RecyclerView homeRV, pinnedRv;
     String yojanaId = "true";
     YojanaAdapter yojanaAdapter;
-    AdView adView;
     FragmentYojanaBinding binding;
     FirebaseAnalytics mFirebaseAnalytics;
     PageViewModel pageViewModel;
@@ -93,8 +88,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
         MobileAds.initialize(root.getContext());
-        adView = binding.adViewHome;
-        CommonMethod.getBannerAds(requireActivity(), adView);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
@@ -134,19 +128,10 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
                         models.remove(model);
                     }
                 }
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewYojana);
+
                 adapter.updateYojanaList(yojanaModels);
                 yojanaAdapter.updateYojanaList(models);
-
-
-                if (WelcomeScreenActivity.count == 1) {
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.show(requireActivity());
-                    } else {
-                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
-                    }
-                    WelcomeScreenActivity.count++;
-                }
-
 
             }
         });
@@ -158,7 +143,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
 
 
     @Override
-    public void onItemClicked(YojanaModel yojanaModel) {
+    public void onItemClicked(YojanaModel yojanaModel, int position) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
         Bundle bundle = new Bundle();
@@ -171,6 +156,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         intent.putExtra("id", yojanaModel.getId());
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());
+        intent.putExtra("pos", position);
         startActivity(intent);
 
 

@@ -19,6 +19,7 @@ import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentQuizBinding;
 import com.pmkisanyojana.models.QuizModel;
+import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,8 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
                 random = new Random();
                 currentPos = random.nextInt(quizModelList.size());
                 setDataToViews(currentPos);
-            }else {
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
+            } else {
                 quiz.setVisibility(View.GONE);
             }
         });
@@ -128,8 +130,8 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private void setDataToViews(int currentPos) {
 
-        if (questionAttemted <= 10) {
-            questionNo.setText(questionAttemted + "/10");
+        if (questionAttemted <= 15) {
+            questionNo.setText(questionAttemted + "/15");
             question.setText(quizModelList.get(currentPos).getQues());
             op1.setText(quizModelList.get(currentPos).getOp1());
             op2.setText(quizModelList.get(currentPos).getOp2());
@@ -151,16 +153,16 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         scoreResult = binding.scoreResult;
         nextBtn = binding.nextBtn;
         cong = binding.cong;
-        if (currentScore < 5) {
+        if (currentScore < 7) {
             cong.setText("Try again!");
             nextBtn.setText("Play Again");
-        } else if (currentScore > 5 && currentScore < 8) {
+        } else if (currentScore > 7 && currentScore < 12) {
             cong.setText("Good!");
 
-        } else if (currentScore > 8 && currentScore <= 10) {
+        } else if (currentScore > 12 && currentScore <= 15) {
             cong.setText("Great!");
         }
-        scoreResult.setText(currentScore + "/10");
+        scoreResult.setText(currentScore + "/15");
         nextBtn.setOnClickListener(v -> {
             quiz.setVisibility(View.VISIBLE);
             score.setVisibility(View.GONE);
@@ -193,21 +195,29 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(button.getText().toString().trim().toLowerCase(Locale.ROOT))) {
             currentScore++;
             button.setBackgroundColor(Color.parseColor("#009637"));
-
+            new Handler().postDelayed(() -> {
+                currentPos = random.nextInt(quizModelList.size());
+                resetButtonColor();
+                setDataToViews(currentPos);
+            }, 3000);
         } else {
             showAnswer();
+            new Handler().postDelayed(() -> {
+                currentPos = random.nextInt(quizModelList.size());
+                resetButtonColor();
+                setDataToViews(currentPos);
+            }, 2000);
             button.setBackgroundColor(Color.parseColor("#ff0000"));
         }
         button.setTextColor(Color.parseColor("#ffffff"));
         questionAttemted++;
-        new Handler().postDelayed(() -> {
-            currentPos = random.nextInt(quizModelList.size());
-            resetButtonColor();
-            setDataToViews(currentPos);
-        }, 800);
     }
 
     private void showAnswer() {
+        op1.setClickable(false);
+        op2.setClickable(false);
+        op3.setClickable(false);
+        op4.setClickable(false);
         if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(op1.getText().toString().trim().toLowerCase(Locale.ROOT))) {
 
             op1.setBackgroundColor(Color.parseColor("#009637"));
@@ -229,12 +239,15 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             op4.setBackgroundColor(Color.parseColor("#009637"));
             op4.setTextColor(Color.parseColor("#ffffff"));
 
-
         }
 
     }
 
     private void resetButtonColor() {
+        op1.setClickable(true);
+        op2.setClickable(true);
+        op3.setClickable(true);
+        op4.setClickable(true);
         op1.setBackgroundColor(Color.parseColor("#ffffff"));
         op2.setBackgroundColor(Color.parseColor("#ffffff"));
         op3.setBackgroundColor(Color.parseColor("#ffffff"));

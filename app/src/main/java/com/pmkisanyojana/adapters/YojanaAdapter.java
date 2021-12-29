@@ -12,8 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.YojanaModel;
 
@@ -44,8 +42,8 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         holder.yojanaTitle.setText(yojanaModelList.get(position).getTitle());
-        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/"+yojanaModelList.get(position).getImage()).into(holder.yojanaImage);
-        holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position)));
+        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModelList.get(position).getImage()).into(holder.yojanaImage);
+        holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(position), position));
 
     }
 
@@ -64,7 +62,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<YojanaAdapter.ViewHolder
 
     public interface YojanaInterface {
 
-        void onItemClicked(YojanaModel yojanaModel);
+        void onItemClicked(YojanaModel yojanaModel, int position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

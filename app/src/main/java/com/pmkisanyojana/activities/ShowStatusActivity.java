@@ -3,10 +3,12 @@ package com.pmkisanyojana.activities;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -40,38 +42,56 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     private static final int PROGRESS_COUNT = 1;
     private final long duration = 500L;
     long pressTime = 0L;
-    long limit = 500L;
+    long limit = 700L;
     TextView UserName, Time, seenBy;
     CircleImageView circleImageView;
     String userImage, userName, statusImage, time, status;
     BottomSheetBehavior sheetBehavior;
     MaterialCardView seenByCard;
     PageViewModel pageViewModel;
-    private StoriesProgressView storiesProgressView;
-    private ImageView image;
-    private int counter = 0;
     Map<String, String> map = new HashMap<>();
     List<StatusViewModel> statusViewModels = new ArrayList<>();
     RecyclerView statusViewsRV;
     StatusViewsAdapter statusViewsAdapter;
+    private StoriesProgressView storiesProgressView;
+    private ImageView image;
+    LinearLayout linearLayout;
+    private int counter = 0;
+
     private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    pressTime = System.currentTimeMillis();
-                    storiesProgressView.pause();
+                    if (isSeenByExpanded()) {
+                        sheetBehavior.setPeekHeight(seenByCard.getHeight());
+                        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    }
+
+                    pause();
                     return false;
                 case MotionEvent.ACTION_UP:
                     long now = System.currentTimeMillis();
-                    sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
                     storiesProgressView.resume();
-
                     return limit < now - pressTime;
+
             }
+
+
             return false;
         }
     };
+
+    private void pause() {
+        pressTime = System.currentTimeMillis();
+        storiesProgressView.pause();
+    }
+
+    private boolean resume() {
+        long now = System.currentTimeMillis();
+        storiesProgressView.resume();
+        return limit < now - pressTime;
+    }
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -101,16 +121,17 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
         seenBy = findViewById(R.id.seenBy);
         seenByCard = findViewById(R.id.seenByCard);
         sheetBehavior = BottomSheetBehavior.from(seenByCard);
+        linearLayout= findViewById(R.id.seenbyLayout);
 
+        initBottomSheets();
 
-        seenBy.setOnClickListener(v -> {
+        linearLayout.setOnClickListener(v1 -> {
             seenByCard.setVisibility(View.VISIBLE);
-            sheetBehavior.setPeekHeight(seenByCard.getHeight());
             sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            sheetBehavior.setPeekHeight(seenByCard.getHeight());
             pressTime = System.currentTimeMillis();
             storiesProgressView.pause();
         });
-
         status = getIntent().getStringExtra("status");
         userImage = getIntent().getStringExtra("userImage");
         userName = getIntent().getStringExtra("userName");
@@ -131,14 +152,14 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             pageViewModel.fetchStatusViews().observe(this, statusViewModelList -> {
                 if (!statusViewModelList.getData().isEmpty()) {
                     statusViewModels.clear();
-                    seenBy.setText(""+statusViewModelList.getData().size());
-                    textView.setText("Viewed  "+statusViewModelList.getData().size());
+                    seenBy.setText("" + statusViewModelList.getData().size());
+                    textView.setText("Viewed  " + statusViewModelList.getData().size());
                     statusViewModels.addAll(statusViewModelList.getData());
                     Collections.reverse(statusViewModels);
                     statusViewsAdapter.updateStatusViewsList(statusViewModels);
 
 
-                }else {
+                } else {
                     seenByCard.setVisibility(View.GONE);
                 }
             });
@@ -201,6 +222,39 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
         super.onDestroy();
     }
 
+    private boolean isSeenByExpanded() {
+        return sheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED;
+    }
+
+    private void initBottomSheets() {
+        sheetBehavior = BottomSheetBehavior.from(seenByCard);
+
+        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+//                        seenBy.animate().rotation(180).setDuration(200).start();
+                        pause();
+                        break;
+
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        seenByCard.animate().rotation(0).setDuration(200).start();
+                        resume();
+
+                        break;
 
 
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+
+            }
+        });
+
+
+    }
 }

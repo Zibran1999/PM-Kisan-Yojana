@@ -64,7 +64,7 @@
         </androidx.core.widget.NestedScrollView>
 
         <com.google.android.gms.ads.AdView
-            android:id="@+id/adView_home"
+            android:id="@+id/adView_Yojana"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

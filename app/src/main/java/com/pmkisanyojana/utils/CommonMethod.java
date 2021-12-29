@@ -28,7 +28,6 @@ import java.net.URLEncoder;
 
 public class CommonMethod {
     public static InterstitialAd mInterstitialAd;
-    public static AdRequest adRequest = new AdRequest.Builder().build();
 
 
     public static void shareApp(Context context) {
@@ -101,8 +100,8 @@ public class CommonMethod {
     }
 
     public static void interstitialAds(Context context) {
-
         MobileAds.initialize(context);
+        AdRequest adRequest = new AdRequest.Builder().build();
         InterstitialAd.load(context, context.getString(R.string.interstitial_id), adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
@@ -116,13 +115,14 @@ public class CommonMethod {
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         // Handle the error
-                        Log.i("TAG", loadAdError.getMessage());
+                        Log.i("TAGError", loadAdError.getMessage());
                         mInterstitialAd = null;
                     }
                 });
     }
 
     public static void getBannerAds(Context context, AdView adView) {
+        AdRequest adRequest = new AdRequest.Builder().build();
         MobileAds.initialize(context);
         adView.loadAd(adRequest);
         adView.setVisibility(View.VISIBLE);

@@ -24,6 +24,7 @@ import com.pmkisanyojana.databinding.ActivityYojanaDataBinding;
 import com.pmkisanyojana.fragments.DetailsFragment;
 import com.pmkisanyojana.fragments.QuizFragment;
 import com.pmkisanyojana.fragments.StatusFragment;
+import com.pmkisanyojana.utils.CommonMethod;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
@@ -37,7 +38,9 @@ public class YojanaDataActivity extends AppCompatActivity {
     ActivityYojanaDataBinding binding;
     YojanaDataActivity activity;
     String[] cameraPermission;
+    public  static int count=1;
     String[] storagePermission;
+    public static int pos =0;
     FirebaseAnalytics mFirebaseAnalytics;
 
 
@@ -47,6 +50,8 @@ public class YojanaDataActivity extends AppCompatActivity {
         binding = ActivityYojanaDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         activity = this;
+        CommonMethod.interstitialAds(this);
+        pos= getIntent().getIntExtra("pos",0);
 
         initViews();
 

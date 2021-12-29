@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -39,7 +38,6 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
     FirebaseAnalytics mFirebaseAnalytics;
     RecyclerView homeRV, pinnedRv;
     YojanaAdapter othersAdapter, pinnedAdapter;
-    AdView adView;
     FragmentOthersBinding binding;
     PageViewModel pageViewModel;
     List<YojanaModel> models = new ArrayList<>();
@@ -90,9 +88,6 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
         MobileAds.initialize(root.getContext());
-        adView = binding.adViewHome;
-        CommonMethod.getBannerAds(requireActivity(), adView);
-
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -136,6 +131,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
                         Log.d("piined ", pinnedModels.toString());
                     }
                 }
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewOthers);
                 pinnedAdapter.updateYojanaList(pinnedModels);
                 othersAdapter.updateYojanaList(models);
 
@@ -146,7 +142,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
     }
 
     @Override
-    public void onItemClicked(YojanaModel yojanaModel) {
+    public void onItemClicked(YojanaModel yojanaModel, int position) {
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
         Bundle bundle = new Bundle();
@@ -159,6 +155,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
         intent.putExtra("id", yojanaModel.getId());
         intent.putExtra("title", yojanaModel.getTitle());
         intent.putExtra("url", yojanaModel.getUrl());
+        intent.putExtra("pos", position);
         startActivity(intent);
     }
 }

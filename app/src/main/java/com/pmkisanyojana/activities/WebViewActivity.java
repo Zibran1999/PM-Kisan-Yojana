@@ -1,11 +1,8 @@
 package com.pmkisanyojana.activities;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -16,8 +13,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.pmkisanyojana.databinding.ActivityWebViewBinding;
 import com.pmkisanyojana.utils.CommonMethod;
@@ -28,10 +23,6 @@ public class WebViewActivity extends AppCompatActivity {
     ActivityWebViewBinding binding;
     String data;
     Dialog dialog;
-
-    /*ads variable*/
-    AdView adView;
-    /*ads variable*/
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -50,9 +41,6 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setDisplayZoomControls(false);
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
-        adView = binding.adViewWebView;
-        CommonMethod.getBannerAds(this, adView);
-
 
 
         dialog = CommonMethod.getDialog(this);
@@ -67,24 +55,24 @@ public class WebViewActivity extends AppCompatActivity {
 
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 
-                adView.setVisibility(View.GONE);
                 Log.e("TAG", "Error: " + description);
                 Toast.makeText(getApplicationContext(), "Oh no! " + description, Toast.LENGTH_SHORT).show();
 
             }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 // TODO Auto-generated method stub
                 dialog.dismiss();
+                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView);
 
                 super.onPageFinished(view, url);
             }
         });
 
-
         webView.loadUrl(data);
         webView.setVisibility(View.VISIBLE);
-        adView.setVisibility(View.VISIBLE);
+
     }
 
     @Override

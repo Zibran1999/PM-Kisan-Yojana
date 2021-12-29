@@ -12,13 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.NewsModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
@@ -44,7 +41,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.newsTitle.setText(newsModelList.get(position).getTitle());
         holder.newsTitle.setTextSize(17);
         Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + newsModelList.get(position).getImage()).into(holder.newsImage);
-        holder.itemView.setOnClickListener(v -> newsInterface.onItemClicked(newsModelList.get(position)));
+        holder.itemView.setOnClickListener(v -> newsInterface.onItemClicked(newsModelList.get(position),position));
 
     }
 
@@ -62,7 +59,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     public interface NewsInterface {
 
-        void onItemClicked(NewsModel newsModel);
+        void onItemClicked(NewsModel newsModel, int position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.NewsDataActivity;
@@ -39,7 +38,6 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
     Dialog dialog;
     RecyclerView homeRV;
     NewsAdapter newsAdapter;
-    AdView adView;
     FragmentNewsBinding binding;
     PageViewModel pageViewModel;
 
@@ -90,8 +88,6 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
         homeRV = binding.HomeRV;
         MobileAds.initialize(root.getContext());
-        adView = binding.adViewHome;
-        CommonMethod.getBannerAds(requireActivity(), adView);
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
@@ -116,17 +112,20 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
             if (!newsModelList.getData().isEmpty()) {
                 newsAdapter.updateNewsList(newsModelList.getData());
                 dialog.dismiss();
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewNews);
             }
+
         });
 
     }
 
     @Override
-    public void onItemClicked(NewsModel newsModel) {
+    public void onItemClicked(NewsModel newsModel, int position) {
         Intent intent = new Intent(getContext(), NewsDataActivity.class);
         intent.putExtra("id", newsModel.getId());
         intent.putExtra("title", newsModel.getTitle());
         intent.putExtra("img", newsModel.getImage());
+        intent.putExtra("pos", position);
         startActivity(intent);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 

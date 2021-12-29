@@ -18,9 +18,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
@@ -38,11 +37,13 @@ public class NewsDataActivity extends AppCompatActivity {
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
+    InterstitialAd interstitialAd;
     Dialog dialog;
+    int pos;
+
 //    String finalEnglishString, finalHindiString;
 
     /*ads variable*/
-    AdView adView;
     /*ads variable*/
 
     @SuppressLint("NonConstantResourceId")
@@ -52,6 +53,7 @@ public class NewsDataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityNewsDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        MobileAds.initialize(NewsDataActivity.this);
         CommonMethod.interstitialAds(this);
         newsImg = binding.newsImg;
         newsTitle = binding.newsTitle;
@@ -61,8 +63,7 @@ public class NewsDataActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         dialog = CommonMethod.getDialog(this);
         dialog.show();
-        MobileAds.initialize(this);
-        adView = binding.adViewNews;
+        pos= getIntent().getIntExtra("pos",0);
 
         map.put("previewId", id);
 
@@ -79,9 +80,7 @@ public class NewsDataActivity extends AppCompatActivity {
                 img = getIntent().getStringExtra("img");
                 Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
                 newsTitle.setText(title);
-                CommonMethod.getBannerAds(this, adView);
-
-
+                CommonMethod.getBannerAds(this, binding.adViewNews);
                 for (PreviewModel m : previewModelList.getData()) {
                     if (m.getPreviewId().equals(id)) {
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");
@@ -94,10 +93,13 @@ public class NewsDataActivity extends AppCompatActivity {
                 }
 
                 new Handler().postDelayed(() -> {
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.show(this);
-                    } else {
-                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                    if (pos%2==1){
+                        if (mInterstitialAd != null) {
+                            mInterstitialAd.show(this);
+                        } else {
+                            CommonMethod.interstitialAds(this);
+                            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                        }
                     }
                 }, 2000);
 

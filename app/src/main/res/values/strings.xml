@@ -17,23 +17,20 @@
     <string name="camera_tip">Tap to Take a Photo,Hold to Record Video</string>
 
     <!--Test ads ids-->
-    <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>
-    <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>
+<!--        <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
+<!--        <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>-->
+<!--        <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>-->
 
     <!--Real ads ids-->
-    <!--    <string name="app_id">ca-app-pub-1247850544347178~2799712755</string>-->
-    <!--    <string name="banner_id">ca-app-pub-1247850544347178/8965665855</string>-->
-    <!--    <string name="interstitial_id">ca-app-pub-1247850544347178/8926137402</string>-->
-    <!--    &lt;!&ndash; TODO: Remove or change this placeholder text &ndash;&gt;-->
+
+    <string name="app_id">ca-app-pub-1247850544347178~2799712755</string>
+    <string name="banner_id">ca-app-pub-1247850544347178/8965665855</string>
+    <string name="interstitial_id">ca-app-pub-1247850544347178/8926137402</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">todo</string>
     <string name="_0">0</string>
 
 
-    <!--    admob ad unit - Banner - ca-app-pub-1247850544347178/5208823053-->
-
-    <!--    admob ad unit -Interstitial - ca-app-pub-1247850544347178/3704169692-->
-
-    <!--    Admob app id - ca-app-pub-1247850544347178~8424522643-->
 </resources>

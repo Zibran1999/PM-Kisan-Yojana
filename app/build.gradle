@@ -12,8 +12,8 @@ android {
         applicationId "com.pmkisanyojana"
         minSdk 21
         targetSdk 31
-        versionCode 8
-        versionName "1.7"
+        versionCode 9
+        versionName "1.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.google.ads.mediation:facebook:6.8.0.0'
     implementation 'com.devlomi:circularstatusview:1.0.1'
 
-//    implementation 'com.google.android.ads:mediation-test-suite:2.0.0'
+    implementation 'com.google.android.ads:mediation-test-suite:2.0.0'
 
 //    // Story Progress View
     implementation 'com.github.shts:StoriesProgressView:3.0.0'

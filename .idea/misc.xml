@@ -7,7 +7,7 @@
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.21510416666666668" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_camera.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_data.xml" value="0.1" />
-        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_show_status.xml" value="0.22" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_show_status.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_web_view.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_yojana_data.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/add_status_layout.xml" value="0.5" />
@@ -16,6 +16,9 @@
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_details.xml" value="0.12" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_home_screen.xml" value="0.1" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_my_status.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_news.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_others.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_quiz.xml" value="0.19589743589743588" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_status.xml" value="0.22" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_yojana.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/header.xml" value="0.19895833333333332" />

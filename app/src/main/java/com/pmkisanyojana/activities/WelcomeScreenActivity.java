@@ -22,9 +22,6 @@ public class WelcomeScreenActivity extends AppCompatActivity {
 
     ActivityWelcomeScreenBinding binding;
 
-    /*ads variable*/
-    AdView adView;
-    /*ads variable*/
 
     public static int count = 1;
 
@@ -36,6 +33,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         MobileAds.initialize(this);
         CommonMethod.interstitialAds(WelcomeScreenActivity.this);
+        CommonMethod.getBannerAds(this, binding.adView);
 
         binding.startBtn.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
@@ -52,10 +50,6 @@ public class WelcomeScreenActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         });
-
-        adView = binding.adView;
-        CommonMethod.getBannerAds(this, adView);
-
 
     }
 

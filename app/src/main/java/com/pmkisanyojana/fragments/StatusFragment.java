@@ -52,6 +52,7 @@ import com.pmkisanyojana.models.MyStatusModel;
 import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.models.StatusModel;
 import com.pmkisanyojana.models.TimeUtils;
+import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -76,13 +77,13 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final int CAMERA_REQUEST = 100;
     private static final int STORAGE_REQUEST = 200;
     public static Uri imageuri;
     public static Dialog uploadProfileDialog, addStatusDialog;
     public static ImageView chooseImg;
     static Bitmap bitmap;
     static String encodedImage;
+    private static final int CAMERA_REQUEST = 100;
     String[] cameraPermission;
     String[] storagePermission;
     MaterialCardView createAccoutnBtn;
@@ -133,7 +134,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
     public static String imageStore(Bitmap bitmap) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 40, stream);
         byte[] imageBytes = stream.toByteArray();
         return android.util.Base64.encodeToString(imageBytes, Base64.DEFAULT);
     }
@@ -171,23 +172,26 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         loadingDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         //**Loading Dialog****/
+        uploadProfileDialog(root.getContext());
 
         // allowing permissions of gallery and camera
         cameraPermission = new String[]{android.Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
         createAccoutnBtn.setOnClickListener(v -> {
-            uploadProfileDialog(root.getContext());
+            uploadProfileDialog.show();
         });
 
         launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            try {
-                InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
-                bitmap = BitmapFactory.decodeStream(inputStream);
-                encodedImage = imageStore(bitmap);
-                showStatusBeforeUpload(result, id);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+           if (result !=null){
+               try {
+                   InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
+                   bitmap = BitmapFactory.decodeStream(inputStream);
+                   encodedImage = imageStore(bitmap);
+                   showStatusBeforeUpload(result, id);
+               } catch (FileNotFoundException e) {
+                   e.printStackTrace();
+               }
+           }
         });
 
 
@@ -201,7 +205,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
             binding.uploadStatusLayout.setVisibility(View.GONE);
             binding.createAcBtn.setVisibility(View.VISIBLE);
         }
-        binding.txtClickToAdd.setOnClickListener(v -> {
+        binding.uploadStatusLayout.setOnClickListener(v -> {
             launcher.launch("image/*");
         });
 
@@ -254,6 +258,8 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 }
                 Collections.reverse(statusModelLis);
                 statusAdapter.updateStatusList(statusModelLis);
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewStatus);
+
             }
         });
     }
@@ -385,11 +391,10 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     Glide.with(requireActivity()).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
                                     + userImage).into(userProfileImage);
-                    binding.uploadStatusLayout.setOnClickListener(v -> {
-                    });
+
                     binding.circularStatusView.setVisibility(View.GONE);
                     binding.imageView4.setVisibility(View.GONE);
-                    binding.txtClickToAdd.setOnClickListener(v -> {
+                    binding.uploadStatusLayout.setOnClickListener(v -> {
                         launcher.launch("image/*");
                     });
 
@@ -419,7 +424,6 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         uploadProfileDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         uploadProfileDialog.getWindow().setBackgroundDrawable(context.getDrawable(R.drawable.item_bg));
         uploadProfileDialog.setCancelable(true);
-        uploadProfileDialog.show();
 
         chooseImg = uploadProfileDialog.findViewById(R.id.choose_img);
         userName = uploadProfileDialog.findViewById(R.id.enter_name);
