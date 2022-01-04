@@ -223,7 +223,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navMenu.setOnClickListener(v -> {
 
             id = Paper.book().read(Prevalent.userId);
-            Log.d("ids", id);
             if (id != null) {
                 setImage(userProfileImg, txtUserName, headerImage, userProfileLayout);
                 userProfileLayout.setVisibility(View.VISIBLE);
