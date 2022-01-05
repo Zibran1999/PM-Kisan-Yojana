@@ -14,7 +14,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,7 +71,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     SectionsPagerAdapter sectionsPagerAdapter;
     ConstraintLayout userProfileLayout;
     TextView txtUserName;
-    ImageView headerImage;
+    ImageView headerImage, editImg;
     ViewPager viewPager;
     String id, userImage;
     PageViewModel pageViewModel;
@@ -210,10 +209,11 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView.setCheckedItem(R.id.nav_home);
 
         userProfileLayout = navigationView.findViewById(R.id.user_profile_layout);
+        editImg = navigationView.findViewById(R.id.edit_img);
 
 
         if (id != null) {
-            setImage(userProfileImg, txtUserName, headerImage, userProfileLayout);
+            setImage(userProfileImg, txtUserName, headerImage, userProfileLayout, editImg);
             userProfileLayout.setVisibility(View.VISIBLE);
             headerImage.setVisibility(View.GONE);
         } else {
@@ -224,7 +224,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
 
             id = Paper.book().read(Prevalent.userId);
             if (id != null) {
-                setImage(userProfileImg, txtUserName, headerImage, userProfileLayout);
+                setImage(userProfileImg, txtUserName, headerImage, userProfileLayout, editImg);
                 userProfileLayout.setVisibility(View.VISIBLE);
                 headerImage.setVisibility(View.GONE);
             } else {
@@ -238,7 +238,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         animateNavigationDrawer();
     }
 
-    private void setImage(CircleImageView userProfileImg, TextView uname, ImageView headerImage, ConstraintLayout userProfileLayout) {
+    private void setImage(CircleImageView userProfileImg, TextView uname, ImageView headerImage, ConstraintLayout userProfileLayout, ImageView editImg) {
         pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication()
                 , map)).get(PageViewModel.class);
         pageViewModel.getUserData().observe(this, profileModelList -> {
@@ -256,6 +256,11 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
         });
         userProfileImg.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeScreenActivity.this, UpdateProfile.class);
+            intent.putExtra("img", userImage);
+            startActivity(intent);
+        });
+        editImg.setOnClickListener(v -> {
             Intent intent = new Intent(HomeScreenActivity.this, UpdateProfile.class);
             intent.putExtra("img", userImage);
             startActivity(intent);

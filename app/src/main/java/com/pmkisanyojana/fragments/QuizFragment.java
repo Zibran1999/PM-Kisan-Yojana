@@ -191,10 +191,37 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @SuppressLint("NonConstantResourceId")
     private void checkAns(MaterialButton button) {
         if (quizModelList.get(currentPos).getAns().trim().toLowerCase(Locale.ROOT).equals(button.getText().toString().trim().toLowerCase(Locale.ROOT))) {
             currentScore++;
             button.setBackgroundColor(Color.parseColor("#009637"));
+            switch (button.getId()) {
+                case R.id.opt_one_card:
+                    binding.lottieWhatsapp.setAnimation(R.raw.right);
+                    binding.lottieWhatsapp.playAnimation();
+                    binding.lottieWhatsapp.setVisibility(View.VISIBLE);
+
+                    break;
+                case R.id.opt_two_card:
+                    binding.lottieWhatsapp2.setAnimation(R.raw.right);
+                    binding.lottieWhatsapp2.playAnimation();
+                    binding.lottieWhatsapp2.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.opt_three_card:
+                    binding.lottieWhatsapp3.setAnimation(R.raw.right);
+                    binding.lottieWhatsapp3.playAnimation();
+                    binding.lottieWhatsapp3.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.opt_four_card:
+                    binding.lottieWhatsapp4.setAnimation(R.raw.right);
+                    binding.lottieWhatsapp4.playAnimation();
+                    binding.lottieWhatsapp4.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + button.getId());
+            }
+
             new Handler().postDelayed(() -> {
                 currentPos = random.nextInt(quizModelList.size());
                 resetButtonColor();
@@ -208,6 +235,32 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
                 setDataToViews(currentPos);
             }, 2000);
             button.setBackgroundColor(Color.parseColor("#ff0000"));
+            switch (button.getId()) {
+                case R.id.opt_one_card:
+                    binding.lottieWhatsapp.setAnimation(R.raw.wrongcross);
+                    binding.lottieWhatsapp.playAnimation();
+                    binding.lottieWhatsapp.setVisibility(View.VISIBLE);
+
+                    break;
+                case R.id.opt_two_card:
+                    binding.lottieWhatsapp2.setAnimation(R.raw.wrongcross);
+                    binding.lottieWhatsapp2.playAnimation();
+                    binding.lottieWhatsapp2.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.opt_three_card:
+                    binding.lottieWhatsapp3.setAnimation(R.raw.wrongcross);
+                    binding.lottieWhatsapp3.playAnimation();
+                    binding.lottieWhatsapp3.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.opt_four_card:
+                    binding.lottieWhatsapp4.setAnimation(R.raw.wrongcross);
+                    binding.lottieWhatsapp4.playAnimation();
+                    binding.lottieWhatsapp4.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + button.getId());
+            }
+
         }
         button.setTextColor(Color.parseColor("#ffffff"));
         questionAttemted++;
@@ -244,10 +297,13 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
     }
 
     private void resetButtonColor() {
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
+
         op1.setClickable(true);
         op2.setClickable(true);
         op3.setClickable(true);
         op4.setClickable(true);
+
         op1.setBackgroundColor(Color.parseColor("#ffffff"));
         op2.setBackgroundColor(Color.parseColor("#ffffff"));
         op3.setBackgroundColor(Color.parseColor("#ffffff"));
@@ -256,6 +312,11 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         op2.setTextColor(Color.parseColor("#000000"));
         op3.setTextColor(Color.parseColor("#000000"));
         op4.setTextColor(Color.parseColor("#000000"));
+        binding.lottieWhatsapp.setVisibility(View.GONE);
+        binding.lottieWhatsapp2.setVisibility(View.GONE);
+        binding.lottieWhatsapp3.setVisibility(View.GONE);
+        binding.lottieWhatsapp4.setVisibility(View.GONE);
+
 
     }
 

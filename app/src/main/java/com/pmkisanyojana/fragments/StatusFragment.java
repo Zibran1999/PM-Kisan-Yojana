@@ -78,12 +78,12 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     private static final String ARG_PARAM2 = "param2";
 
     private static final int STORAGE_REQUEST = 200;
+    private static final int CAMERA_REQUEST = 100;
     public static Uri imageuri;
     public static Dialog uploadProfileDialog, addStatusDialog;
     public static ImageView chooseImg;
     static Bitmap bitmap;
     static String encodedImage;
-    private static final int CAMERA_REQUEST = 100;
     String[] cameraPermission;
     String[] storagePermission;
     MaterialCardView createAccoutnBtn;
@@ -182,16 +182,16 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         });
 
         launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-           if (result !=null){
-               try {
-                   InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
-                   bitmap = BitmapFactory.decodeStream(inputStream);
-                   encodedImage = imageStore(bitmap);
-                   showStatusBeforeUpload(result, id);
-               } catch (FileNotFoundException e) {
-                   e.printStackTrace();
-               }
-           }
+            if (result != null) {
+                try {
+                    InputStream inputStream = requireActivity().getContentResolver().openInputStream(result);
+                    bitmap = BitmapFactory.decodeStream(inputStream);
+                    encodedImage = imageStore(bitmap);
+                    showStatusBeforeUpload(result, id);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         });
 
 
@@ -260,6 +260,9 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 statusAdapter.updateStatusList(statusModelLis);
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewStatus);
 
+            }else {
+                binding.recentUpdateLayout.setVisibility(View.GONE);
+
             }
         });
     }
@@ -322,6 +325,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     Glide.with(requireActivity()).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Status_Images/" + m.getImage()).into(userProfileImage);
                 }
 
+                CommonMethod.schedule(myStatusId, img);
                 binding.imageView4.setVisibility(View.VISIBLE);
                 binding.menuClick.setOnClickListener(v -> {
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
@@ -338,16 +342,20 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     builder.show();
                 });
 
-                if (timeSt.equals("just now") || timeSt.equals("a minute ago") || timeSt.equals("an hour ago")) {
-                    Log.d("timeString", timeSt);
-                } else {
-                    int time = Integer.parseInt(timeSt.replaceAll("[^0-9]", ""));
-                    if (time >= 24) {
-                        map.put("statusId", myStatusId);
-                        map.put("statusImg", "User_Status_Images/" + img);
-                        deleteMyStatus(map, userImage);
-                    }
-                }
+//                if (timeSt.equals("just now") || timeSt.equals("a minute ago") || timeSt.equals("an hour ago")) {
+//                    Log.d("timeString", timeSt);
+//                } else {
+//                    int time = Integer.parseInt(timeSt.replaceAll("[^0-9]", ""));
+//                    if (time >= 24) {
+//                        map.put("statusId", myStatusId);
+//                        map.put("statusImg", "User_Status_Images/" + img);
+//                        deleteMyStatus(map, userImage);
+//                    }else if (timeSt.equals(time+" days ago")){
+//                        map.put("statusId", myStatusId);
+//                        map.put("statusImg", "User_Status_Images/" + img);
+//                        deleteMyStatus(map, userImage);
+//                    }
+//                }
 
                 binding.txtClickToAdd.setClickable(false);
                 binding.uploadStatusLayout.setOnClickListener(v -> {

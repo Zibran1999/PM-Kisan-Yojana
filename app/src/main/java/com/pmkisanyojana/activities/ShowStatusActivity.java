@@ -3,7 +3,6 @@ package com.pmkisanyojana.activities;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,7 +46,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     CircleImageView circleImageView;
     String userImage, userName, statusImage, time, status;
     BottomSheetBehavior sheetBehavior;
-    MaterialCardView seenByCard;
+    LinearLayout seenByCard;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     List<StatusViewModel> statusViewModels = new ArrayList<>();
@@ -55,31 +54,30 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     StatusViewsAdapter statusViewsAdapter;
     private StoriesProgressView storiesProgressView;
     private ImageView image;
-    LinearLayout linearLayout;
     private int counter = 0;
+    private ImageView arrowUp;
 
-    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    if (isSeenByExpanded()) {
-                        sheetBehavior.setPeekHeight(seenByCard.getHeight());
-                        sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-                    }
 
-                    pause();
+    @SuppressLint("ClickableViewAccessibility")
+    private View.OnTouchListener onTouchListener = (v, event) -> {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (isSeenByExpanded()) {
+                    pressTime = System.currentTimeMillis();
+                    storiesProgressView.pause();
                     return false;
-                case MotionEvent.ACTION_UP:
-                    long now = System.currentTimeMillis();
-                    storiesProgressView.resume();
-                    return limit < now - pressTime;
+                }
+                pause();
+                return false;
+            case MotionEvent.ACTION_UP:
+                long now = System.currentTimeMillis();
+                storiesProgressView.resume();
+                return limit < now - pressTime;
 
-            }
-
-
-            return false;
         }
+
+
+        return false;
     };
 
     private void pause() {
@@ -103,35 +101,25 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        storiesProgressView = (StoriesProgressView) findViewById(R.id.stories);
+        storiesProgressView = findViewById(R.id.stories);
         storiesProgressView.setStoriesCount(PROGRESS_COUNT);
         storiesProgressView.setStoryDuration(3000L);
-        // or
-
-//         storiesProgressView.setStoriesCountWithDurations(duration);
 
         storiesProgressView.setStoriesListener(this);
         storiesProgressView.startStories();
 
         Paper.init(this);
-        image = (ImageView) findViewById(R.id.image);
+        image = findViewById(R.id.image);
         UserName = findViewById(R.id.textView);
         Time = findViewById(R.id.textView2);
         circleImageView = findViewById(R.id.circleImageView);
         seenBy = findViewById(R.id.seenBy);
         seenByCard = findViewById(R.id.seenByCard);
-        sheetBehavior = BottomSheetBehavior.from(seenByCard);
-        linearLayout= findViewById(R.id.seenbyLayout);
+        arrowUp = findViewById(R.id.arrow_up);
+        statusViewsRV = findViewById(R.id.viewedByRV);
 
         initBottomSheets();
 
-        linearLayout.setOnClickListener(v1 -> {
-            seenByCard.setVisibility(View.VISIBLE);
-            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            sheetBehavior.setPeekHeight(seenByCard.getHeight());
-            pressTime = System.currentTimeMillis();
-            storiesProgressView.pause();
-        });
         status = getIntent().getStringExtra("status");
         userImage = getIntent().getStringExtra("userImage");
         userName = getIntent().getStringExtra("userName");
@@ -140,7 +128,6 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
         if (status.equals("MyStatus")) {
             TextView textView = findViewById(R.id.viewedTV);
-            statusViewsRV = findViewById(R.id.viewedByRV);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             layoutManager.setOrientation(RecyclerView.VERTICAL);
             statusViewsRV.setLayoutManager(layoutManager);
@@ -152,6 +139,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             pageViewModel.fetchStatusViews().observe(this, statusViewModelList -> {
                 if (!statusViewModelList.getData().isEmpty()) {
                     statusViewModels.clear();
+                    seenByCard.setVisibility(View.VISIBLE);
                     seenBy.setText("" + statusViewModelList.getData().size());
                     textView.setText("Viewed  " + statusViewModelList.getData().size());
                     statusViewModels.addAll(statusViewModelList.getData());
@@ -160,7 +148,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
 
                 } else {
-                    seenByCard.setVisibility(View.GONE);
+//                    seenByCard.setVisibility(View.GONE);
                 }
             });
 
@@ -169,6 +157,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
         if (status.equals("allStatus")) {
             seenBy.setVisibility(View.GONE);
+            seenByCard.setVisibility(View.GONE);
         }
         UserName.setText(userName);
         Time.setText(time);
@@ -223,25 +212,28 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     }
 
     private boolean isSeenByExpanded() {
-        return sheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED;
+
+        return sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
     }
 
     private void initBottomSheets() {
         sheetBehavior = BottomSheetBehavior.from(seenByCard);
 
-        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @SuppressLint("SwitchIntDef")
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
-                    case BottomSheetBehavior.STATE_COLLAPSED:
-//                        seenBy.animate().rotation(180).setDuration(200).start();
-                        pause();
+                    case BottomSheetBehavior.STATE_EXPANDED:
+//                        statusViewsRV.animate().translationY(-DpUtil.toPixel(50, MyApp.mInstance)).start();
+                        arrowUp.animate().rotation(180).setDuration(200).start();
+                        pressTime = System.currentTimeMillis();
+                        storiesProgressView.pause();
                         break;
-
-                    case BottomSheetBehavior.STATE_HIDDEN:
-                        seenByCard.animate().rotation(0).setDuration(200).start();
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        arrowUp.animate().rotation(0).setDuration(200).start();
+                        statusViewsRV.animate().translationY(0).start();
                         resume();
-
                         break;
 
 
@@ -251,10 +243,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
 
-
             }
         });
-
-
     }
 }

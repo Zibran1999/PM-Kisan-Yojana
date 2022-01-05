@@ -95,6 +95,10 @@ dependencies {
     implementation 'com.github.shts:StoriesProgressView:3.0.0'
     implementation 'com.github.bxute:StoryView:v1.0'
 
+// job shedule
+    implementation 'com.evernote:android-job:1.2.6'
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'

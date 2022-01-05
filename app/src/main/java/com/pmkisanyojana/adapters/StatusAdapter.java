@@ -62,6 +62,11 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
                 map.put("statusId", statusModelList.get(position).getId());
                 map.put("statusImg", "User_Status_Images/" + statusModelList.get(position).getImage());
                 deleteMyStatus(map, holder.itemView.getContext());
+            } else if (statusModelList.get(position).getTime().equals(time + " days ago")) {
+                map.put("statusId", statusModelList.get(position).getId());
+                Log.d("time",time + " days ago");
+                map.put("statusImg", "User_Status_Images/" + statusModelList.get(position).getImage());
+                deleteMyStatus(map, holder.itemView.getContext());
             }
         }
 

@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.evernote.android.job.Job;
+import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
@@ -22,12 +25,36 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
+import com.pmkisanyojana.models.ApiInterface;
+import com.pmkisanyojana.models.ApiWebServices;
+import com.pmkisanyojana.models.MessageModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class CommonMethod {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class CommonMethod extends Job {
     public static InterstitialAd mInterstitialAd;
+    ApiInterface apiInterface;
+
+
+    public static void schedule(String statusId, String statusImg) {
+        PersistableBundleCompat bundle = new PersistableBundleCompat();
+        bundle.putString(Prevalent.UID, statusId);
+        bundle.putString(Prevalent.STATUS_IMAGE, statusImg);
+        new JobRequest.Builder(Prevalent.JOB_TAG_DELETE_STATUS)
+                .setExact(TimeUnit.HOURS.toMillis(24))
+                .setExtras(bundle)
+                .build()
+                .schedule();
+    }
+
 
 
     public static void shareApp(Context context) {
@@ -127,6 +154,45 @@ public class CommonMethod {
         adView.loadAd(adRequest);
         adView.setVisibility(View.VISIBLE);
 
+
+    }
+
+    @NonNull
+    @Override
+    protected Result onRunJob(@NonNull Params params) {
+
+        String sId = params.getExtras().getString(Prevalent.UID, "");
+        String statusImg = params.getExtras().getString(Prevalent.STATUS_IMAGE, "");
+        Map<String, String> map = new HashMap<>();
+        map.put("statusId", sId);
+        map.put("statusImg", "User_Status_Images/" + statusImg);
+        deleteMyStatus(map);
+        return Result.SUCCESS;
+    }
+
+    private void deleteMyStatus(Map<String, String> map) {
+        apiInterface = ApiWebServices.getApiInterface();
+        Call<MessageModel> call = apiInterface.deleteMyStatus(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Log.d("deleteStatus", response.body().getMessage());
+
+                } else {
+                    Log.d("StatusError", response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Log.d("deleteStatusError", t.getMessage());
+
+
+            }
+        });
 
     }
 }
