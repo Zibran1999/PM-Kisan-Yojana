@@ -10,8 +10,13 @@ public class FireJobCreator implements JobCreator {
     @Nullable
     @Override
     public Job create(@NonNull String tag) {
-        return new CommonMethod();
 
+        switch (tag) {
+            case Prevalent.JOB_TAG_DELETE_STATUS:
+                return new CommonMethod();
+            default:
+                return null;
+        }
     }
 }
 

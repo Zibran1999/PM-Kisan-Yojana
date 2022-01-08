@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:nestedScrollingEnabled="true"
-            app:layout_constraintBottom_toTopOf="@+id/adView_home"
+            app:layout_constraintBottom_toTopOf="@+id/adView_News"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">

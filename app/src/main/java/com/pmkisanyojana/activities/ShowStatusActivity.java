@@ -2,7 +2,6 @@ package com.pmkisanyojana.activities;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,13 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.card.MaterialCardView;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.StatusViewsAdapter;
@@ -46,7 +45,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     CircleImageView circleImageView;
     String userImage, userName, statusImage, time, status;
     BottomSheetBehavior sheetBehavior;
-    LinearLayout seenByCard;
+    ConstraintLayout seenByCard;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     List<StatusViewModel> statusViewModels = new ArrayList<>();
@@ -54,7 +53,6 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     StatusViewsAdapter statusViewsAdapter;
     private StoriesProgressView storiesProgressView;
     private ImageView image;
-    private int counter = 0;
     private ImageView arrowUp;
 
 
@@ -103,7 +101,8 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
         storiesProgressView = findViewById(R.id.stories);
         storiesProgressView.setStoriesCount(PROGRESS_COUNT);
-        storiesProgressView.setStoryDuration(3000L);
+        storiesProgressView.setStoryDuration(6000L);
+
 
         storiesProgressView.setStoriesListener(this);
         storiesProgressView.startStories();
@@ -139,6 +138,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             pageViewModel.fetchStatusViews().observe(this, statusViewModelList -> {
                 if (!statusViewModelList.getData().isEmpty()) {
                     statusViewModels.clear();
+                    statusViewsRV.setVisibility(View.VISIBLE);
                     seenByCard.setVisibility(View.VISIBLE);
                     seenBy.setText("" + statusViewModelList.getData().size());
                     textView.setText("Viewed  " + statusViewModelList.getData().size());
@@ -148,6 +148,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
 
                 } else {
+                    statusViewsRV.setVisibility(View.GONE);
 //                    seenByCard.setVisibility(View.GONE);
                 }
             });
@@ -161,7 +162,6 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
         }
         UserName.setText(userName);
         Time.setText(time);
-        Log.d("lddfdfd", userName + " " + time + " " + userImage + " " + statusImage);
         Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/" + userImage).into(circleImageView);
 
         Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Status_Images/" + statusImage).into(image);
@@ -169,22 +169,12 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
 
         // bind reverse view
         View reverse = findViewById(R.id.reverse);
-        reverse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                storiesProgressView.reverse();
-            }
-        });
+        reverse.setOnClickListener(v -> storiesProgressView.reverse());
         reverse.setOnTouchListener(onTouchListener);
 
         // bind skip view
         View skip = findViewById(R.id.skip);
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                storiesProgressView.skip();
-            }
-        });
+        skip.setOnClickListener(v -> storiesProgressView.skip());
         skip.setOnTouchListener(onTouchListener);
     }
 
@@ -212,8 +202,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
     }
 
     private boolean isSeenByExpanded() {
-
-        return sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED;
+        return sheetBehavior.getState() == BottomSheetBehavior.STATE_DRAGGING;
     }
 
     private void initBottomSheets() {
@@ -224,7 +213,7 @@ public class ShowStatusActivity extends AppCompatActivity implements StoriesProg
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
-                    case BottomSheetBehavior.STATE_EXPANDED:
+                    case BottomSheetBehavior.STATE_DRAGGING:
 //                        statusViewsRV.animate().translationY(-DpUtil.toPixel(50, MyApp.mInstance)).start();
                         arrowUp.animate().rotation(180).setDuration(200).start();
                         pressTime = System.currentTimeMillis();

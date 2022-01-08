@@ -54,22 +54,6 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
         holder.name.setText(statusModelList.get(position).getProfileName());
         String time = TimeUtils.getTimeAgo(Long.valueOf(statusModelList.get(position).getTime()));
         holder.time.setText(time);
-        if (time.equals("just now") || time.equals("a minute ago") || time.equals("an hour ago")) {
-            Log.d("timeString", time);
-        } else {
-            int timeD = Integer.parseInt(time.replaceAll("[^0-9]", ""));
-            if (timeD >= 24) {
-                map.put("statusId", statusModelList.get(position).getId());
-                map.put("statusImg", "User_Status_Images/" + statusModelList.get(position).getImage());
-                deleteMyStatus(map, holder.itemView.getContext());
-            } else if (statusModelList.get(position).getTime().equals(time + " days ago")) {
-                map.put("statusId", statusModelList.get(position).getId());
-                Log.d("time",time + " days ago");
-                map.put("statusImg", "User_Status_Images/" + statusModelList.get(position).getImage());
-                deleteMyStatus(map, holder.itemView.getContext());
-            }
-        }
-
         holder.itemView.setOnClickListener(v -> listener.onStatusClicked(statusModelList.get(position)));
 
 

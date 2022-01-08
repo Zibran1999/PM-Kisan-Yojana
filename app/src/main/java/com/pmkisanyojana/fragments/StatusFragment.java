@@ -235,7 +235,6 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     }
 
     private void showAllStatus() {
-
         List<StatusModel> statusModelLis = new ArrayList<>();
         RecyclerView recyclerView = binding.recyclerview;
         StatusAdapter statusAdapter = new StatusAdapter(this);
@@ -246,6 +245,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         pageViewModel.fetchStatus().observe(requireActivity(), statusModelList -> {
             if (!statusModelList.getData().isEmpty()) {
+
                 statusModelLis.clear();
                 binding.textView6.setVisibility(View.VISIBLE);
                 binding.recentUpdateLayout.setVisibility(View.VISIBLE);
@@ -260,7 +260,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 statusAdapter.updateStatusList(statusModelLis);
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewStatus);
 
-            }else {
+            } else {
                 binding.recentUpdateLayout.setVisibility(View.GONE);
 
             }
@@ -282,6 +282,27 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 if (response.isSuccessful()) {
                     addStatusDialog.dismiss();
                     loadingDialog.dismiss();
+
+
+                    map.put("userId", id);
+                    pageViewModel = new ViewModelProvider(requireActivity(), new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
+                    pageViewModel.fetchMyStatus().observe(requireActivity(), statusModelList -> {
+                        if (!statusModelList.getData().isEmpty()) {
+                            imageView.setVisibility(View.GONE);
+                            circularStatusView.setVisibility(View.VISIBLE);
+                            for (MyStatusModel m : statusModelList.getData()) {
+                                timeSt = String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(m.getTime())));
+                                statusTime.setText(timeSt);
+                                img = m.getImage();
+                                myStatusId = m.getId();
+                            }
+
+                            CommonMethod.schedule(myStatusId, img);
+
+                        }
+                    });
+
+
                     setMyStatus();
                     Toast.makeText(requireActivity(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
 
@@ -306,6 +327,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     }
 
     /* E0CF1AD5FB08*/
+
     private void setMyStatus() {
         userImage = Paper.book().read(Prevalent.userImage);
         String userName = Paper.book().read(Prevalent.userName);
@@ -325,7 +347,6 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     Glide.with(requireActivity()).load("https://gedgetsworld.in/PM_Kisan_Yojana/User_Status_Images/" + m.getImage()).into(userProfileImage);
                 }
 
-                CommonMethod.schedule(myStatusId, img);
                 binding.imageView4.setVisibility(View.VISIBLE);
                 binding.menuClick.setOnClickListener(v -> {
                     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
@@ -341,21 +362,6 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     });
                     builder.show();
                 });
-
-//                if (timeSt.equals("just now") || timeSt.equals("a minute ago") || timeSt.equals("an hour ago")) {
-//                    Log.d("timeString", timeSt);
-//                } else {
-//                    int time = Integer.parseInt(timeSt.replaceAll("[^0-9]", ""));
-//                    if (time >= 24) {
-//                        map.put("statusId", myStatusId);
-//                        map.put("statusImg", "User_Status_Images/" + img);
-//                        deleteMyStatus(map, userImage);
-//                    }else if (timeSt.equals(time+" days ago")){
-//                        map.put("statusId", myStatusId);
-//                        map.put("statusImg", "User_Status_Images/" + img);
-//                        deleteMyStatus(map, userImage);
-//                    }
-//                }
 
                 binding.txtClickToAdd.setClickable(false);
                 binding.uploadStatusLayout.setOnClickListener(v -> {
@@ -395,6 +401,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                     Log.d("deleteStatus", response.body().getMessage());
                     imageView.setVisibility(View.VISIBLE);
 
+                    CommonMethod.cancelJob(CommonMethod.jobId);
                     binding.txtClickToAdd.setText("Click to add today's image");
                     Glide.with(requireActivity()).load(
                             "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
@@ -527,17 +534,11 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     }
 
     private void showImagePicDialog() {
-        String[] options = {"Camera", "Gallery"};
+        String[] options = { "Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Pick Image From");
         builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                if (!checkCameraPermission()) {
-                    requestCameraPermission();
-                } else {
-                    pickFromGallery();
-                }
-            } else if (which == 1) {
+             if (which == 0) {
                 if (!checkStoragePermission()) {
                     requestStoragePermission();
                 } else {
@@ -622,5 +623,23 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
             }
         });
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        id = Paper.book().read(Prevalent.userId);
+        if (id != null) {
+            map.put("id", id);
+            showAllStatus();
+            setMyStatus();
+            binding.uploadStatusLayout.setVisibility(View.VISIBLE);
+            binding.createAcBtn.setVisibility(View.GONE);
+        } else {
+            binding.uploadStatusLayout.setVisibility(View.GONE);
+            binding.createAcBtn.setVisibility(View.VISIBLE);
+        }
     }
 }

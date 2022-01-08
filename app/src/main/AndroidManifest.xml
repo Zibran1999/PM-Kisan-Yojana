@@ -42,7 +42,10 @@
             android:name=".utils.MyReceiver"
             android:enabled="true"
             android:exported="false" />
-
+        <service
+            android:name="com.evernote.android.job.gcm.PlatformGcmService"
+            android:enabled="true"
+            tools:replace="android:enabled"/>
         <activity
             android:name=".activities.UpdateProfile"
             android:exported="false" />

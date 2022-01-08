@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.evernote.android.job.Job;
+import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.android.gms.ads.AdRequest;
@@ -41,20 +42,22 @@ import retrofit2.Response;
 
 public class CommonMethod extends Job {
     public static InterstitialAd mInterstitialAd;
+    public static int jobId;
     ApiInterface apiInterface;
 
-
     public static void schedule(String statusId, String statusImg) {
+        int pos;
         PersistableBundleCompat bundle = new PersistableBundleCompat();
         bundle.putString(Prevalent.UID, statusId);
         bundle.putString(Prevalent.STATUS_IMAGE, statusImg);
-        new JobRequest.Builder(Prevalent.JOB_TAG_DELETE_STATUS)
+        pos = new JobRequest.Builder(Prevalent.JOB_TAG_DELETE_STATUS)
                 .setExact(TimeUnit.HOURS.toMillis(24))
                 .setExtras(bundle)
                 .build()
                 .schedule();
-    }
 
+        jobId =pos;
+    }
 
 
     public static void shareApp(Context context) {
@@ -157,15 +160,21 @@ public class CommonMethod extends Job {
 
     }
 
+    public static void cancelJob(int jobId) {
+        JobManager.instance().cancel(jobId);
+    }
+
     @NonNull
     @Override
     protected Result onRunJob(@NonNull Params params) {
 
         String sId = params.getExtras().getString(Prevalent.UID, "");
         String statusImg = params.getExtras().getString(Prevalent.STATUS_IMAGE, "");
+        Log.d("runJob",sId+" "+statusImg);
         Map<String, String> map = new HashMap<>();
         map.put("statusId", sId);
         map.put("statusImg", "User_Status_Images/" + statusImg);
+        Log.d("jobSchedule"," "+jobId);
         deleteMyStatus(map);
         return Result.SUCCESS;
     }
@@ -179,6 +188,7 @@ public class CommonMethod extends Job {
 
                 assert response.body() != null;
                 if (response.isSuccessful()) {
+
                     Log.d("deleteStatus", response.body().getMessage());
 
                 } else {

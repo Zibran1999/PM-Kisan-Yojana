@@ -2,7 +2,10 @@ package com.pmkisanyojana.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.DownloadManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -17,12 +20,14 @@ import com.google.android.gms.ads.MobileAds;
 import com.pmkisanyojana.databinding.ActivityWebViewBinding;
 import com.pmkisanyojana.utils.CommonMethod;
 
+
 public class WebViewActivity extends AppCompatActivity {
     WebView webView;
     TextView title;
     ActivityWebViewBinding binding;
     String data;
     Dialog dialog;
+
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -41,6 +46,29 @@ public class WebViewActivity extends AppCompatActivity {
         webView.getSettings().setDisplayZoomControls(false);
         WebSettings webSettings = webView.getSettings();
         webSettings.getLoadsImagesAutomatically();
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        webView.getSettings().setSupportMultipleWindows(true);
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+
+
+        /* if website doesn't open proper way then we put this code in webView*/
+
+        webView.getSettings().setSupportZoom(true);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        webView.setScrollbarFadingEnabled(false);
+
+        /* if website doesn't open proper way then we put this code in webview*/
+
+
+        webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "myPDFile.pdf");
+            DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            dm.enqueue(request);
+        });
 
 
         dialog = CommonMethod.getDialog(this);
@@ -48,7 +76,7 @@ public class WebViewActivity extends AppCompatActivity {
 
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d("TAG", "Processing webview url click...");
+                Log.d("TAG", "Processing webView url click...");
                 view.loadUrl(url);
                 return true;
             }
