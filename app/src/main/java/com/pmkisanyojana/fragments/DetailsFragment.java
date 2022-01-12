@@ -184,14 +184,14 @@ public class DetailsFragment extends Fragment {
                 if (YojanaDataActivity.count == 1) {
                     new Handler().postDelayed(() -> {
 
-                        if (YojanaDataActivity.pos % 2 == 1) {
+
                             if (mInterstitialAd != null) {
                                 mInterstitialAd.show(requireActivity());
                             } else {
                                 CommonMethod.interstitialAds(requireActivity());
                                 Log.d("TAG", "The interstitial ad wasn't ready yet.");
                             }
-                        }
+                        
                         YojanaDataActivity.count++;
                     }, 2000);
                 }
