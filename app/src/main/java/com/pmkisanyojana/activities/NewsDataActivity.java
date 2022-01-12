@@ -93,14 +93,14 @@ public class NewsDataActivity extends AppCompatActivity {
                 }
 
                 new Handler().postDelayed(() -> {
-                    if (pos%2==1){
+
                         if (mInterstitialAd != null) {
                             mInterstitialAd.show(this);
                         } else {
                             CommonMethod.interstitialAds(this);
                             Log.d("TAG", "The interstitial ad wasn't ready yet.");
                         }
-                    }
+
                 }, 2000);
 
             } else {

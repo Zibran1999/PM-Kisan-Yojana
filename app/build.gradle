@@ -12,8 +12,8 @@ android {
         applicationId "com.pmkisanyojana"
         minSdk 21
         targetSdk 31
-        versionCode 9
-        versionName "1.8"
+        versionCode 11
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
