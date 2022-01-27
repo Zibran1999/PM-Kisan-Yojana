@@ -1,5 +1,8 @@
 package com.pmkisanyojana.fragments;
 
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +17,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -72,6 +77,8 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileAds.initialize(requireActivity());
+        CommonMethod.interstitialAds(requireActivity());
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -96,16 +103,16 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(root.getContext());
         layoutManager1.setOrientation(RecyclerView.VERTICAL);
         pinnedRv.setLayoutManager(layoutManager1);
-        setYojanaData(root.getContext());
+        setYojanaData(requireActivity());
         binding.swipeRefresh.setOnRefreshListener(() -> {
-            setYojanaData(root.getContext());
+            setYojanaData(requireActivity());
             binding.swipeRefresh.setRefreshing(false);
 
         });
         return binding.getRoot();
     }
 
-    private void setYojanaData(Context context) {
+    private void setYojanaData(Activity context) {
         List<YojanaModel> yojanaModels = new ArrayList<>();
         List<YojanaModel> yojanaModelList = new ArrayList<>();
         yojanaAdapter = new YojanaAdapter(context, this);
@@ -144,20 +151,65 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel, int position) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "YOJANA Fragment");
-        mFirebaseAnalytics.logEvent("Clicked_Yojana_Items", bundle);
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(requireActivity());
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    // Called when fullscreen content is dismissed.
+                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-        Intent intent = new Intent(getContext(), YojanaDataActivity.class);
-        intent.putExtra("id", yojanaModel.getId());
-        intent.putExtra("title", yojanaModel.getTitle());
-        intent.putExtra("url", yojanaModel.getUrl());
-        intent.putExtra("pos", position);
-        startActivity(intent);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "YOJANA Fragment");
+                    mFirebaseAnalytics.logEvent("Clicked_Yojana_Items", bundle);
+
+                    Intent intent = new Intent(getContext(), YojanaDataActivity.class);
+                    intent.putExtra("id", yojanaModel.getId());
+                    intent.putExtra("title", yojanaModel.getTitle());
+                    intent.putExtra("url", yojanaModel.getUrl());
+                    intent.putExtra("pos", position);
+                    startActivity(intent);
+                    Log.d("TAG", "The ad was dismissed.");
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(AdError adError) {
+                    // Called when fullscreen content failed to show.
+                    Log.d("TAG", "The ad failed to show.");
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    // Called when fullscreen content is shown.
+                    // Make sure to set your reference to null so you don't
+                    // show it a second time.
+                    mInterstitialAd = null;
+                    Log.d("TAG", "The ad was shown.");
+                }
+            });
+        } else {
+            CommonMethod.interstitialAds(requireActivity());
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "YOJANA Fragment");
+            mFirebaseAnalytics.logEvent("Clicked_Yojana_Items", bundle);
+
+            Intent intent = new Intent(getContext(), YojanaDataActivity.class);
+            intent.putExtra("id", yojanaModel.getId());
+            intent.putExtra("title", yojanaModel.getTitle());
+            intent.putExtra("url", yojanaModel.getUrl());
+            intent.putExtra("pos", position);
+            startActivity(intent);
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
+
+
 
 
     }

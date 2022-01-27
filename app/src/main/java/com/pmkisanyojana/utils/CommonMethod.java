@@ -51,12 +51,13 @@ public class CommonMethod extends Job {
         bundle.putString(Prevalent.UID, statusId);
         bundle.putString(Prevalent.STATUS_IMAGE, statusImg);
         pos = new JobRequest.Builder(Prevalent.JOB_TAG_DELETE_STATUS)
-                .setExact(TimeUnit.HOURS.toMillis(24))
+                .setExact(TimeUnit.HOURS.toMillis(23))
                 .setExtras(bundle)
                 .build()
                 .schedule();
 
         jobId =pos;
+
     }
 
 
@@ -161,7 +162,8 @@ public class CommonMethod extends Job {
     }
 
     public static void cancelJob(int jobId) {
-        JobManager.instance().cancel(jobId);
+        JobManager.instance().cancelAll();
+
     }
 
     @NonNull

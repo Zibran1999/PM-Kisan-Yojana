@@ -17,20 +17,32 @@
     <string name="camera_tip">Tap to Take a Photo,Hold to Record Video</string>
 
     <!--Test ads ids-->
-<!--        <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
-<!--        <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>-->
-<!--        <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>-->
+    <!--        <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
+    <!--        <string name="interstitial_id">ca-app-pub-3940256099942544/1033173712</string>-->
+    <!--        <string name="app_id">ca-app-pub-3940256099942544~3347511713</string>-->
+    <!--        <string name="native_ads">ca-app-pub-3940256099942544/2247696110</string>-->
+
 
     <!--Real ads ids-->
 
     <string name="app_id">ca-app-pub-1247850544347178~2799712755</string>
-    <string name="banner_id">ca-app-pub-1247850544347178/8965665855</string>
-    <string name="interstitial_id">ca-app-pub-1247850544347178/8926137402</string>
+<!--    <string name="banner_id">ca-app-pub-1247850544347178/8965665855</string>-->
+<!--    <string name="interstitial_id">ca-app-pub-1247850544347178/8926137402</string>-->
+<!--    <string name="native_ads">ca-app-pub-1247850544347178/5185756803</string>-->
+
+        <string name="banner_id">/22569351198/chakdo_com.pmkisanyojana_banner</string>
+        <string name="interstitial_id">/22569351198/chakdo_com.pmkisanyojana_interstitial</string>
+        <string name="native_ads">/22569351198/chakdo_com.pmkisanyojana_native</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">todo</string>
     <string name="_0">0</string>
+    <!--    /22569351198/chakdo_com.pmkisanyojana_banner-->
 
+    <!--    /22569351198/chakdo_com.pmkisanyojana_interstitial-->
+
+    <!--    /22569351198/chakdo_com.pmkisanyojana_native-->
 
 </resources>

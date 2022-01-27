@@ -1,14 +1,11 @@
 package com.pmkisanyojana.fragments;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +24,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.pmkisanyojana.R;
-import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.WebViewActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -92,6 +88,7 @@ public class DetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            MobileAds.initialize(requireActivity());
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
@@ -105,8 +102,7 @@ public class DetailsFragment extends Fragment {
         binding = FragmentDetailsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         dialog = CommonMethod.getDialog(requireActivity());
-        MobileAds.initialize(requireActivity());
-        CommonMethod.interstitialAds(requireActivity());
+
 
         webView = binding.webView;
         WebSettings webSettings = webView.getSettings();
@@ -141,6 +137,7 @@ public class DetailsFragment extends Fragment {
             previewModels.clear();
             previewModels.addAll(previewModelList.getData());
             if (!previewModels.isEmpty()) {
+
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
                 lottieAnimationView.setVisibility(View.GONE);
                 String hindiString = null;
@@ -181,20 +178,6 @@ public class DetailsFragment extends Fragment {
                     materialButtonToggleGroup.setVisibility(View.GONE);
                 }
                 Log.d("pos", String.valueOf(YojanaDataActivity.count));
-                if (YojanaDataActivity.count == 1) {
-                    new Handler().postDelayed(() -> {
-
-
-                            if (mInterstitialAd != null) {
-                                mInterstitialAd.show(requireActivity());
-                            } else {
-                                CommonMethod.interstitialAds(requireActivity());
-                                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-                            }
-                        
-                        YojanaDataActivity.count++;
-                    }, 2000);
-                }
                 binding.titleTv.setText(requireActivity().getIntent().getStringExtra("title"));
                 dialog.dismiss();
 

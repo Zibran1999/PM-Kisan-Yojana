@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -54,7 +53,6 @@ public class NewsDataActivity extends AppCompatActivity {
         binding = ActivityNewsDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         MobileAds.initialize(NewsDataActivity.this);
-        CommonMethod.interstitialAds(this);
         newsImg = binding.newsImg;
         newsTitle = binding.newsTitle;
         newsDesc = binding.newsDesc;
@@ -63,7 +61,7 @@ public class NewsDataActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         dialog = CommonMethod.getDialog(this);
         dialog.show();
-        pos= getIntent().getIntExtra("pos",0);
+        pos = getIntent().getIntExtra("pos", 0);
 
         map.put("previewId", id);
 
@@ -91,17 +89,6 @@ public class NewsDataActivity extends AppCompatActivity {
 
                     }
                 }
-
-                new Handler().postDelayed(() -> {
-
-                        if (mInterstitialAd != null) {
-                            mInterstitialAd.show(this);
-                        } else {
-                            CommonMethod.interstitialAds(this);
-                            Log.d("TAG", "The interstitial ad wasn't ready yet.");
-                        }
-
-                }, 2000);
 
             } else {
                 dialog.dismiss();

@@ -31,6 +31,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
 
 import com.bumptech.glide.Glide;
 import com.devlomi.circularstatusview.CircularStatusView;
@@ -53,6 +56,7 @@ import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.models.StatusModel;
 import com.pmkisanyojana.models.TimeUtils;
 import com.pmkisanyojana.utils.CommonMethod;
+import com.pmkisanyojana.utils.DeleteWorker;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -297,8 +301,9 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                                 myStatusId = m.getId();
                             }
 
+                        }
+                        if (statusModelList.getData().isEmpty()){
                             CommonMethod.schedule(myStatusId, img);
-
                         }
                     });
 
@@ -534,11 +539,11 @@ public class StatusFragment extends Fragment implements StatusClickListener {
     }
 
     private void showImagePicDialog() {
-        String[] options = { "Gallery"};
+        String[] options = {"Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Pick Image From");
         builder.setItems(options, (dialog, which) -> {
-             if (which == 0) {
+            if (which == 0) {
                 if (!checkStoragePermission()) {
                     requestStoragePermission();
                 } else {

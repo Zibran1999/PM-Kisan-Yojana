@@ -1,9 +1,13 @@
 package com.pmkisanyojana.fragments;
 
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
+
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +18,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.activities.NewsDataActivity;
@@ -71,6 +77,8 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileAds.initialize(requireActivity());
+        CommonMethod.interstitialAds(requireActivity());
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         dialog = CommonMethod.getDialog(requireActivity());
         if (getArguments() != null) {
@@ -94,16 +102,16 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
         dialog.show();
-        setNewsData(root.getContext());
+        setNewsData(requireActivity());
         binding.swipeRefresh.setOnRefreshListener(() -> {
-            setNewsData(root.getContext());
+            setNewsData(requireActivity());
             binding.swipeRefresh.setRefreshing(false);
 
         });
         return binding.getRoot();
     }
 
-    private void setNewsData(Context context) {
+    private void setNewsData(Activity context) {
         newsAdapter = new NewsAdapter(context, this);
         homeRV.setAdapter(newsAdapter);
 
@@ -121,18 +129,61 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
     @Override
     public void onItemClicked(NewsModel newsModel, int position) {
-        Intent intent = new Intent(getContext(), NewsDataActivity.class);
-        intent.putExtra("id", newsModel.getId());
-        intent.putExtra("title", newsModel.getTitle());
-        intent.putExtra("img", newsModel.getImage());
-        intent.putExtra("pos", position);
-        startActivity(intent);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
-        mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(requireActivity());
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    // Called when fullscreen content is dismissed.
+                    Intent intent = new Intent(getContext(), NewsDataActivity.class);
+                    intent.putExtra("id", newsModel.getId());
+                    intent.putExtra("title", newsModel.getTitle());
+                    intent.putExtra("img", newsModel.getImage());
+                    intent.putExtra("pos", position);
+                    startActivity(intent);
+                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
+                    mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+                    Log.d("TAG", "The ad was dismissed.");
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(AdError adError) {
+                    // Called when fullscreen content failed to show.
+                    Log.d("TAG", "The ad failed to show.");
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    // Called when fullscreen content is shown.
+                    // Make sure to set your reference to null so you don't
+                    // show it a second time.
+                    mInterstitialAd = null;
+                    Log.d("TAG", "The ad was shown.");
+                }
+            });
+        } else {
+            CommonMethod.interstitialAds(requireActivity());
+            Intent intent = new Intent(getContext(), NewsDataActivity.class);
+            intent.putExtra("id", newsModel.getId());
+            intent.putExtra("title", newsModel.getTitle());
+            intent.putExtra("img", newsModel.getImage());
+            intent.putExtra("pos", position);
+            startActivity(intent);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
+            mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
+
     }
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -77,7 +78,14 @@ public class WebViewActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient() {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("TAG", "Processing webView url click...");
-                view.loadUrl(url);
+                String googleDocs = "https://docs.google.com/viewer?url=";
+                Log.d("url",url);
+                if (URLUtil.isFileUrl(url)) {
+                    view.loadUrl(googleDocs + url);
+                } else {
+
+                    view.loadUrl(url);
+                }
                 return true;
             }
 
@@ -111,4 +119,6 @@ public class WebViewActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+
 }
