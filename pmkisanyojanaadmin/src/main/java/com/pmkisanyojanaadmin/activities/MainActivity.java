@@ -26,10 +26,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.databinding.ActivityMainBinding;
+import com.pmkisanyojanaadmin.model.AdsModel;
+import com.pmkisanyojanaadmin.model.AdsModelList;
 import com.pmkisanyojanaadmin.model.ApiInterface;
 import com.pmkisanyojanaadmin.model.ApiWebServices;
 import com.pmkisanyojanaadmin.model.MessageModel;
@@ -50,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -59,21 +63,21 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Button cancelBtn, uploadBtn,
-            cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn;
-    Dialog uploadDialog, adYojanaDialog, addQuizDialog;
+            cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn, adIdCancelBtn, adIdUploadBtn;
+    Dialog uploadDialog, adYojanaDialog, addQuizDialog, adsUpdateDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
     LinearLayout scheduleLayout;
-    TextView dialogTitle, dialogTitle2;
+    TextView dialogTitle, dialogTitle2,adIdTitleTxt;
     TextView setDate, setTime;
     ImageView selectImage;
-    EditText selectTitle, yojanaData, yojanaLink;
+    EditText selectTitle, yojanaData, yojanaLink, bannerIdTxt, interstitialIdTxt, nativeIdTxt;
     AppCompatAutoCompleteTextView appCompatAutoCompleteTextView;
     List<YojanaModel> yojanaModelList = new ArrayList<>();
     List<NewsModel> newsModelList = new ArrayList<>();
     List<String> arrayList = new ArrayList<>();
     ArrayAdapter<String> arrayAdapter;
-    String getYojanaName, previewId, randomId;
+    String getYojanaName, previewId, randomId, adIdTitle;
     ApiInterface apiInterface;
     String encodedImage;
     Uri uri;
@@ -84,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     Dialog loadingDialog;
     Button uploadQuizQuestionBtn;
     TextView question, op1, op2, op3, op4, ans;
+    AdsModel adsModel;
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -131,6 +136,100 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.uploadQuiz.setOnClickListener(v -> showUploadQuizQuestionDialog());
+
+        binding.updateAdId.setOnClickListener(v -> {
+            showUpdateAdsDialog();
+        });
+    }
+
+    private void showUpdateAdsDialog() {
+        adsUpdateDialog = new Dialog(this);
+        adsUpdateDialog.setContentView(R.layout.ad_id_layout);
+        adsUpdateDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        adsUpdateDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.item_bg));
+        adsUpdateDialog.setCancelable(false);
+        adsUpdateDialog.show();
+
+        bannerIdTxt = adsUpdateDialog.findViewById(R.id.banner_id);
+        interstitialIdTxt = adsUpdateDialog.findViewById(R.id.interstitial_id);
+        nativeIdTxt = adsUpdateDialog.findViewById(R.id.native_id);
+        adIdTitleTxt = adsUpdateDialog.findViewById(R.id.ad_id_title);
+        adIdUploadBtn = adsUpdateDialog.findViewById(R.id.upload_ids);
+        adIdCancelBtn = adsUpdateDialog.findViewById(R.id.cancel_id);
+
+        adIdCancelBtn.setOnClickListener(v -> {
+            adsUpdateDialog.dismiss();
+        });
+
+        apiInterface = ApiWebServices.getApiInterface();
+        Call<AdsModelList> call = apiInterface.fetchAds("PM Kisan Yojana");
+        call.enqueue(new Callback<AdsModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<AdsModelList> call, @NonNull Response<AdsModelList> response) {
+                if (response.isSuccessful()) {
+                    if (Objects.requireNonNull(response.body()).getData() != null) {
+                        for (AdsModel ads : response.body().getData()) {
+                            adsModel = ads;
+                            adIdTitle = ads.getId();
+                            adIdTitleTxt.setText(adIdTitle);
+                            bannerIdTxt.setText(ads.getBanner());
+                            interstitialIdTxt.setText(ads.getInterstitial());
+                            nativeIdTxt.setText(ads.getNativeADs());
+                        }
+                    }
+                } else {
+                    Log.d("adsError", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<AdsModelList> call, @NonNull Throwable t) {
+                Log.d("adsError", t.getMessage());
+            }
+        });
+
+
+        adIdUploadBtn.setOnClickListener(v -> {
+            String bnId = bannerIdTxt.getText().toString().trim();
+            String interId = interstitialIdTxt.getText().toString().trim();
+            String nativeId = nativeIdTxt.getText().toString().trim();
+            if (bnId.equals(adsModel.getBanner())
+                    && interId.equals(adsModel.getInterstitial())
+                    && nativeId.equals(adsModel.getNativeADs())){
+
+                Toast.makeText(this, "No changes made in Ids", Toast.LENGTH_SHORT).show();
+
+            }else {
+                loadingDialog.show();
+                map.put("id", adIdTitle);
+                map.put("banner_id", bnId);
+                map.put("inter_id", interId);
+                map.put("native_id", nativeId);
+                updateAdIds(map);
+            }
+        });
+    }
+
+    private void updateAdIds(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.updateAdIds(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                if (response.isSuccessful()){
+                    assert response.body() != null;
+                    Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+                adsUpdateDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+            }
+        });
     }
 
     private void showUploadQuizQuestionDialog() {
@@ -139,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
         addQuizDialog.setContentView(R.layout.quiz_layout);
         addQuizDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        addQuizDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
+        addQuizDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.item_bg));
         addQuizDialog.setCancelable(false);
         addQuizDialog.show();
 
@@ -221,13 +320,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @SuppressLint({"UseCompatLoadingForDrawables", "NonConstantResourceId"})
+
     private void showYojanaUploadDialog(Context context, String title) {
         uploadDialog = new Dialog(context);
         uploadDialog.setContentView(R.layout.upload_dialog);
         uploadDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        uploadDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
+        uploadDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.item_bg));
         uploadDialog.setCancelable(false);
         uploadDialog.show();
         dialogTitle = uploadDialog.findViewById(R.id.dialog_title);
