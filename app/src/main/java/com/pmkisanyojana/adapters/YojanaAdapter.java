@@ -25,10 +25,13 @@ import com.google.android.gms.ads.nativead.NativeAdView;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.databinding.AdLayoutBinding;
 import com.pmkisanyojana.models.YojanaModel;
+import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import io.paperdb.Paper;
 
 public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_VIEW = 0;
@@ -120,7 +123,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
 
         private void bindAdData() {
-            AdLoader.Builder builder = new AdLoader.Builder(context, context.getString(R.string.native_ads))
+            AdLoader.Builder builder = new AdLoader.Builder(context, Paper.book().read(Prevalent.nativeAds))
                     .forNativeAd(nativeAd -> {
                         NativeAdView nativeAdView = (NativeAdView) context.getLayoutInflater().inflate(R.layout.native_ad_layout, null);
                         populateNativeADView(nativeAd, nativeAdView);

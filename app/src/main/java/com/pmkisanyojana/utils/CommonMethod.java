@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.evernote.android.job.JobManager;
 import com.evernote.android.job.JobRequest;
 import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
@@ -36,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -132,8 +135,9 @@ public class CommonMethod extends Job {
 
     public static void interstitialAds(Context context) {
         MobileAds.initialize(context);
+        String id = Paper.book().read(Prevalent.interstitialAds);
         AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(context, context.getString(R.string.interstitial_id), adRequest,
+        InterstitialAd.load(context, id, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
@@ -152,15 +156,19 @@ public class CommonMethod extends Job {
                 });
     }
 
-    public static void getBannerAds(Context context, AdView adView) {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        MobileAds.initialize(context);
-        adView.loadAd(adRequest);
-        adView.setVisibility(View.VISIBLE);
 
+    public static void getBannerAds(Context context, RelativeLayout container) {
+        String id = Paper.book().read(Prevalent.bannerAds);
+        MobileAds.initialize(context);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        AdView adView = new AdView(context);
+        container.addView(adView);
+        adView.setAdUnitId(id);
+        adView.setAdSize(AdSize.BANNER);
+        adView.loadAd(adRequest);
+        container.setVisibility(View.VISIBLE);
 
     }
-
     public static void cancelJob(int jobId) {
         JobManager.instance().cancelAll();
 

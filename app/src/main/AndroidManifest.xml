@@ -21,6 +21,7 @@
         android:theme="@style/Theme.PMKisanYojana"
         tools:ignore="AllowBackup"
         tools:targetApi="n">
+
         <activity
             android:name=".activities.ShowStatusActivity"
             android:exported="false" />

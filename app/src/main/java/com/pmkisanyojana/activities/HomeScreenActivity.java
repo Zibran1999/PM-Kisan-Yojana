@@ -398,7 +398,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onResume() {
         super.onResume();
-
         registerReceiver(receiver, intentFilter);
     }
 
