@@ -20,4 +20,8 @@
     <string name="edit_and_delete_others">Edit and Delete Others</string>
     <string name="edit_and_delete_news">Edit and Delete News</string>
     <string name="edit_and_delete_yojana">Edit and Delete Yojana</string>
+    <string name="banner_id">Banner id</string>
+    <string name="interstitial_id">Interstitial id</string>
+    <string name="native_id">Native id</string>
+    <string name="update_ad_id">Update ad ids</string>
 </resources>

@@ -3,6 +3,7 @@ package com.pmkisanyojanaadmin.model;
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
@@ -76,6 +77,13 @@ public interface ApiInterface {
     @POST("update_quiz_api.php")
     Call<MessageModel> updateQuiz(@FieldMap Map<String, String> map);
 
+    @FormUrlEncoded
+    @POST("ads_id_fetch.php")
+    Call<AdsModelList> fetchAds(@Field("id") String id);
+
+    @FormUrlEncoded
+    @POST("ads_id_update.php")
+    Call<MessageModel> updateAdIds(@FieldMap Map<String, String> map);
 
 
 }
