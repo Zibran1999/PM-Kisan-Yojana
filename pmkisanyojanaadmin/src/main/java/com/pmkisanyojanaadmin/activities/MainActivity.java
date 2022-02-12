@@ -138,11 +138,14 @@ public class MainActivity extends AppCompatActivity {
         binding.uploadQuiz.setOnClickListener(v -> showUploadQuizQuestionDialog());
 
         binding.updateAdId.setOnClickListener(v -> {
-            showUpdateAdsDialog();
+            showUpdateAdsDialog("PM Kisan Yojana");
+        });
+        binding.updateAdId2.setOnClickListener(v -> {
+            showUpdateAdsDialog("PM Kisan Yojana List");
         });
     }
 
-    private void showUpdateAdsDialog() {
+    private void showUpdateAdsDialog(String key) {
         adsUpdateDialog = new Dialog(this);
         adsUpdateDialog.setContentView(R.layout.ad_id_layout);
         adsUpdateDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         apiInterface = ApiWebServices.getApiInterface();
-        Call<AdsModelList> call = apiInterface.fetchAds("PM Kisan Yojana");
+        Call<AdsModelList> call = apiInterface.fetchAds(key);
         call.enqueue(new Callback<AdsModelList>() {
             @Override
             public void onResponse(@NonNull Call<AdsModelList> call, @NonNull Response<AdsModelList> response) {
