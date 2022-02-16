@@ -1,5 +1,7 @@
 package com.pmkisanyojana.fragments;
 
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -20,9 +22,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.WebViewActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -94,7 +99,7 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
+    @SuppressLint({"SetJavaScriptEnabled", "NonConstantResourceId"})
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,7 +134,9 @@ public class DetailsFragment extends Fragment {
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
+
         MobileAds.initialize(requireActivity());
+        CommonMethod.interstitialAds(requireActivity());
 
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
@@ -193,6 +200,7 @@ public class DetailsFragment extends Fragment {
 
                     switch (checkedId) {
                         case R.id.hindiPreview:
+                            CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
                             english.setBackgroundColor(0);
                             english.setTextColor(Color.BLACK);
                             hindi.setBackgroundColor(Color.parseColor("#009637"));
@@ -201,6 +209,7 @@ public class DetailsFragment extends Fragment {
                             webView.setVisibility(View.VISIBLE);
                             break;
                         case R.id.englishPreview:
+                            CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
                             english.setBackgroundColor(Color.parseColor("#009637"));
                             english.setTextColor(Color.WHITE);
                             hindi.setBackgroundColor(0);
@@ -233,12 +242,48 @@ public class DetailsFragment extends Fragment {
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
-                WebView.HitTestResult result = view.getHitTestResult();
-                String data = result.getExtra();
-                Context context = view.getContext();
-                Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
-                browserIntent.putExtra("url", data);
-                context.startActivity(browserIntent);
+
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.show(requireActivity());
+                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                        @Override
+                        public void onAdDismissedFullScreenContent() {
+                            // Called when fullscreen content is dismissed.
+                            WebView.HitTestResult result = view.getHitTestResult();
+                            String data = result.getExtra();
+                            Context context = view.getContext();
+                            Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
+                            browserIntent.putExtra("url", data);
+                            context.startActivity(browserIntent);
+                        }
+
+                        @Override
+                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                            // Called when fullscreen content failed to show.
+                            Log.d("TAG", "The ad failed to show.");
+                        }
+
+                        @Override
+                        public void onAdShowedFullScreenContent() {
+                            // Called when fullscreen content is shown.
+                            // Make sure to set your reference to null so you don't
+                            // show it a second time.
+                            mInterstitialAd = null;
+                            Log.d("TAG", "The ad was shown.");
+                        }
+                    });
+                } else {
+                    CommonMethod.interstitialAds(requireActivity());
+
+                    WebView.HitTestResult result = view.getHitTestResult();
+                    String data = result.getExtra();
+                    Context context = view.getContext();
+                    Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
+                    browserIntent.putExtra("url", data);
+                    context.startActivity(browserIntent);
+                }
+
+
                 return false;
             }
         });

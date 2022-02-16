@@ -137,10 +137,26 @@
             android:textAllCaps="true"
             android:textSize="20sp"
             android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/upload_quiz"
             app:layout_constraintStart_toStartOf="@+id/upload_quiz"
             app:layout_constraintTop_toBottomOf="@+id/upload_quiz" />
+
+        <Button
+            android:id="@+id/update_ad_id2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:padding="10dp"
+            android:text="@string/update_ads_id_2"
+            android:textAllCaps="true"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/update_ad_id"
+            app:layout_constraintStart_toStartOf="@+id/update_ad_id"
+            app:layout_constraintTop_toBottomOf="@+id/update_ad_id" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

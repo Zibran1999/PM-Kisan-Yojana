@@ -24,4 +24,5 @@
     <string name="interstitial_id">Interstitial id</string>
     <string name="native_id">Native id</string>
     <string name="update_ad_id">Update ad ids</string>
+    <string name="update_ads_id_2">Update Ads Id 2</string>
 </resources>

@@ -81,6 +81,7 @@ public class WebViewActivity extends AppCompatActivity {
                 String googleDocs = "https://docs.google.com/viewer?url=";
                 Log.d("url",url);
                 if (URLUtil.isFileUrl(url)) {
+                    CommonMethod.interstitialAds(WebViewActivity.this);
                     view.loadUrl(googleDocs + url);
                 } else {
 
