@@ -18,6 +18,7 @@ import com.pmkisanyojana.models.ApiWebServices;
 import java.util.Objects;
 
 import io.paperdb.Paper;
+import papaya.in.admobopenads.AppOpenManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -62,6 +63,7 @@ public class MyApp extends Application {
                             Paper.book().write(Prevalent.bannerAds, ads.getBanner());
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
+                            new AppOpenManager(mInstance, ads.getAppOpen());
 
                         }
 

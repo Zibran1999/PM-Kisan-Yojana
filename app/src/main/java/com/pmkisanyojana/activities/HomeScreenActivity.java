@@ -12,8 +12,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +45,9 @@ import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
 import com.pmkisanyojana.fragments.NewsFragment;
 import com.pmkisanyojana.fragments.OthersFragment;
 import com.pmkisanyojana.fragments.YojanaFragment;
+import com.pmkisanyojana.models.ApiInterface;
+import com.pmkisanyojana.models.ApiWebServices;
+import com.pmkisanyojana.models.ImgModel;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.utils.CommonMethod;
@@ -55,6 +60,9 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
@@ -75,6 +83,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     ViewPager viewPager;
     String id, userImage;
     PageViewModel pageViewModel;
+    ApiInterface apiInterface;
+    String img, url;
 
     Map<String, String> map = new HashMap<>();
     public BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -157,13 +167,32 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             map.put("id", id);
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         }
+        apiInterface= ApiWebServices.getApiInterface();
+        Call<ImgModel> call = apiInterface.fetchImg();
+        call.enqueue(new Callback<ImgModel>() {
+            @Override
+            public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
+
+                if (response.body() != null) {
+                    ImgModel imgModel = response.body();
+                    img = imgModel.getImg();
+                    url = imgModel.getUrl();
+                    Glide.with(HomeScreenActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(binding.lottieWhatsapp);
+
+                    Log.d("img",img);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ImgModel> call, Throwable t) {
+
+            }
+        });
+
 
         binding.lottieWhatsapp.setOnClickListener(view -> {
-            try {
-                CommonMethod.whatsApp(this);
-            } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
+            openWebPage(url);
+
         });
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastStringForAction);
@@ -191,6 +220,14 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         }
     }
 
+    @SuppressLint("QueryPermissionsNeeded")
+    public void openWebPage(String url) {
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 
     public void navigationDrawer() {
         navigationView = findViewById(R.id.navigation);

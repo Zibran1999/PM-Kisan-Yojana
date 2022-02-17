@@ -191,9 +191,10 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
                 }
             });
         } else {
-            CommonMethod.interstitialAds(requireActivity());
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
+            CommonMethod.interstitialAds(requireActivity());
+
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());

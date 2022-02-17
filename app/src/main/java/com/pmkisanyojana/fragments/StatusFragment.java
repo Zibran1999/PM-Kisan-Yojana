@@ -1,5 +1,7 @@
 package com.pmkisanyojana.fragments;
 
+import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,6 +39,8 @@ import androidx.work.OneTimeWorkRequest;
 
 import com.bumptech.glide.Glide;
 import com.devlomi.circularstatusview.CircularStatusView;
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -586,24 +590,70 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
     @Override
     public void onStatusClicked(StatusModel statusModel) {
-        Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
-        intent.putExtra("status", "allStatus");
-        intent.putExtra("userImage", statusModel.getProfileImage());
-        intent.putExtra("userName", statusModel.getProfileName());
-        intent.putExtra("statusImage", statusModel.getImage());
-        intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+        if (mInterstitialAd != null) {
+            mInterstitialAd.show(requireActivity());
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    // Called when fullscreen content is dismissed.
+                    Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+                    intent.putExtra("status", "allStatus");
+                    intent.putExtra("userImage", statusModel.getProfileImage());
+                    intent.putExtra("userName", statusModel.getProfileName());
+                    intent.putExtra("statusImage", statusModel.getImage());
+                    intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+                    startActivity(intent);
+                    id = Paper.book().read(Prevalent.userId);
+                    map.put("userId", id);
+                    map.put("statusId", statusModel.getId());
+                    map.put("statusTime", String.valueOf(System.currentTimeMillis()));
 
-        startActivity(intent);
-        id = Paper.book().read(Prevalent.userId);
-        map.put("userId", id);
-        map.put("statusId", statusModel.getId());
-        map.put("statusTime", String.valueOf(System.currentTimeMillis()));
+                    uploadSeenBy(map);
+                    FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
+                    firebaseAnalytics.logEvent("Status_click_Event", bundle);
+                    Log.d("TAG", "The ad was dismissed.");
+                }
 
-        uploadSeenBy(map);
-        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
-        firebaseAnalytics.logEvent("Status_click_Event", bundle);
+                @Override
+                public void onAdFailedToShowFullScreenContent(AdError adError) {
+                    // Called when fullscreen content failed to show.
+                    Log.d("TAG", "The ad failed to show.");
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    // Called when fullscreen content is shown.
+                    // Make sure to set your reference to null so you don't
+                    // show it a second time.
+                    mInterstitialAd = null;
+                    Log.d("TAG", "The ad was shown.");
+                }
+            });
+        } else {
+
+            CommonMethod.interstitialAds(requireActivity());
+            Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+            intent.putExtra("status", "allStatus");
+            intent.putExtra("userImage", statusModel.getProfileImage());
+            intent.putExtra("userName", statusModel.getProfileName());
+            intent.putExtra("statusImage", statusModel.getImage());
+            intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+            startActivity(intent);
+            id = Paper.book().read(Prevalent.userId);
+            map.put("userId", id);
+            map.put("statusId", statusModel.getId());
+            map.put("statusTime", String.valueOf(System.currentTimeMillis()));
+
+            uploadSeenBy(map);
+            FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
+            firebaseAnalytics.logEvent("Status_click_Event", bundle);
+            Log.d("TAG", "The interstitial ad wasn't ready yet.");
+        }
+
 
 
     }

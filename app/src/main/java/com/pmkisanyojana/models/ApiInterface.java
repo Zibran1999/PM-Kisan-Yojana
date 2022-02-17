@@ -65,8 +65,12 @@ public interface ApiInterface {
     Call<MessageModel> deleteMyStatus(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
-    @POST("ads_id_fetch.php")
+    @POST("pm_kisan_ads_id_fetch.php")
     Call<AdsModelList> fetchAds(@Field("id") String id);
+
+
+    @POST("fetchImg.php")
+    Call<ImgModel> fetchImg();
 
 
 }

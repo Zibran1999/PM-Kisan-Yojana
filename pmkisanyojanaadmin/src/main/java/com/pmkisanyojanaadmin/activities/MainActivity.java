@@ -22,12 +22,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.textfield.TextInputLayout;
 import com.pmkisanyojanaadmin.R;
 import com.pmkisanyojanaadmin.databinding.ActivityMainBinding;
@@ -35,9 +38,12 @@ import com.pmkisanyojanaadmin.model.AdsModel;
 import com.pmkisanyojanaadmin.model.AdsModelList;
 import com.pmkisanyojanaadmin.model.ApiInterface;
 import com.pmkisanyojanaadmin.model.ApiWebServices;
+import com.pmkisanyojanaadmin.model.ImgModel;
 import com.pmkisanyojanaadmin.model.MessageModel;
 import com.pmkisanyojanaadmin.model.NewsModel;
 import com.pmkisanyojanaadmin.model.NewsModelList;
+import com.pmkisanyojanaadmin.model.PMAdsModel;
+import com.pmkisanyojanaadmin.model.PMAdsModelList;
 import com.pmkisanyojanaadmin.model.YojanaModel;
 import com.pmkisanyojanaadmin.model.YojanaModelList;
 
@@ -64,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Button cancelBtn, uploadBtn,
             cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn, adIdCancelBtn, adIdUploadBtn;
-    Dialog uploadDialog, adYojanaDialog, addQuizDialog, adsUpdateDialog;
+    Dialog uploadDialog, adYojanaDialog, addQuizDialog, adsUpdateDialog,uploadImagesDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
     LinearLayout scheduleLayout;
-    TextView dialogTitle, dialogTitle2,adIdTitleTxt;
+    TextView dialogTitle, dialogTitle2, adIdTitleTxt;
     TextView setDate, setTime;
-    ImageView selectImage;
-    EditText selectTitle, yojanaData, yojanaLink, bannerIdTxt, interstitialIdTxt, nativeIdTxt;
+    ImageView selectImage,chooseBannerImage;
+    EditText selectTitle, yojanaData, yojanaLink, bannerIdTxt, interstitialIdTxt, nativeIdTxt, openAppTxt,imageURlTxt;
     AppCompatAutoCompleteTextView appCompatAutoCompleteTextView;
     List<YojanaModel> yojanaModelList = new ArrayList<>();
     List<NewsModel> newsModelList = new ArrayList<>();
@@ -86,9 +92,14 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
-    Button uploadQuizQuestionBtn;
+    Button uploadQuizQuestionBtn,uploadBannerImageBtn;
     TextView question, op1, op2, op3, op4, ans;
     AdsModel adsModel;
+    PMAdsModel pmAdsModel;
+    ActivityResultLauncher<String> launcher;
+    String img, url;
+
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -108,6 +119,21 @@ public class MainActivity extends AppCompatActivity {
         loadingDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.item_bg));
         loadingDialog.setCancelable(false);
         //**Loading Dialog****/
+
+        launcher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null) {
+                if (chooseBannerImage != null) {
+                    Glide.with(this).load(result).into(chooseBannerImage);
+                }
+                try {
+                    InputStream inputStream = this.getContentResolver().openInputStream(result);
+                    bitmap = BitmapFactory.decodeStream(inputStream);
+                    encodedImage = imageStore(bitmap);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         apiInterface = ApiWebServices.getApiInterface();
         arrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, arrayList);
@@ -138,10 +164,210 @@ public class MainActivity extends AppCompatActivity {
         binding.uploadQuiz.setOnClickListener(v -> showUploadQuizQuestionDialog());
 
         binding.updateAdId.setOnClickListener(v -> {
-            showUpdateAdsDialog("PM Kisan Yojana");
+            showUpdatePMAdsDialog();
         });
         binding.updateAdId2.setOnClickListener(v -> {
             showUpdateAdsDialog("PM Kisan Yojana List");
+        });
+        updateImagesDialog();
+
+        binding.uploadImg.setOnClickListener(v -> {
+            uploadImagesDialog.show();
+
+        });
+    }
+
+    public void updateImagesDialog() {
+        uploadImagesDialog = new Dialog(this);
+        uploadImagesDialog.setContentView(R.layout.upload_image_dialog);
+        uploadImagesDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        uploadImagesDialog.getWindow().setBackgroundDrawable(
+                ContextCompat.getDrawable(this, R.drawable.item_bg));
+        uploadImagesDialog.setCancelable(false);
+
+        Call<ImgModel> call = apiInterface.fetchImg();
+        call.enqueue(new Callback<ImgModel>() {
+            @Override
+            public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
+
+                if (response.body()!= null){
+
+                    img= response.body().getImg();
+                    url= response.body().getUrl();
+                    encodedImage = img;
+                    Glide.with(MainActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(chooseBannerImage);
+                    imageURlTxt.setText(url);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ImgModel> call, @NonNull Throwable t) {
+
+            }
+        });
+        chooseBannerImage = uploadImagesDialog.findViewById(R.id.choose_banner_image);
+        imageURlTxt = uploadImagesDialog.findViewById(R.id.image_url);
+        uploadBannerImageBtn = uploadImagesDialog.findViewById(R.id.upload_image_btn);
+        cancelBtn = uploadImagesDialog.findViewById(R.id.image_cancel);
+        cancelBtn.setOnClickListener(v -> {
+            uploadImagesDialog.dismiss();
+            encodedImage = "";
+        });
+
+
+        chooseBannerImage.setOnClickListener(v -> {
+            launcher.launch("image/*");
+        });
+
+        uploadBannerImageBtn.setOnClickListener(v -> {
+            loadingDialog.show();
+            String mUrl = imageURlTxt.getText().toString().trim();
+            if (encodedImage == null) {
+                Toast.makeText(this, "Please Select an Image", Toast.LENGTH_SHORT).show();
+
+            } else if (TextUtils.isEmpty(mUrl)) {
+                imageURlTxt.setError("Image Url Required");
+                loadingDialog.dismiss();
+            } else {
+                if (encodedImage.length() <= 100) {
+                    map.put("img", encodedImage);
+                    map.put("deleteImg", img);
+                    map.put("url", mUrl);
+                    map.put("imgKey", "0");
+                    updateBannerImage(map);
+
+                } else {
+                    map.put("img", encodedImage);
+                    map.put("deleteImg", img);
+                    map.put("url", mUrl);
+                    map.put("imgKey", "1");
+                    updateBannerImage(map);
+                }
+
+            }
+        });
+
+    }
+    private void updateBannerImage(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.updateImg(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                assert response.body() != null;
+                if (response.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    uploadImagesDialog.dismiss();
+                } else {
+                    Toast.makeText(MainActivity.this, response.body().getError(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+            }
+        });
+    }
+    private void showUpdatePMAdsDialog() {
+        adsUpdateDialog = new Dialog(this);
+        adsUpdateDialog.setContentView(R.layout.ad_id_layout);
+        adsUpdateDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        adsUpdateDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.item_bg));
+        adsUpdateDialog.setCancelable(false);
+        adsUpdateDialog.show();
+
+        bannerIdTxt = adsUpdateDialog.findViewById(R.id.banner_id);
+        interstitialIdTxt = adsUpdateDialog.findViewById(R.id.interstitial_id);
+        nativeIdTxt = adsUpdateDialog.findViewById(R.id.native_id);
+        adIdTitleTxt = adsUpdateDialog.findViewById(R.id.ad_id_title);
+        openAppTxt = adsUpdateDialog.findViewById(R.id.openapp_id);
+        adIdUploadBtn = adsUpdateDialog.findViewById(R.id.upload_ids);
+        adIdCancelBtn = adsUpdateDialog.findViewById(R.id.cancel_id);
+        TextInputLayout textInputLayout = adsUpdateDialog.findViewById(R.id.textInputLayout1);
+        textInputLayout.setVisibility(View.VISIBLE);
+
+        adIdCancelBtn.setOnClickListener(v -> {
+            adsUpdateDialog.dismiss();
+        });
+
+        apiInterface = ApiWebServices.getApiInterface();
+        Call<PMAdsModelList> call = apiInterface.fetchAdsPm("PM Kisan Yojana");
+        call.enqueue(new Callback<PMAdsModelList>() {
+            @Override
+            public void onResponse(@NonNull Call<PMAdsModelList> call, @NonNull Response<PMAdsModelList> response) {
+                if (response.isSuccessful()) {
+                    if (Objects.requireNonNull(response.body()).getData() != null) {
+                        for (PMAdsModel ads : response.body().getData()) {
+                            pmAdsModel = ads;
+                            adIdTitle = ads.getId();
+                            adIdTitleTxt.setText(adIdTitle);
+                            bannerIdTxt.setText(ads.getBanner());
+                            interstitialIdTxt.setText(ads.getInterstitial());
+                            nativeIdTxt.setText(ads.getNativeADs());
+                            openAppTxt.setText(ads.getAppOpen());
+
+                            Log.d("ads", pmAdsModel.getBanner());
+
+                        }
+                    }
+                } else {
+                    Log.d("adsError", response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<PMAdsModelList> call, @NonNull Throwable t) {
+                Log.d("adsError", t.getMessage());
+            }
+        });
+
+
+        adIdUploadBtn.setOnClickListener(v -> {
+            String bnId = bannerIdTxt.getText().toString().trim();
+            String interId = interstitialIdTxt.getText().toString().trim();
+            String nativeId = nativeIdTxt.getText().toString().trim();
+            String appOpen = openAppTxt.getText().toString().trim();
+            if (bnId.equals(pmAdsModel.getBanner())
+                    && interId.equals(pmAdsModel.getInterstitial())
+                    && nativeId.equals(pmAdsModel.getNativeADs())
+                    && appOpen.equals(pmAdsModel.getAppOpen())) {
+
+                Toast.makeText(this, "No changes made in Ids", Toast.LENGTH_SHORT).show();
+
+            } else {
+                loadingDialog.show();
+                map.put("id", adIdTitle);
+                map.put("banner_id", bnId);
+                map.put("inter_id", interId);
+                map.put("native_id", nativeId);
+                map.put("open_app", appOpen);
+                updatePMAdIds(map);
+            }
+        });
+    }
+
+    private void updatePMAdIds(Map<String, String> map) {
+        Call<MessageModel> call = apiInterface.updatePMAdIds(map);
+        call.enqueue(new Callback<MessageModel>() {
+            @Override
+            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                loadingDialog.dismiss();
+                adsUpdateDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismiss();
+            }
         });
     }
 
@@ -153,7 +379,6 @@ public class MainActivity extends AppCompatActivity {
         adsUpdateDialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.item_bg));
         adsUpdateDialog.setCancelable(false);
         adsUpdateDialog.show();
-
         bannerIdTxt = adsUpdateDialog.findViewById(R.id.banner_id);
         interstitialIdTxt = adsUpdateDialog.findViewById(R.id.interstitial_id);
         nativeIdTxt = adsUpdateDialog.findViewById(R.id.native_id);
@@ -199,11 +424,11 @@ public class MainActivity extends AppCompatActivity {
             String nativeId = nativeIdTxt.getText().toString().trim();
             if (bnId.equals(adsModel.getBanner())
                     && interId.equals(adsModel.getInterstitial())
-                    && nativeId.equals(adsModel.getNativeADs())){
+                    && nativeId.equals(adsModel.getNativeADs())) {
 
                 Toast.makeText(this, "No changes made in Ids", Toast.LENGTH_SHORT).show();
 
-            }else {
+            } else {
                 loadingDialog.show();
                 map.put("id", adIdTitle);
                 map.put("banner_id", bnId);
@@ -219,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     assert response.body() != null;
                     Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }

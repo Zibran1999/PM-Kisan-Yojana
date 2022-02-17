@@ -69,6 +69,7 @@ public interface ApiInterface {
 
     @POST("fetch_quiz_questions.php")
     Call<QuizModelList> fetchQuizQuestions();
+
     @FormUrlEncoded
     @POST("Delete_quiz_api.php")
     Call<MessageModel> deleteQuizItems(@FieldMap Map<String, String> map);
@@ -76,6 +77,15 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("update_quiz_api.php")
     Call<MessageModel> updateQuiz(@FieldMap Map<String, String> map);
+
+
+    @FormUrlEncoded
+    @POST("pm_kisan_ads_id_fetch.php")
+    Call<PMAdsModelList> fetchAdsPm(@Field("id") String id);
+
+    @FormUrlEncoded
+    @POST("pm_kisan_id_update.php")
+    Call<MessageModel> updatePMAdIds(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
     @POST("ads_id_fetch.php")
@@ -85,5 +95,10 @@ public interface ApiInterface {
     @POST("ads_id_update.php")
     Call<MessageModel> updateAdIds(@FieldMap Map<String, String> map);
 
+    @POST("fetchImg.php")
+    Call<ImgModel> fetchImg();
 
+    @FormUrlEncoded
+    @POST("update_image.php")
+    Call<MessageModel> updateImg(@FieldMap Map<String, String> map);
 }

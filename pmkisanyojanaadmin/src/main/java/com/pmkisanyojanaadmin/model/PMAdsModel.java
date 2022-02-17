@@ -1,13 +1,13 @@
-package com.pmkisanyojana.models;
+package com.pmkisanyojanaadmin.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class AdsModel {
+public class PMAdsModel {
     String id, banner, interstitial,appOpen;
     @SerializedName("native")
     String nativeADs;
 
-    public AdsModel(String id, String banner, String interstitial, String appOpen, String nativeADs) {
+    public PMAdsModel(String id, String banner, String interstitial, String appOpen, String nativeADs) {
         this.id = id;
         this.banner = banner;
         this.interstitial = interstitial;
