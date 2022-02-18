@@ -98,6 +98,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         binding = FragmentQuizBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        CommonMethod.interstitialAds(requireActivity());
 
         question = binding.question;
         op1 = binding.optOneCard;

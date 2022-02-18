@@ -93,11 +93,11 @@ dependencies {
 
     implementation 'com.google.android.ads:mediation-test-suite:2.0.0'
 
-//    // Story Progress View
+    // Story Progress View
     implementation 'com.github.shts:StoriesProgressView:3.0.0'
     implementation 'com.github.bxute:StoryView:v1.0'
 
-// job shedule
+   // job schedule
     implementation 'com.evernote:android-job:1.4.2'
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.github.1902shubh:AdmobOpenAds:1.0.1'

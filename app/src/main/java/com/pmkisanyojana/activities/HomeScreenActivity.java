@@ -184,7 +184,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             }
 
             @Override
-            public void onFailure(Call<ImgModel> call, Throwable t) {
+            public void onFailure(@NonNull Call<ImgModel> call, @NonNull Throwable t) {
 
             }
         });

@@ -54,7 +54,7 @@ public class StatusAdapter extends RecyclerView.Adapter<StatusAdapter.ViewHolder
         holder.name.setText(statusModelList.get(position).getProfileName());
         String time = TimeUtils.getTimeAgo(Long.valueOf(statusModelList.get(position).getTime()));
         holder.time.setText(time);
-        holder.itemView.setOnClickListener(v -> listener.onStatusClicked(statusModelList.get(position)));
+        holder.itemView.setOnClickListener(v -> listener.onStatusClicked(statusModelList.get(position),position));
 
 
     }
