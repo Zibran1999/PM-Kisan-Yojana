@@ -33,9 +33,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
 
 import com.bumptech.glide.Glide;
 import com.devlomi.circularstatusview.CircularStatusView;
@@ -60,7 +57,6 @@ import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.models.StatusModel;
 import com.pmkisanyojana.models.TimeUtils;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.DeleteWorker;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -306,7 +302,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                             }
 
                         }
-                        if (statusModelList.getData().isEmpty()){
+                        if (statusModelList.getData().isEmpty()) {
                             CommonMethod.schedule(myStatusId, img);
                         }
                     });
@@ -589,51 +585,73 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
 
     @Override
-    public void onStatusClicked(StatusModel statusModel) {
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(requireActivity());
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    // Called when fullscreen content is dismissed.
-                    Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
-                    intent.putExtra("status", "allStatus");
-                    intent.putExtra("userImage", statusModel.getProfileImage());
-                    intent.putExtra("userName", statusModel.getProfileName());
-                    intent.putExtra("statusImage", statusModel.getImage());
-                    intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
-                    startActivity(intent);
-                    id = Paper.book().read(Prevalent.userId);
-                    map.put("userId", id);
-                    map.put("statusId", statusModel.getId());
-                    map.put("statusTime", String.valueOf(System.currentTimeMillis()));
+    public void onStatusClicked(StatusModel statusModel, int position) {
+        if (position % 2 == 0) {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(requireActivity());
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+                        intent.putExtra("status", "allStatus");
+                        intent.putExtra("userImage", statusModel.getProfileImage());
+                        intent.putExtra("userName", statusModel.getProfileName());
+                        intent.putExtra("statusImage", statusModel.getImage());
+                        intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+                        startActivity(intent);
+                        id = Paper.book().read(Prevalent.userId);
+                        map.put("userId", id);
+                        map.put("statusId", statusModel.getId());
+                        map.put("statusTime", String.valueOf(System.currentTimeMillis()));
 
-                    uploadSeenBy(map);
-                    FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
-                    firebaseAnalytics.logEvent("Status_click_Event", bundle);
-                    Log.d("TAG", "The ad was dismissed.");
-                }
+                        uploadSeenBy(map);
+                        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
+                        firebaseAnalytics.logEvent("Status_click_Event", bundle);
+                        Log.d("TAG", "The ad was dismissed.");
+                    }
 
-                @Override
-                public void onAdFailedToShowFullScreenContent(AdError adError) {
-                    // Called when fullscreen content failed to show.
-                    Log.d("TAG", "The ad failed to show.");
-                }
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        Log.d("TAG", "The ad failed to show.");
+                    }
 
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    // Called when fullscreen content is shown.
-                    // Make sure to set your reference to null so you don't
-                    // show it a second time.
-                    mInterstitialAd = null;
-                    Log.d("TAG", "The ad was shown.");
-                }
-            });
-        } else {
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when fullscreen content is shown.
+                        // Make sure to set your reference to null so you don't
+                        // show it a second time.
+                        mInterstitialAd = null;
+                        Log.d("TAG", "The ad was shown.");
+                    }
+                });
+            } else {
 
-            CommonMethod.interstitialAds(requireActivity());
+                CommonMethod.interstitialAds(requireActivity());
+                Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
+                intent.putExtra("status", "allStatus");
+                intent.putExtra("userImage", statusModel.getProfileImage());
+                intent.putExtra("userName", statusModel.getProfileName());
+                intent.putExtra("statusImage", statusModel.getImage());
+                intent.putExtra("time", String.valueOf(TimeUtils.getTimeAgo(Long.valueOf(statusModel.getTime()))));
+                startActivity(intent);
+                id = Paper.book().read(Prevalent.userId);
+                map.put("userId", id);
+                map.put("statusId", statusModel.getId());
+                map.put("statusTime", String.valueOf(System.currentTimeMillis()));
+
+                uploadSeenBy(map);
+                FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
+                firebaseAnalytics.logEvent("Status_click_Event", bundle);
+                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+            }
+
+        }else {
             Intent intent = new Intent(requireActivity(), ShowStatusActivity.class);
             intent.putExtra("status", "allStatus");
             intent.putExtra("userImage", statusModel.getProfileImage());
@@ -651,10 +669,7 @@ public class StatusFragment extends Fragment implements StatusClickListener {
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, statusModel.getProfileName());
             firebaseAnalytics.logEvent("Status_click_Event", bundle);
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
         }
-
-
 
     }
 

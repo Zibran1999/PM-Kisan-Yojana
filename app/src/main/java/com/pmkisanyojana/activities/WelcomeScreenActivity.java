@@ -37,56 +37,16 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         MobileAds.initialize(this);
         CommonMethod.interstitialAds(WelcomeScreenActivity.this);
         CommonMethod.getBannerAds(this, binding.adView);
-        CommonMethod.getBannerAds(this, binding.adView2);
         binding.startBtn.setOnClickListener(v -> {
 
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(this);
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
-                        mFirebaseAnalytics = FirebaseAnalytics.getInstance(WelcomeScreenActivity.this);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Welcome Button");
-                        mFirebaseAnalytics.logEvent("Clicked_start_Button", bundle);
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(WelcomeScreenActivity.this);
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Welcome Button");
+            mFirebaseAnalytics.logEvent("Clicked_start_Button", bundle);
 
-                        Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
-                        startActivity(intent);
-                        finish();
-
-                        Log.d("TAG", "The ad was dismissed.");
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        mInterstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            } else {
-
-                CommonMethod.interstitialAds(WelcomeScreenActivity.this);
-                mFirebaseAnalytics = FirebaseAnalytics.getInstance(WelcomeScreenActivity.this);
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Welcome Button");
-                mFirebaseAnalytics.logEvent("Clicked_start_Button", bundle);
-
-                Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
-                startActivity(intent);
-                finish();
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-
+            Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
+            startActivity(intent);
+            finish();
         });
 
         binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));

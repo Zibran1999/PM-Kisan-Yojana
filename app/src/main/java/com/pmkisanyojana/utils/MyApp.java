@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.evernote.android.job.JobManager;
+import com.google.android.gms.ads.MobileAds;
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 import com.pmkisanyojana.activities.MainActivity;
@@ -28,6 +29,7 @@ public class MyApp extends Application {
     private static final String ONESIGNAL_APP_ID = "9a77bdda-945f-4f86-bf6a-5c564559c350";
     public static MyApp mInstance;
     ApiInterface apiInterface;
+    AppOpenManager appOpenManager;
 
     public MyApp() {
         mInstance = this;
@@ -63,15 +65,14 @@ public class MyApp extends Application {
                             Paper.book().write(Prevalent.bannerAds, ads.getBanner());
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
-                            new AppOpenManager(mInstance, ads.getAppOpen());
-
+                            Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
+                            MobileAds.initialize(mInstance);
+                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds));
                         }
-
                     }
                 } else {
                     Log.d("adsError", response.message());
                 }
-
             }
 
             @Override

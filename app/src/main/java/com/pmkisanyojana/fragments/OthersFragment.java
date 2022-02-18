@@ -3,7 +3,6 @@ package com.pmkisanyojana.fragments;
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +19,6 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.YojanaAdapter;
@@ -151,46 +149,64 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel, int position) {
+        if (position % 2 == 0) {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(requireActivity());
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
+                        mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
 
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(requireActivity());
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    // Called when fullscreen content is dismissed.
-                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
-                    mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
+                        Intent intent = new Intent(getContext(), YojanaDataActivity.class);
+                        intent.putExtra("id", yojanaModel.getId());
+                        intent.putExtra("title", yojanaModel.getTitle());
+                        intent.putExtra("url", yojanaModel.getUrl());
+                        intent.putExtra("pos", position);
+                        startActivity(intent);
+                        Log.d("TAG", "The ad was dismissed.");
+                    }
 
-                    Intent intent = new Intent(getContext(), YojanaDataActivity.class);
-                    intent.putExtra("id", yojanaModel.getId());
-                    intent.putExtra("title", yojanaModel.getTitle());
-                    intent.putExtra("url", yojanaModel.getUrl());
-                    intent.putExtra("pos", position);
-                    startActivity(intent);
-                    Log.d("TAG", "The ad was dismissed.");
-                }
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        Log.d("TAG", "The ad failed to show.");
+                    }
 
-                @Override
-                public void onAdFailedToShowFullScreenContent(AdError adError) {
-                    // Called when fullscreen content failed to show.
-                    Log.d("TAG", "The ad failed to show.");
-                }
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when fullscreen content is shown.
+                        // Make sure to set your reference to null so you don't
+                        // show it a second time.
+                        mInterstitialAd = null;
+                        Log.d("TAG", "The ad was shown.");
+                    }
+                });
+            } else {
+                CommonMethod.interstitialAds(requireActivity());
+                mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
+                mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
 
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    // Called when fullscreen content is shown.
-                    // Make sure to set your reference to null so you don't
-                    // show it a second time.
-                    mInterstitialAd = null;
-                    Log.d("TAG", "The ad was shown.");
-                }
-            });
+                Intent intent = new Intent(getContext(), YojanaDataActivity.class);
+                intent.putExtra("id", yojanaModel.getId());
+                intent.putExtra("title", yojanaModel.getTitle());
+                intent.putExtra("url", yojanaModel.getUrl());
+                intent.putExtra("pos", position);
+                startActivity(intent);
+                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+            }
+
+
         } else {
-            CommonMethod.interstitialAds(requireActivity());
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
@@ -204,10 +220,6 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
             intent.putExtra("url", yojanaModel.getUrl());
             intent.putExtra("pos", position);
             startActivity(intent);
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
         }
-
-
-
     }
 }

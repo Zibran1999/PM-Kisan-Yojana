@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -18,9 +17,9 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -31,16 +30,19 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.databinding.ActivityMainBinding;
 import com.pmkisanyojana.utils.MyReceiver;
+import com.pmkisanyojana.utils.Prevalent;
+
+import io.paperdb.Paper;
+import papaya.in.admobopenads.AppOpenManager;
 
 public class MainActivity extends AppCompatActivity {
     public static final String BroadCastStringForAction = "checkingInternet";
+    public static AdRequest adRequest;
     FirebaseAnalytics firebaseAnalytics;
     int REQUEST_CODE = 11;
     int count = 1;
+    int countAd=0;
     ActivityMainBinding binding;
-   public static AdRequest adRequest;
-
-
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private IntentFilter intentFilter;
+    AppOpenManager appOpenManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,14 +96,21 @@ public class MainActivity extends AppCompatActivity {
         binding.noNetwork.setVisibility(View.GONE);
         binding.spIcon.setVisibility(View.VISIBLE);
         binding.lottieLoading.setVisibility(View.VISIBLE);
-        binding.spBg.setBackground(ContextCompat.getDrawable(this,R.drawable.sp_bg));
+        binding.spBg.setBackground(ContextCompat.getDrawable(this, R.drawable.sp_bg));
+
+
+      appOpenManager =  new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds));
+
         if (count == 2) {
             new Handler().postDelayed(() -> {
                 startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
                 finish();
             }, 2000);
+
         }
     }
+
+
 
     private void Set_Visibility_OFF() {
         binding.tvNotConnected.setVisibility(View.VISIBLE);

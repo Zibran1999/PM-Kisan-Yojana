@@ -4,7 +4,6 @@ import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -129,46 +128,63 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
     @Override
     public void onItemClicked(NewsModel newsModel, int position) {
+        if (position % 2 == 0) {
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(requireActivity());
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        Intent intent = new Intent(getContext(), NewsDataActivity.class);
+                        intent.putExtra("id", newsModel.getId());
+                        intent.putExtra("title", newsModel.getTitle());
+                        intent.putExtra("img", newsModel.getImage());
+                        intent.putExtra("pos", position);
+                        startActivity(intent);
+                        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-        if (mInterstitialAd != null) {
-            mInterstitialAd.show(requireActivity());
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    // Called when fullscreen content is dismissed.
-                    Intent intent = new Intent(getContext(), NewsDataActivity.class);
-                    intent.putExtra("id", newsModel.getId());
-                    intent.putExtra("title", newsModel.getTitle());
-                    intent.putExtra("img", newsModel.getImage());
-                    intent.putExtra("pos", position);
-                    startActivity(intent);
-                    mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
+                        mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+                        Log.d("TAG", "The ad was dismissed.");
+                    }
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
-                    mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
-                    Log.d("TAG", "The ad was dismissed.");
-                }
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        Log.d("TAG", "The ad failed to show.");
+                    }
 
-                @Override
-                public void onAdFailedToShowFullScreenContent(AdError adError) {
-                    // Called when fullscreen content failed to show.
-                    Log.d("TAG", "The ad failed to show.");
-                }
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when fullscreen content is shown.
+                        // Make sure to set your reference to null so you don't
+                        // show it a second time.
+                        mInterstitialAd = null;
+                        Log.d("TAG", "The ad was shown.");
+                    }
+                });
+            } else {
+                CommonMethod.interstitialAds(requireActivity());
+                Intent intent = new Intent(getContext(), NewsDataActivity.class);
+                intent.putExtra("id", newsModel.getId());
+                intent.putExtra("title", newsModel.getTitle());
+                intent.putExtra("img", newsModel.getImage());
+                intent.putExtra("pos", position);
+                startActivity(intent);
+                mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    // Called when fullscreen content is shown.
-                    // Make sure to set your reference to null so you don't
-                    // show it a second time.
-                    mInterstitialAd = null;
-                    Log.d("TAG", "The ad was shown.");
-                }
-            });
-        } else {
-            CommonMethod.interstitialAds(requireActivity());
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
+                mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+            }
+
+        }else {
             Intent intent = new Intent(getContext(), NewsDataActivity.class);
             intent.putExtra("id", newsModel.getId());
             intent.putExtra("title", newsModel.getTitle());
@@ -182,8 +198,6 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
             mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
-            Log.d("TAG", "The interstitial ad wasn't ready yet.");
         }
-
     }
 }
