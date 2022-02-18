@@ -34,7 +34,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int ITEM_VIEW = 0;
     private static final int AD_VIEW = 1;
-    private static final int ITEM_FEED_COUNT = 5;
+    private static final int ITEM_FEED_COUNT = 4;
     private final List<NewsModel> newsModelList = new ArrayList<>();
     Activity context;
     NewsInterface newsInterface;

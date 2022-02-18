@@ -144,8 +144,39 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             op4.setText(quizModelList.get(currentPos).getOp4());
 
         } else {
-            quiz.setVisibility(View.GONE);
-            showScore();
+            if (mInterstitialAd != null) {
+                mInterstitialAd.show(requireActivity());
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        quiz.setVisibility(View.GONE);
+                        showScore();
+                        Log.d("TAG", "The ad was dismissed.");
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        Log.d("TAG", "The ad failed to show.");
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when fullscreen content is shown.
+                        // Make sure to set your reference to null so you don't
+                        // show it a second time.
+                        mInterstitialAd = null;
+                        Log.d("TAG", "The ad was shown.");
+                    }
+                });
+            } else {
+                quiz.setVisibility(View.GONE);
+                showScore();
+                CommonMethod.interstitialAds(requireActivity());
+                Log.d("TAG", "The interstitial ad wasn't ready yet.");
+            }
+
         }
 
     }
@@ -177,38 +208,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             currentScore = 0;
         });
 
-        if (questionAttemted%4==0){
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(requireActivity());
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
 
-                        Log.d("TAG", "The ad was dismissed.");
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        mInterstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            } else {
-                CommonMethod.interstitialAds(requireActivity());
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-
-        }
 
     }
 
