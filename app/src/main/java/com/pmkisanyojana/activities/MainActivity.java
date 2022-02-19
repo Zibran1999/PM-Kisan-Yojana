@@ -18,8 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
@@ -29,19 +27,16 @@ import com.google.android.play.core.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.databinding.ActivityMainBinding;
+import com.pmkisanyojana.utils.AppOpenManager;
+import com.pmkisanyojana.utils.MyApp;
 import com.pmkisanyojana.utils.MyReceiver;
-import com.pmkisanyojana.utils.Prevalent;
 
-import io.paperdb.Paper;
-import papaya.in.admobopenads.AppOpenManager;
 
 public class MainActivity extends AppCompatActivity {
     public static final String BroadCastStringForAction = "checkingInternet";
-    public static AdRequest adRequest;
     FirebaseAnalytics firebaseAnalytics;
     int REQUEST_CODE = 11;
     int count = 1;
-    int countAd=0;
     ActivityMainBinding binding;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -58,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private IntentFilter intentFilter;
-    AppOpenManager appOpenManager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         inAppUpdate();
-        adRequest = new AdRequest.Builder().build();
-
 
         intentFilter = new IntentFilter();
         intentFilter.addAction(BroadCastStringForAction);
@@ -99,17 +90,18 @@ public class MainActivity extends AppCompatActivity {
         binding.spBg.setBackground(ContextCompat.getDrawable(this, R.drawable.sp_bg));
 
 
-      appOpenManager =  new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds));
+//      appOpenManager =  new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds));
 
         if (count == 2) {
-            new Handler().postDelayed(() -> {
-                startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
-                finish();
-            }, 2000);
+                    new Handler().postDelayed(() -> {
+                        startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+                        finish();
+                    }, 4000);
+
+
 
         }
     }
-
 
 
     private void Set_Visibility_OFF() {

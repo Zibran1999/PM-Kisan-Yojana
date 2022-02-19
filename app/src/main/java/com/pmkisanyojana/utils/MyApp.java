@@ -19,7 +19,6 @@ import com.pmkisanyojana.models.ApiWebServices;
 import java.util.Objects;
 
 import io.paperdb.Paper;
-import papaya.in.admobopenads.AppOpenManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,8 +27,9 @@ public class MyApp extends Application {
 
     private static final String ONESIGNAL_APP_ID = "9a77bdda-945f-4f86-bf6a-5c564559c350";
     public static MyApp mInstance;
+    private static AppOpenManager appOpenManager;
     ApiInterface apiInterface;
-    AppOpenManager appOpenManager;
+
 
     public MyApp() {
         mInstance = this;
@@ -39,6 +39,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        MobileAds.initialize(mInstance);
 
         fetchAds();
         Paper.init(mInstance);
