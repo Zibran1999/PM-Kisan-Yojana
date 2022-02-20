@@ -4,9 +4,12 @@ import static androidx.lifecycle.Lifecycle.Event.ON_START;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ProcessLifecycleOwner;
@@ -16,15 +19,18 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.appopen.AppOpenAd;
+import com.pmkisanyojana.activities.WelcomeScreenActivity;
 
 import java.util.Date;
 
 public class AppOpenManager implements LifecycleObserver, Application.ActivityLifecycleCallbacks {
+    public static int count = 1;
     private static final String LOG_TAG = "AppOpenManager";
-    private static String AD_UNIT_ID;
     public static boolean isShowingAd = false;
-    public boolean isIsShowingAd =false;
+    public static boolean isIsShowingAd = true;
+    private static String AD_UNIT_ID;
     private final MyApp myApplication;
+    Context context;
     private AppOpenAd appOpenAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private Activity currentActivity;
@@ -34,20 +40,24 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     /**
      * Constructor
      */
-    public AppOpenManager(MyApp myApplication, String adUnitId) {
+    public AppOpenManager(MyApp myApplication, String adUnitId, Context applicationContext) {
         AD_UNIT_ID = adUnitId;
         this.myApplication = myApplication;
         this.myApplication.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
+        context = applicationContext;
     }
+
 
     /**
      * LifecycleObserver methods
      */
     @OnLifecycleEvent(ON_START)
     public void onStart() {
-        showAdIfAvailable();
-        Log.d(LOG_TAG, "onStart");
+        isIsShowingAd = showAdIfAvailable();
+        Log.d("open ads", "onStart" + isIsShowingAd);
+//        myApplication.getApplicationContext().startActivity(new Intent(myApplication.getApplicationContext(), WelcomeScreenActivity.class));
+
     }
 
     /**
@@ -64,7 +74,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     /**
      * Shows the ad if one isn't already showing.
      */
-    public void showAdIfAvailable() {
+    public boolean showAdIfAvailable() {
         // Only show ad if there is not already an app open ad currently showing
         // and an ad is available.
         if (!isShowingAd && isAdAvailable()) {
@@ -78,13 +88,14 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
                             AppOpenManager.this.appOpenAd = null;
                             isShowingAd = false;
                             fetchAd();
-                            isIsShowingAd =true;
 
 
                         }
 
                         @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+
+
                         }
 
                         @Override
@@ -96,9 +107,12 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
             appOpenAd.setFullScreenContentCallback(fullScreenContentCallback);
 
         } else {
+
             Log.d(LOG_TAG, "Can not show ad.");
             fetchAd();
         }
+
+        return isAdAvailable();
     }
 
     /**
@@ -118,11 +132,10 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
                      * @param ad the loaded app open ad.
                      */
                     @Override
-                    public void onAdLoaded(AppOpenAd ad) {
+                    public void onAdLoaded(@NonNull AppOpenAd ad) {
                         AppOpenManager.this.appOpenAd = ad;
                         AppOpenManager.this.loadTime = (new Date()).getTime();
                         appOpenAd.show(currentActivity);
-                        isIsShowingAd  = true;
 
                     }
 
@@ -132,8 +145,15 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
                      * @param loadAdError the error.
                      */
                     @Override
-                    public void onAdFailedToLoad(LoadAdError loadAdError) {
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         // Handle the error.
+//                        currentActivity.startActivity(new Intent(currentActivity, WelcomeScreenActivity.class));
+                        Log.d("adError", "error = " + loadAdError);
+                        if (count == 1) {
+                            myApplication.intent();
+                            count++;
+                        }
+
                     }
 
                 };
@@ -154,8 +174,11 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
      * Utility method that checks if ad exists and can be shown.
      */
     public boolean isAdAvailable() {
-        return appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4);
-
+        if (appOpenAd != null && wasLoadTimeLessThanNHoursAgo(4)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -163,6 +186,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
      */
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
     }
 
     @Override
@@ -173,22 +197,31 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     @Override
     public void onActivityResumed(Activity activity) {
         currentActivity = activity;
+
+
     }
 
     @Override
     public void onActivityStopped(Activity activity) {
+
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
+
     }
 
     @Override
     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
+
     }
 
     @Override
     public void onActivityDestroyed(Activity activity) {
         currentActivity = null;
+        if (count == 1) {
+            myApplication.intent();
+            count++;
+        }
     }
 }

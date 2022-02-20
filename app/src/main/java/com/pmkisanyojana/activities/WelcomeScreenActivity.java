@@ -52,7 +52,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));
 
         binding.contactBtn.setOnClickListener(v -> {
-            final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+            final String appPackageName = "com.pmkisanyojnastatusdetail"; // getPackageName() from Context or Activity object
             try {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
             } catch (android.content.ActivityNotFoundException anfe) {
@@ -62,5 +62,14 @@ public class WelcomeScreenActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        startActivity(intent);
+        moveTaskToBack(true);
+        System.exit(0);
+    }
 }

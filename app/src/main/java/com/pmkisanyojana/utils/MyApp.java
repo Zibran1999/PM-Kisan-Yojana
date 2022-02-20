@@ -1,7 +1,9 @@
 package com.pmkisanyojana.utils;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 import com.pmkisanyojana.activities.MainActivity;
+import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.models.AdsModel;
 import com.pmkisanyojana.models.AdsModelList;
 import com.pmkisanyojana.models.ApiInterface;
@@ -68,7 +71,9 @@ public class MyApp extends Application {
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
                             Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
                             MobileAds.initialize(mInstance);
-                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds));
+                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds),getApplicationContext());
+                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
+
                         }
                     }
                 } else {
@@ -92,6 +97,13 @@ public class MyApp extends Application {
             startActivity(intent);
 
         }
+    }
+
+    public void intent(){
+        if (!AppOpenManager.isIsShowingAd){
+            startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+            AppOpenManager.isIsShowingAd=false;
+                    }
     }
 
 }
