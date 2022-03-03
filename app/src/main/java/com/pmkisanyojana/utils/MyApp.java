@@ -70,9 +70,9 @@ public class MyApp extends Application {
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
                             Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
-                            MobileAds.initialize(mInstance);
-                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds),getApplicationContext());
-                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
+//                            MobileAds.initialize(mInstance);
+//                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds),getApplicationContext());
+//                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
 
                         }
                     }
@@ -99,13 +99,13 @@ public class MyApp extends Application {
         }
     }
 
-    public void intent(){
-        if (!AppOpenManager.isIsShowingAd){
-            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            AppOpenManager.isIsShowingAd=false;
-                    }
-    }
+//    public void intent(){
+//        if (!AppOpenManager.isIsShowingAd){
+//            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
+//            AppOpenManager.isIsShowingAd=false;
+//                    }
+//    }
 
 }

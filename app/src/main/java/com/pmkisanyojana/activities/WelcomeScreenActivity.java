@@ -1,32 +1,48 @@
 package com.pmkisanyojana.activities;
 
+import static androidx.lifecycle.Lifecycle.Event.ON_START;
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.RequestConfiguration;
+import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.databinding.ActivityWelcomeScreenBinding;
+import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
+import com.pmkisanyojana.utils.MyApp;
+import com.pmkisanyojana.utils.Prevalent;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Date;
+
+import io.paperdb.Paper;
 
 public class WelcomeScreenActivity extends AppCompatActivity {
 
     public static int count = 1;
     ActivityWelcomeScreenBinding binding;
-    FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
@@ -38,12 +54,6 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         CommonMethod.interstitialAds(WelcomeScreenActivity.this);
         CommonMethod.getBannerAds(this, binding.adView);
         binding.startBtn.setOnClickListener(v -> {
-
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(WelcomeScreenActivity.this);
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Welcome Button");
-            mFirebaseAnalytics.logEvent("Clicked_start_Button", bundle);
-
             Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
             startActivity(intent);
             finish();
@@ -52,12 +62,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));
 
         binding.contactBtn.setOnClickListener(v -> {
-//            final String appPackageName = "com.pmkisanyojnastatusdetail"; // getPackageName() from Context or Activity object
-//            try {
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-//            } catch (android.content.ActivityNotFoundException anfe) {
-//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-//            }
+
             try {
                 CommonMethod.whatsApp(this);
             } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
@@ -77,4 +82,6 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         moveTaskToBack(true);
         System.exit(0);
     }
+
+
 }

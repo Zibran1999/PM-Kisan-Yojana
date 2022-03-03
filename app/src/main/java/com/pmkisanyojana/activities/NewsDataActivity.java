@@ -23,10 +23,14 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
+import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
+import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.paperdb.Paper;
 
 public class NewsDataActivity extends AppCompatActivity {
     ImageView newsImg, backIcon;
@@ -63,6 +67,9 @@ public class NewsDataActivity extends AppCompatActivity {
         dialog.show();
         pos = getIntent().getIntExtra("pos", 0);
 
+        if (pos%2==0){
+            new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds),this);
+        }
         map.put("previewId", id);
 
         newsTitle.setVisibility(View.VISIBLE);
@@ -85,6 +92,7 @@ public class NewsDataActivity extends AppCompatActivity {
 
                         newsDesc.setText(replaceString);
                         newsDesc.setVisibility(View.VISIBLE);
+
 
 
                     }

@@ -90,20 +90,13 @@ public class MainActivity extends AppCompatActivity {
         binding.spBg.setBackground(ContextCompat.getDrawable(this, R.drawable.sp_bg));
 
 
-//      appOpenManager =  new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds));
+        if (count == 2) {
+                      new Handler().postDelayed(() -> {
+                          startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+                          finish();
+                      }, 1000);
 
-//        if (count == 2) {
-//            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
-//                  if (!AppOpenManager.isIsShowingAd){
-//                      new Handler().postDelayed(() -> {
-//                          startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
-//                          finish();
-//                      }, 1000);
-//
-//                  }
-//
-//
-//        }
+                  }
     }
 
 

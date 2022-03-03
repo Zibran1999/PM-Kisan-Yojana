@@ -34,12 +34,16 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentDetailsBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
+import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
+import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.paperdb.Paper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +64,7 @@ public class DetailsFragment extends Fragment {
     FragmentDetailsBinding binding;
     Dialog dialog;
     LottieAnimationView lottieAnimationView;
+    int pos;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -116,6 +121,10 @@ public class DetailsFragment extends Fragment {
         lottieAnimationView = binding.lottieAnimationEmpty;
         lottieAnimationView.setVisibility(View.GONE);
 
+        pos = requireActivity().getIntent().getIntExtra("pos",0);
+        if (pos%2==0){
+            new AppOpenManager(requireActivity().getApplication(), Paper.book().read(Prevalent.openAppAds),requireContext());
+        }
 
         id = requireActivity().getIntent().getStringExtra("id");
         map.put("previewId", id);

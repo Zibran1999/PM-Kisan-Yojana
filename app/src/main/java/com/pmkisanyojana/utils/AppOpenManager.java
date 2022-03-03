@@ -29,7 +29,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     public static boolean isShowingAd = false;
     public static boolean isIsShowingAd = true;
     private static String AD_UNIT_ID;
-    private final MyApp myApplication;
+    private final Application myApplication;
     Context context;
     private AppOpenAd appOpenAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
@@ -40,7 +40,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     /**
      * Constructor
      */
-    public AppOpenManager(MyApp myApplication, String adUnitId, Context applicationContext) {
+    public AppOpenManager(Application myApplication, String adUnitId, Context applicationContext) {
         AD_UNIT_ID = adUnitId;
         this.myApplication = myApplication;
         this.myApplication.registerActivityLifecycleCallbacks(this);
@@ -150,7 +150,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
 //                        currentActivity.startActivity(new Intent(currentActivity, WelcomeScreenActivity.class));
                         Log.d("adError", "error = " + loadAdError);
                         if (count == 1) {
-                            myApplication.intent();
+//                            myApplication.intent();
                             count++;
                         }
 
@@ -220,7 +220,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     public void onActivityDestroyed(Activity activity) {
         currentActivity = null;
         if (count == 1) {
-            myApplication.intent();
+//            myApplication.intent();
             count++;
         }
     }
