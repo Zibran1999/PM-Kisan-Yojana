@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -86,6 +87,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommonMethod.interstitialAds(requireActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -93,13 +95,11 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentQuizBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        CommonMethod.interstitialAds(requireActivity());
-
         question = binding.question;
         op1 = binding.optOneCard;
         op2 = binding.optTwoCard;
@@ -147,7 +147,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         } else {
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(requireActivity());
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdDismissedFullScreenContent() {
                         // Called when fullscreen content is dismissed.
@@ -208,7 +208,6 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             questionAttemted = 1;
             currentScore = 0;
         });
-
 
 
     }

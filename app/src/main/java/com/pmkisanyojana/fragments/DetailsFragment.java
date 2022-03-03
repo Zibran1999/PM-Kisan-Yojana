@@ -27,7 +27,6 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.WebViewActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -56,7 +55,6 @@ public class DetailsFragment extends Fragment {
     int count = 1;
     String id;
     PageViewModel pageViewModel;
-    MaterialButton visitSiteBtn;
     Map<String, String> map = new HashMap<>();
     String finalEnglishString, finalHindiString;
     FragmentDetailsBinding binding;
@@ -115,15 +113,9 @@ public class DetailsFragment extends Fragment {
         webSettings.setJavaScriptEnabled(true);
         dialog.show();
 
-        visitSiteBtn = binding.visitSiteBtn;
         lottieAnimationView = binding.lottieAnimationEmpty;
         lottieAnimationView.setVisibility(View.GONE);
 
-        visitSiteBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(requireActivity(), WebViewActivity.class);
-            intent.putExtra("url", requireActivity().getIntent().getStringExtra("url"));
-            startActivity(intent);
-        });
 
         id = requireActivity().getIntent().getStringExtra("id");
         map.put("previewId", id);
@@ -189,10 +181,6 @@ public class DetailsFragment extends Fragment {
                 dialog.dismiss();
 
                 binding.titleTv.setVisibility(View.VISIBLE);
-                if (requireActivity().getIntent().getStringExtra("url").equals("null")) {
-                    visitSiteBtn.setVisibility(View.GONE);
-                } else
-                    visitSiteBtn.setVisibility(View.VISIBLE);
 
                 english.setBackgroundColor(0);
                 english.setTextColor(Color.BLACK);
@@ -224,7 +212,6 @@ public class DetailsFragment extends Fragment {
 
             } else {
                 lottieAnimationView.setVisibility(View.VISIBLE);
-                visitSiteBtn.setVisibility(View.GONE);
                 binding.titleTv.setVisibility(View.GONE);
                 webView.setVisibility(View.GONE);
 
@@ -245,7 +232,7 @@ public class DetailsFragment extends Fragment {
 
                 if (mInterstitialAd != null) {
                     mInterstitialAd.show(requireActivity());
-                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback(){
+                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                         @Override
                         public void onAdDismissedFullScreenContent() {
                             // Called when fullscreen content is dismissed.

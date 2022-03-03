@@ -101,7 +101,9 @@ public class MyApp extends Application {
 
     public void intent(){
         if (!AppOpenManager.isIsShowingAd){
-            startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             AppOpenManager.isIsShowingAd=false;
                     }
     }

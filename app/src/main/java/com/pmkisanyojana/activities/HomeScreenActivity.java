@@ -167,31 +167,35 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             map.put("id", id);
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         }
-        apiInterface= ApiWebServices.getApiInterface();
-        Call<ImgModel> call = apiInterface.fetchImg();
-        call.enqueue(new Callback<ImgModel>() {
-            @Override
-            public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
-
-                if (response.body() != null) {
-                    ImgModel imgModel = response.body();
-                    img = imgModel.getImg();
-                    url = imgModel.getUrl();
-                    Glide.with(HomeScreenActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(binding.lottieWhatsapp);
-
-                    Log.d("img",img);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ImgModel> call, @NonNull Throwable t) {
-
-            }
-        });
+//        apiInterface= ApiWebServices.getApiInterface();
+//        Call<ImgModel> call = apiInterface.fetchImg();
+//        call.enqueue(new Callback<ImgModel>() {
+//            @Override
+//            public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
+//
+//                if (response.body() != null) {
+//                    ImgModel imgModel = response.body();
+//                    img = imgModel.getImg();
+//                    url = imgModel.getUrl();
+//                    Glide.with(HomeScreenActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(binding.lottieWhatsapp);
+//
+//                    Log.d("img",img);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<ImgModel> call, @NonNull Throwable t) {
+//
+//            }
+//        });
 
 
         binding.lottieWhatsapp.setOnClickListener(view -> {
-            openWebPage(url);
+            try {
+                CommonMethod.whatsApp(this);
+            } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
 
         });
         intentFilter = new IntentFilter();
@@ -235,6 +239,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this, drawerLayout, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
+
+
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(HomeScreenActivity.this);

@@ -88,31 +88,15 @@
 
         </ScrollView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/visit_site_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20sp"
-            android:layout_marginEnd="20sp"
-            android:layout_marginBottom="10sp"
-            android:backgroundTint="#4397F0"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10sp"
-            android:text="visit website"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
         <RelativeLayout
             android:id="@+id/adView_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:gravity="center"
             android:background="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/visit_site_btn"
+            android:gravity="center"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
