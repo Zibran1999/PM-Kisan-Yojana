@@ -52,11 +52,16 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));
 
         binding.contactBtn.setOnClickListener(v -> {
-            final String appPackageName = "com.pmkisanyojnastatusdetail"; // getPackageName() from Context or Activity object
+//            final String appPackageName = "com.pmkisanyojnastatusdetail"; // getPackageName() from Context or Activity object
+//            try {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+//            } catch (android.content.ActivityNotFoundException anfe) {
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+//            }
             try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException anfe) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                CommonMethod.whatsApp(this);
+            } catch (UnsupportedEncodingException | PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
             }
         });
 

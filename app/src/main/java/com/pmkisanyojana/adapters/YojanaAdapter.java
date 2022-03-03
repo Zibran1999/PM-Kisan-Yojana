@@ -36,7 +36,7 @@ import io.paperdb.Paper;
 public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int ITEM_VIEW = 0;
     private static final int AD_VIEW = 1;
-    private static final int ITEM_FEED_COUNT = 4;
+    private static final int ITEM_FEED_COUNT = 5;
     AdLoader adLoader;
     Activity context;
     YojanaInterface yojanaInterface;
