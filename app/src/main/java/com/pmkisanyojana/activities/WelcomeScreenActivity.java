@@ -10,7 +10,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Half;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,10 +56,50 @@ public class WelcomeScreenActivity extends AppCompatActivity {
         MobileAds.initialize(this);
         CommonMethod.interstitialAds(WelcomeScreenActivity.this);
         CommonMethod.getBannerAds(this, binding.adView);
+
         binding.startBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), HomeScreenActivity.class);
-            startActivity(intent);
-            finish();
+            binding.lottieFlower.setVisibility(View.VISIBLE);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.lottieFlower.setVisibility(View.GONE);
+
+                    if (CommonMethod.mInterstitialAd != null) {
+                        CommonMethod.mInterstitialAd.show(WelcomeScreenActivity.this);
+                        CommonMethod.mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                // Called when fullscreen content is dismissed.
+                                startActivity(new Intent(getApplicationContext(),HomeScreenActivity.class));
+                                finish();
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                                // Called when fullscreen content failed to show.
+                                Log.d("TAG", "The ad failed to show.");
+                            }
+
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                // Called when fullscreen content is shown.
+                                // Make sure to set your reference to null so you don't
+                                // show it a second time.
+                                CommonMethod.mInterstitialAd = null;
+                                Log.d("TAG", "The ad was shown.");
+                            }
+                        });
+                    } else {
+                        CommonMethod.interstitialAds(WelcomeScreenActivity.this);
+                        startActivity(new Intent(getApplicationContext(),HomeScreenActivity.class));
+                        finish();
+                        Log.d("TAG", "The interstitial ad wasn't ready yet.");
+                    }
+
+                    // new AppOpenManager(MyApp.mInstance, Paper.book().read(Prevalent.openAppAds),getApplicationContext());
+
+                }
+            },3000);
         });
 
         binding.shareBtn.setOnClickListener(v -> CommonMethod.shareApp(this));

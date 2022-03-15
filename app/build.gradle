@@ -12,8 +12,8 @@ android {
         applicationId "com.pmkisanyojana"
         minSdk 21
         targetSdk 31
-        versionCode 14
-        versionName "2.3"
+        versionCode 17
+        versionName "2.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -87,7 +87,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 
-    implementation 'com.google.android.gms:play-services-ads:20.5.0'
+    implementation 'com.google.android.gms:play-services-ads:20.6.0'
     implementation 'com.google.ads.mediation:facebook:6.8.0.0'
     implementation 'com.devlomi:circularstatusview:1.0.1'
 
