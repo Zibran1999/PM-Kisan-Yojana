@@ -91,7 +91,7 @@ dependencies {
     implementation 'com.google.ads.mediation:facebook:6.8.0.0'
     implementation 'com.devlomi:circularstatusview:1.0.1'
 
-    implementation 'com.google.android.ads:mediation-test-suite:2.0.0'
+//    implementation 'com.google.android.ads:mediation-test-suite:2.0.0'
 
     // Story Progress View
     implementation 'com.github.shts:StoriesProgressView:3.0.0'
@@ -105,6 +105,14 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
+
+    // IronSource
+    implementation 'com.ironsource.sdk:mediationsdk:7.2.1'
+
+    // Add Facebook Network
+    implementation 'com.ironsource.adapters:facebookadapter:4.3.34'
+    implementation 'com.facebook.android:audience-network-sdk:6.8.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

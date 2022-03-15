@@ -15,7 +15,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +36,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -45,11 +45,9 @@ import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
 import com.pmkisanyojana.fragments.NewsFragment;
 import com.pmkisanyojana.fragments.OthersFragment;
 import com.pmkisanyojana.fragments.YojanaFragment;
-import com.pmkisanyojana.models.ApiInterface;
-import com.pmkisanyojana.models.ApiWebServices;
-import com.pmkisanyojana.models.ImgModel;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.ProfileModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
 import com.pmkisanyojana.utils.Prevalent;
@@ -60,14 +58,10 @@ import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
     private static final float END_SCALE = 0.7f;
-    public static int count_ad = 1;
     TextView versionCode;
     CircleImageView userProfileImg;
     ActivityHomeScreenBinding binding;
@@ -83,8 +77,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     ViewPager viewPager;
     String id, userImage;
     PageViewModel pageViewModel;
-    ApiInterface apiInterface;
-    String img, url;
 
     Map<String, String> map = new HashMap<>();
     public BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -130,6 +122,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
+            AdsViewModel adsViewModel = new AdsViewModel(this, binding.adView);
+            getLifecycle().addObserver(adsViewModel);
             navigationDrawer();
         }
     }
@@ -159,36 +153,12 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navMenu = binding.navMenu;
         drawerLayout = binding.drawerLayout;
         Paper.init(this);
-        CommonMethod.interstitialAds(this);
-
         id = Paper.book().read(Prevalent.userId);
 
         if (id != null) {
             map.put("id", id);
             pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
         }
-//        apiInterface= ApiWebServices.getApiInterface();
-//        Call<ImgModel> call = apiInterface.fetchImg();
-//        call.enqueue(new Callback<ImgModel>() {
-//            @Override
-//            public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
-//
-//                if (response.body() != null) {
-//                    ImgModel imgModel = response.body();
-//                    img = imgModel.getImg();
-//                    url = imgModel.getUrl();
-//                    Glide.with(HomeScreenActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(binding.lottieWhatsapp);
-//
-//                    Log.d("img",img);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<ImgModel> call, @NonNull Throwable t) {
-//
-//            }
-//        });
-
 
         binding.lottieWhatsapp.setOnClickListener(view -> {
             try {
@@ -441,11 +411,13 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onResume() {
         super.onResume();
+        IronSource.onResume(this);
         registerReceiver(receiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
+        IronSource.onPause(this);
         super.onPause();
         unregisterReceiver(receiver);
     }

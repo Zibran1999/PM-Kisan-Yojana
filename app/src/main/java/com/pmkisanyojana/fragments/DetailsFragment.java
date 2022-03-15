@@ -27,6 +27,7 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.WebViewActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -34,6 +35,7 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentDetailsBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
@@ -96,7 +98,6 @@ public class DetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            MobileAds.initialize(requireActivity());
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
@@ -121,11 +122,6 @@ public class DetailsFragment extends Fragment {
         lottieAnimationView = binding.lottieAnimationEmpty;
         lottieAnimationView.setVisibility(View.GONE);
 
-        pos = requireActivity().getIntent().getIntExtra("pos",0);
-        if (pos%2==0){
-            new AppOpenManager(requireActivity().getApplication(), Paper.book().read(Prevalent.openAppAds),requireContext());
-        }
-
         id = requireActivity().getIntent().getStringExtra("id");
         map.put("previewId", id);
 
@@ -135,9 +131,7 @@ public class DetailsFragment extends Fragment {
         hindi = binding.hindiPreview;
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
-
-        MobileAds.initialize(requireActivity());
-        CommonMethod.interstitialAds(requireActivity());
+        CommonMethod.getBannerAds(requireActivity(),binding.adViewData);
 
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
@@ -146,7 +140,6 @@ public class DetailsFragment extends Fragment {
             previewModels.addAll(previewModelList.getData());
             if (!previewModels.isEmpty()) {
 
-                CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
                 lottieAnimationView.setVisibility(View.GONE);
                 String hindiString = null;
                 String englishString = null;
@@ -239,46 +232,14 @@ public class DetailsFragment extends Fragment {
             @Override
             public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
 
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.show(requireActivity());
-                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            // Called when fullscreen content is dismissed.
-                            WebView.HitTestResult result = view.getHitTestResult();
-                            String data = result.getExtra();
-                            Context context = view.getContext();
-                            Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
-                            browserIntent.putExtra("url", data);
-                            context.startActivity(browserIntent);
-                        }
-
-                        @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            // Called when fullscreen content failed to show.
-                            Log.d("TAG", "The ad failed to show.");
-                        }
-
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-                            // Called when fullscreen content is shown.
-                            // Make sure to set your reference to null so you don't
-                            // show it a second time.
-                            mInterstitialAd = null;
-                            Log.d("TAG", "The ad was shown.");
-                        }
-                    });
-                } else {
-                    CommonMethod.interstitialAds(requireActivity());
-
-                    WebView.HitTestResult result = view.getHitTestResult();
-                    String data = result.getExtra();
-                    Context context = view.getContext();
-                    Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
-                    browserIntent.putExtra("url", data);
-                    context.startActivity(browserIntent);
-                }
-
+                AdsViewModel.destroyBanner();
+                CommonMethod.interstitialAds(requireActivity());
+                WebView.HitTestResult result = view.getHitTestResult();
+                String data = result.getExtra();
+                Context context = view.getContext();
+                Intent browserIntent = new Intent(requireActivity(), WebViewActivity.class);
+                browserIntent.putExtra("url", data);
+                context.startActivity(browserIntent);
 
                 return false;
             }
@@ -291,5 +252,17 @@ public class DetailsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         YojanaDataActivity.count--;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        IronSource.onPause(requireActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IronSource.onResume(requireActivity());
     }
 }

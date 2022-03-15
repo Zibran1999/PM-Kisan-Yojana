@@ -41,6 +41,7 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ShowStatusActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
@@ -56,6 +57,7 @@ import com.pmkisanyojana.models.MyStatusModel;
 import com.pmkisanyojana.models.ProfileModel;
 import com.pmkisanyojana.models.StatusModel;
 import com.pmkisanyojana.models.TimeUtils;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -165,9 +167,9 @@ public class StatusFragment extends Fragment implements StatusClickListener {
         userProfileImage = binding.userStatusImg;
         apiInterface = ApiWebServices.getApiInterface();
 
+        CommonMethod.getBannerAds(requireActivity(),binding.adViewStatus);
         Paper.init(requireActivity());
         id = Paper.book().read(Prevalent.userId);
-
 
         //****Loading Dialog****/
         loadingDialog = new Dialog(requireActivity());
@@ -262,7 +264,6 @@ public class StatusFragment extends Fragment implements StatusClickListener {
                 }
                 Collections.reverse(statusModelLis);
                 statusAdapter.updateStatusList(statusModelLis);
-                CommonMethod.getBannerAds(requireActivity(), binding.adViewStatus);
 
             } else {
                 binding.recentUpdateLayout.setVisibility(View.GONE);
@@ -697,8 +698,15 @@ public class StatusFragment extends Fragment implements StatusClickListener {
 
 
     @Override
+    public void onPause() {
+        super.onPause();
+        IronSource.onPause(requireActivity());
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        IronSource.onResume(requireActivity());
 
         id = Paper.book().read(Prevalent.userId);
         if (id != null) {

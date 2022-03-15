@@ -1,6 +1,7 @@
 package com.pmkisanyojana.utils;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -26,6 +27,9 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.logger.IronSourceError;
+import com.ironsource.mediationsdk.sdk.InterstitialListener;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.ApiInterface;
@@ -134,26 +138,48 @@ public class CommonMethod extends Job {
     }
 
     public static void interstitialAds(Context context) {
-        MobileAds.initialize(context);
-        String id = Paper.book().read(Prevalent.interstitialAds);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(context, id, adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        mInterstitialAd = interstitialAd;
-                        Log.i("TAG", "InteronAdLoaded");
-                    }
+//        MobileAds.initialize(context);
+        String id = Paper.book().read(Prevalent.openAppAds);
+        IronSource.init((Activity) context, id.trim());
+        IronSource.loadInterstitial();
+        IronSource.setMetaData("Facebook_IS_CacheFlag", "IMAGE");
+        IronSource.showInterstitial();
+        IronSource.setInterstitialListener(new InterstitialListener() {
+            @Override
+            public void onInterstitialAdReady() {
+                IronSource.showInterstitial();
 
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i("TAGError", loadAdError.getMessage());
-                        mInterstitialAd = null;
-                    }
-                });
+            }
+
+            @Override
+            public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+
+            }
+
+            @Override
+            public void onInterstitialAdOpened() {
+            }
+
+            @Override
+            public void onInterstitialAdClosed() {
+
+            }
+
+            @Override
+            public void onInterstitialAdShowSucceeded() {
+
+            }
+
+            @Override
+            public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+
+            }
+
+            @Override
+            public void onInterstitialAdClicked() {
+
+            }
+        });
     }
 
 

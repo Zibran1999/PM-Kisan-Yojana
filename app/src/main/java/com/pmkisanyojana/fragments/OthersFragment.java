@@ -29,6 +29,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
@@ -36,6 +37,7 @@ import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentOthersBinding;
 import com.pmkisanyojana.models.NewsModel;
 import com.pmkisanyojana.models.YojanaModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
 
@@ -92,8 +94,6 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MobileAds.initialize(requireActivity());
-        CommonMethod.interstitialAds(requireActivity());
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -109,7 +109,6 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
 
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
-        MobileAds.initialize(root.getContext());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -165,78 +164,35 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
 
     @Override
     public void onItemClicked(YojanaModel yojanaModel, int position) {
-        if (position % 2 == 1) {
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(requireActivity());
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
-                        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
-                        mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
 
-                        Intent intent = new Intent(getContext(), YojanaDataActivity.class);
-                        intent.putExtra("id", yojanaModel.getId());
-                        intent.putExtra("title", yojanaModel.getTitle());
-                        intent.putExtra("url", yojanaModel.getUrl());
-                        intent.putExtra("pos", position);
-                        startActivity(intent);
-                        Log.d("TAG", "The ad was dismissed.");
-                    }
+        AdsViewModel.destroyBanner();
+        CommonMethod.interstitialAds(requireActivity());
 
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
+        mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
 
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        mInterstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            } else {
-                CommonMethod.interstitialAds(requireActivity());
-                mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
-                mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
-
-                Intent intent = new Intent(getContext(), YojanaDataActivity.class);
-                intent.putExtra("id", yojanaModel.getId());
-                intent.putExtra("title", yojanaModel.getTitle());
-                intent.putExtra("url", yojanaModel.getUrl());
-                intent.putExtra("pos", position);
-                startActivity(intent);
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-
-
-        } else {
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, yojanaModel.getTitle());
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "OTHERS LIST");
-            mFirebaseAnalytics.logEvent("Clicked_Others_Items", bundle);
-
-            Intent intent = new Intent(getContext(), YojanaDataActivity.class);
-            intent.putExtra("id", yojanaModel.getId());
-            intent.putExtra("title", yojanaModel.getTitle());
-            intent.putExtra("url", yojanaModel.getUrl());
-            intent.putExtra("pos", position);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(getContext(), YojanaDataActivity.class);
+        intent.putExtra("id", yojanaModel.getId());
+        intent.putExtra("title", yojanaModel.getTitle());
+        intent.putExtra("url", yojanaModel.getUrl());
+        intent.putExtra("pos", position);
+        startActivity(intent);
+        Log.d("TAG", "The ad was dismissed.");
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        IronSource.onPause(requireActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        IronSource.onResume(requireActivity());
+    }
 }

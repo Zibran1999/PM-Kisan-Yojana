@@ -16,10 +16,9 @@
             android:layout_height="0dp"
             android:fillViewport="false"
             android:scrollbars="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/adView_data"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/adView_data">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -77,8 +76,8 @@
                         android:id="@+id/webView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:scrollbars="vertical"
                         android:layout_below="@id/title_tv"
+                        android:scrollbars="vertical"
 
                         android:textAlignment="viewStart" />
 
@@ -96,9 +95,9 @@
             android:background="@color/white"
             android:gravity="center"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_animationEmpty"
@@ -113,6 +112,7 @@
             app:lottie_loop="true"
             app:lottie_fileName="empty.json"
             />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

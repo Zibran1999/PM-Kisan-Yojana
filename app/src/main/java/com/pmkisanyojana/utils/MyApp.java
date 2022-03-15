@@ -9,7 +9,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.evernote.android.job.JobManager;
+import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
+import com.ironsource.mediationsdk.IronSource;
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 import com.pmkisanyojana.activities.MainActivity;
@@ -43,7 +45,10 @@ public class MyApp extends Application {
         super.onCreate();
         mInstance = this;
         MobileAds.initialize(mInstance);
-
+        IronSource.getAdvertiserId(this);
+        //Network Connectivity Status
+        IronSource.shouldTrackNetworkState(this, true);
+        AudienceNetworkAds.initialize(mInstance);
         fetchAds();
         Paper.init(mInstance);
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);

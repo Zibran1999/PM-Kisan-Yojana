@@ -7,6 +7,9 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url 'https://jitpack.io' }
 
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
         jcenter() // Warning: this repository is going to shut down soon
     }
 }

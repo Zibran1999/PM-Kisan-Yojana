@@ -21,10 +21,12 @@ import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentQuizBinding;
 import com.pmkisanyojana.models.QuizModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
@@ -87,7 +89,6 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CommonMethod.interstitialAds(requireActivity());
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -108,7 +109,8 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         questionNo = binding.questionNo;
         quiz = binding.quiz;
         score = binding.score;
-
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
+        AdsViewModel.destroyBanner();
         pageViewModel = new ViewModelProvider(requireActivity()).get(PageViewModel.class);
         pageViewModel.getquizQuestions().observe(requireActivity(), quizModelList1 -> {
             quizModelList.clear();
@@ -118,7 +120,6 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
                 random = new Random();
                 currentPos = random.nextInt(quizModelList.size());
                 setDataToViews(currentPos);
-                CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
             } else {
                 quiz.setVisibility(View.GONE);
             }
@@ -145,39 +146,9 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             op4.setText(quizModelList.get(currentPos).getOp4());
 
         } else {
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(requireActivity());
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
-                        quiz.setVisibility(View.GONE);
-                        showScore();
-                        Log.d("TAG", "The ad was dismissed.");
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        mInterstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            } else {
-                quiz.setVisibility(View.GONE);
-                showScore();
-                CommonMethod.interstitialAds(requireActivity());
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-
+            CommonMethod.interstitialAds(requireActivity());
+            quiz.setVisibility(View.GONE);
+            showScore();
         }
 
     }
@@ -356,6 +327,16 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
 
 
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        IronSource.onPause(requireActivity());
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        IronSource.onResume(requireActivity());
+    }
 
 }

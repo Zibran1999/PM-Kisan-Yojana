@@ -9,13 +9,11 @@
     tools:context=".fragments.StatusFragment">
 
 
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/create_ac_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="10dp"
         android:clickable="true"
         android:focusable="true"
@@ -24,7 +22,7 @@
         app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/adView_status">
 
         <TextView
             android:layout_width="wrap_content"
@@ -38,15 +36,25 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <RelativeLayout
+        android:id="@+id/adView_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upload_status_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible"
-        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/adView_status">
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -56,10 +64,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:src="@mipmap/ic_launcher_foreground"
+            android:src="@mipmap/ic_launcher"
+            android:visibility="visible"
             app:civ_border_color="#E8E8E8"
             app:civ_border_width="1dp"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -99,8 +107,8 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="5dp"
             android:padding="10dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
             android:text="Click to add today's image"
+            app:layout_constraintEnd_toStartOf="@+id/imageView4"
             app:layout_constraintStart_toEndOf="@+id/user_status_img"
             app:layout_constraintTop_toBottomOf="@+id/txt_status_title" />
 
@@ -165,21 +173,11 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/adView_status"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
-        <RelativeLayout
-            android:id="@+id/adView_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:gravity="center"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

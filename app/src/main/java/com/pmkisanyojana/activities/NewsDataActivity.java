@@ -23,6 +23,7 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
@@ -40,14 +41,8 @@ public class NewsDataActivity extends AppCompatActivity {
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
     LottieAnimationView lottieAnimationView;
-    InterstitialAd interstitialAd;
     Dialog dialog;
-    int pos;
 
-//    String finalEnglishString, finalHindiString;
-
-    /*ads variable*/
-    /*ads variable*/
 
     @SuppressLint("NonConstantResourceId")
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -65,11 +60,7 @@ public class NewsDataActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         dialog = CommonMethod.getDialog(this);
         dialog.show();
-        pos = getIntent().getIntExtra("pos", 0);
 
-        if (pos%2==0){
-            new AppOpenManager(this.getApplication(), Paper.book().read(Prevalent.openAppAds),this);
-        }
         map.put("previewId", id);
 
         newsTitle.setVisibility(View.VISIBLE);
@@ -85,7 +76,10 @@ public class NewsDataActivity extends AppCompatActivity {
                 img = getIntent().getStringExtra("img");
                 Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
                 newsTitle.setText(title);
-                CommonMethod.getBannerAds(this, binding.adViewNews);
+                CommonMethod.getBannerAds(this, binding.adViewNews2);
+                AdsViewModel adsViewModel = new AdsViewModel(this,binding.adViewNews);
+                getLifecycle().addObserver(adsViewModel);
+
                 for (PreviewModel m : previewModelList.getData()) {
                     if (m.getPreviewId().equals(id)) {
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");

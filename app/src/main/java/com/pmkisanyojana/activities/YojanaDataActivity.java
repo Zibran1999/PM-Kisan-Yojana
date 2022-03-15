@@ -20,10 +20,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.databinding.ActivityYojanaDataBinding;
 import com.pmkisanyojana.fragments.DetailsFragment;
 import com.pmkisanyojana.fragments.QuizFragment;
 import com.pmkisanyojana.fragments.StatusFragment;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -97,6 +99,8 @@ public class YojanaDataActivity extends AppCompatActivity {
     private void initViews() {
         setUpViewPager(binding.viewPager);
         binding.tabs.setupWithViewPager(binding.viewPager);
+        AdsViewModel adsViewModel = new AdsViewModel(this,binding.adView);
+        getLifecycle().addObserver(adsViewModel);
         binding.backIcon.setOnClickListener(v -> onBackPressed());
 
     }
@@ -195,4 +199,22 @@ public class YojanaDataActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        AdsViewModel.destroyBanner();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IronSource.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IronSource.onPause(this);
+    }
 }

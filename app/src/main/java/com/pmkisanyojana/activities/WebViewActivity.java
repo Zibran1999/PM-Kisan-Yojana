@@ -18,7 +18,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.ads.MobileAds;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.databinding.ActivityWebViewBinding;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 
@@ -36,8 +38,6 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityWebViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        MobileAds.initialize(this);
-        CommonMethod.interstitialAds(this);
         webView = binding.webView;
         title = binding.title;
         binding.backIcon.setOnClickListener(v -> onBackPressed());
@@ -101,7 +101,10 @@ public class WebViewActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 // TODO Auto-generated method stub
                 dialog.dismiss();
-                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView);
+                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView2);
+                AdsViewModel adsViewModel = new AdsViewModel(WebViewActivity.this,binding.adViewWebView);
+                getLifecycle().addObserver(adsViewModel);
+
 
                 super.onPageFinished(view, url);
             }
@@ -114,6 +117,7 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        AdsViewModel.destroyBanner();
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
@@ -121,5 +125,16 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IronSource.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IronSource.onPause(this);
+    }
 
 }

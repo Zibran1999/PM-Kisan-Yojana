@@ -30,6 +30,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.activities.HomeScreenActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.WelcomeScreenActivity;
@@ -37,6 +38,7 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.databinding.FragmentNewsBinding;
 import com.pmkisanyojana.models.NewsModel;
+import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.Prevalent;
@@ -93,8 +95,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MobileAds.initialize(requireActivity());
-        CommonMethod.interstitialAds(requireActivity());
+
         pageViewModel = new ViewModelProvider(this).get(PageViewModel.class);
         dialog = CommonMethod.getDialog(requireActivity());
         if (getArguments() != null) {
@@ -109,11 +110,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         // Inflate the layout for this fragment
         binding = FragmentNewsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
         homeRV = binding.HomeRV;
-        MobileAds.initialize(root.getContext());
-
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
@@ -145,78 +142,32 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
     @Override
     public void onItemClicked(NewsModel newsModel, int position) {
-        if (position % 2 == 1) {
-            if (mInterstitialAd != null) {
-                mInterstitialAd.show(requireActivity());
-                mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
-                        Intent intent = new Intent(getContext(), NewsDataActivity.class);
-                        intent.putExtra("id", newsModel.getId());
-                        intent.putExtra("title", newsModel.getTitle());
-                        intent.putExtra("img", newsModel.getImage());
-                        intent.putExtra("pos", position);
-                        startActivity(intent);
-                        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
+        AdsViewModel.destroyBanner();
+        CommonMethod.interstitialAds(requireActivity());
+        Intent intent = new Intent(getContext(), NewsDataActivity.class);
+        intent.putExtra("id", newsModel.getId());
+        intent.putExtra("title", newsModel.getTitle());
+        intent.putExtra("img", newsModel.getImage());
+        intent.putExtra("pos", position);
+        startActivity(intent);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
-                        mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
-                        Log.d("TAG", "The ad was dismissed.");
-                    }
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
+        mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
+        Log.d("TAG", "The ad was dismissed.");    }
 
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        mInterstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            } else {
-                CommonMethod.interstitialAds(requireActivity());
-                Intent intent = new Intent(getContext(), NewsDataActivity.class);
-                intent.putExtra("id", newsModel.getId());
-                intent.putExtra("title", newsModel.getTitle());
-                intent.putExtra("img", newsModel.getImage());
-                intent.putExtra("pos", position);
-                startActivity(intent);
-                mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
-                mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
-                Log.d("TAG", "The interstitial ad wasn't ready yet.");
-            }
-
-        }else {
-            Intent intent = new Intent(getContext(), NewsDataActivity.class);
-            intent.putExtra("id", newsModel.getId());
-            intent.putExtra("title", newsModel.getTitle());
-            intent.putExtra("img", newsModel.getImage());
-            intent.putExtra("pos", position);
-            startActivity(intent);
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
-
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, newsModel.getId());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, newsModel.getTitle());
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "NEWS LIST");
-            mFirebaseAnalytics.logEvent("Clicked_News_Items", bundle);
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        IronSource.onPause(requireActivity());
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        IronSource.onResume(requireActivity());
+    }
 }
