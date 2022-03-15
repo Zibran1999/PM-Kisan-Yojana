@@ -110,7 +110,6 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         quiz = binding.quiz;
         score = binding.score;
         CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
-        AdsViewModel.destroyBanner();
         pageViewModel = new ViewModelProvider(requireActivity()).get(PageViewModel.class);
         pageViewModel.getquizQuestions().observe(requireActivity(), quizModelList1 -> {
             quizModelList.clear();
