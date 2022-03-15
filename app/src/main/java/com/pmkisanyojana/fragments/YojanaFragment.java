@@ -1,11 +1,8 @@
 package com.pmkisanyojana.fragments;
 
-import static androidx.lifecycle.Lifecycle.Event.ON_START;
 import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,38 +10,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.pmkisanyojana.activities.NewsDataActivity;
 import com.pmkisanyojana.activities.YojanaDataActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentYojanaBinding;
-import com.pmkisanyojana.models.NewsModel;
 import com.pmkisanyojana.models.YojanaModel;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import io.paperdb.Paper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -226,7 +210,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
                 Log.d("TAG", "The interstitial ad wasn't ready yet.");
             }
 
-        }else {
+        } else {
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
 
             Bundle bundle = new Bundle();
