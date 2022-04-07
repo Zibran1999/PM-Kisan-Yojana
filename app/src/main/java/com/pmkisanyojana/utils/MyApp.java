@@ -1,9 +1,7 @@
 package com.pmkisanyojana.utils;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -61,6 +59,14 @@ public class MyApp extends Application {
 
     }
 
+    public void intent() {
+        if (!AppOpenManager.isIsShowingAd) {
+            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            AppOpenManager.isIsShowingAd = false;
+        }
+    }
     private void fetchAds() {
 
         apiInterface = ApiWebServices.getApiInterface();
@@ -75,8 +81,8 @@ public class MyApp extends Application {
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
                             Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
-//                            MobileAds.initialize(mInstance);
-//                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.openAppAds),getApplicationContext());
+                            MobileAds.initialize(mInstance);
+                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.interstitialAds), mInstance);
 //                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
 
                         }
@@ -93,6 +99,8 @@ public class MyApp extends Application {
         });
     }
 
+
+
     private class ExampleNotificationOpenedHandler implements OneSignal.OSNotificationOpenedHandler {
 
         @Override
@@ -103,14 +111,4 @@ public class MyApp extends Application {
 
         }
     }
-
-//    public void intent(){
-//        if (!AppOpenManager.isIsShowingAd){
-//            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(intent);
-//            AppOpenManager.isIsShowingAd=false;
-//                    }
-//    }
-
 }

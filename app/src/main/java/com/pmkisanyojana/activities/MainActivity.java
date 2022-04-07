@@ -90,13 +90,13 @@ public class MainActivity extends AppCompatActivity {
         binding.spBg.setBackground(ContextCompat.getDrawable(this, R.drawable.sp_bg));
 
 
-        if (count == 2) {
-                      new Handler().postDelayed(() -> {
-                          startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
-                          finish();
-                      }, 1000);
-
-                  }
+//        if (count == 2) {
+//                      new Handler().postDelayed(() -> {
+//                          startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+//                          finish();
+//                      }, 1000);
+//
+//                  }
     }
 
 

@@ -5,7 +5,6 @@ import static androidx.lifecycle.Lifecycle.Event.ON_START;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -19,18 +18,17 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.appopen.AppOpenAd;
-import com.pmkisanyojana.activities.WelcomeScreenActivity;
 
 import java.util.Date;
 
 public class AppOpenManager implements LifecycleObserver, Application.ActivityLifecycleCallbacks {
-    public static int count = 1;
     private static final String LOG_TAG = "AppOpenManager";
+    public static int count = 1;
     public static boolean isShowingAd = false;
     public static boolean isIsShowingAd = true;
     private static String AD_UNIT_ID;
-    private final Application myApplication;
     Context context;
+    public MyApp myApplication;
     private AppOpenAd appOpenAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private Activity currentActivity;
@@ -40,7 +38,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     /**
      * Constructor
      */
-    public AppOpenManager(Application myApplication, String adUnitId, Context applicationContext) {
+    public AppOpenManager(MyApp myApplication, String adUnitId, Context applicationContext) {
         AD_UNIT_ID = adUnitId;
         this.myApplication = myApplication;
         this.myApplication.registerActivityLifecycleCallbacks(this);
@@ -150,7 +148,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
 //                        currentActivity.startActivity(new Intent(currentActivity, WelcomeScreenActivity.class));
                         Log.d("adError", "error = " + loadAdError);
                         if (count == 1) {
-//                            myApplication.intent();
+                            myApplication.intent();
                             count++;
                         }
 
@@ -220,7 +218,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
     public void onActivityDestroyed(Activity activity) {
         currentActivity = null;
         if (count == 1) {
-//            myApplication.intent();
+            myApplication.intent();
             count++;
         }
     }

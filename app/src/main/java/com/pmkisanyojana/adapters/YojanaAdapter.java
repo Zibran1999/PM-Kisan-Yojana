@@ -139,7 +139,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             }).build();
 
-//            adLoader.loadAd(new AdRequest.Builder().build());
+            adLoader.loadAd(new AdRequest.Builder().build());
 
         }
 
