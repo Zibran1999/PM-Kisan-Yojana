@@ -6,7 +6,9 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Url;
 
 public interface ApiInterface {
 
@@ -72,5 +74,11 @@ public interface ApiInterface {
     @POST("fetchImg.php")
     Call<ImgModel> fetchImg();
 
+    @FormUrlEncoded
+    @POST()
+    Call<MessageModel> getContestRes(@FieldMap Map<String, String> map, @Url String url);
+
+    @GET("fetch_contest_code_data.php")
+    Call<ContestCodeModel> getContestData();
 
 }

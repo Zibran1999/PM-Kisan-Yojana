@@ -161,7 +161,7 @@ public class YojanaDataActivity extends AppCompatActivity {
                 assert result != null;
                 uri = result.getUri();
                 setImage(uri, this);
-                Glide.with(this).load(uri).into(StatusFragment.chooseImg);
+                Glide.with(this).load(uri).into(StatusFragment.userImageView);
             }
         }
     }

@@ -25,6 +25,8 @@ public class YojanaRepository {
     private final MutableLiveData<MyStatusModelList> mystatusModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<StatusModelList> statusModelListMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<StatusViewModelList> statusViewModelListMutableLiveData = new MutableLiveData<>();
+    private final MutableLiveData<ContestCodeModel> contestCodeMutableLiveData = new MutableLiveData<>();
+
 
 
 
@@ -211,7 +213,8 @@ public class YojanaRepository {
         });
 
         return statusModelListMutableLiveData;
-    }public LiveData<StatusViewModelList> getStatusViews(Map<String, String> map) {
+    }
+    public LiveData<StatusViewModelList> getStatusViews(Map<String, String> map) {
         Call<StatusViewModelList> call = apiInterface.fetchStatusViews(map);
         call.enqueue(new Callback<StatusViewModelList>() {
             @Override
@@ -230,6 +233,25 @@ public class YojanaRepository {
         });
 
         return statusViewModelListMutableLiveData;
+    }
+
+    public MutableLiveData<ContestCodeModel> getCodeModelMutableLiveData() {
+        Call<ContestCodeModel> call = apiInterface.getContestData();
+        call.enqueue(new Callback<ContestCodeModel>() {
+            @Override
+            public void onResponse(@NonNull Call<ContestCodeModel> call, @NonNull Response<ContestCodeModel> response) {
+
+                if (response.isSuccessful()) {
+                    contestCodeMutableLiveData.setValue(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ContestCodeModel> call, @NonNull Throwable t) {
+
+            }
+        });
+        return contestCodeMutableLiveData;
     }
 
 }

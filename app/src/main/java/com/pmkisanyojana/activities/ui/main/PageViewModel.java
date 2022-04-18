@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.pmkisanyojana.models.ContestCodeModel;
 import com.pmkisanyojana.models.MyStatusModelList;
 import com.pmkisanyojana.models.NewsModelList;
 import com.pmkisanyojana.models.PreviewModelList;
@@ -69,6 +70,10 @@ public class PageViewModel extends AndroidViewModel {
 
     public LiveData<StatusViewModelList> fetchStatusViews() {
         return yojanaRepository.getStatusViews(map);
+    }
+
+    public LiveData<ContestCodeModel> getContestData() {
+        return yojanaRepository.getCodeModelMutableLiveData();
     }
 
 

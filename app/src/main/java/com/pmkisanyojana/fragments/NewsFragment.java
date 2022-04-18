@@ -144,6 +144,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
     public void onItemClicked(NewsModel newsModel, int position) {
         AdsViewModel.destroyBanner();
         CommonMethod.interstitialAds(requireActivity());
+
         Intent intent = new Intent(getContext(), NewsDataActivity.class);
         intent.putExtra("id", newsModel.getId());
         intent.putExtra("title", newsModel.getTitle());

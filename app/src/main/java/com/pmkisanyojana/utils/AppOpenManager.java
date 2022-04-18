@@ -86,19 +86,16 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
                             AppOpenManager.this.appOpenAd = null;
                             isShowingAd = false;
                             fetchAd();
-
-
                         }
 
                         @Override
                         public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-
-
                         }
 
                         @Override
                         public void onAdShowedFullScreenContent() {
                             isShowingAd = true;
+                            Log.d(LOG_TAG, "onAdShowedFullScreenContent");
                         }
                     };
 
