@@ -99,8 +99,8 @@ public class YojanaDataActivity extends AppCompatActivity {
     private void initViews() {
         setUpViewPager(binding.viewPager);
         binding.tabs.setupWithViewPager(binding.viewPager);
-        AdsViewModel adsViewModel = new AdsViewModel(this,binding.adView);
-        getLifecycle().addObserver(adsViewModel);
+//        AdsViewModel adsViewModel = new AdsViewModel(this,binding.adView);
+//        getLifecycle().addObserver(adsViewModel);
         binding.backIcon.setOnClickListener(v -> onBackPressed());
 
     }

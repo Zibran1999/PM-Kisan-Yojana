@@ -89,6 +89,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
         CommonMethod.getBannerAds(requireActivity(), binding.adViewYojana);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
@@ -100,6 +101,7 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         binding.swipeRefresh.setOnRefreshListener(() -> {
             setYojanaData(requireActivity());
             CommonMethod.getBannerAds(requireActivity(), binding.adViewYojana);
+            CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
             binding.swipeRefresh.setRefreshing(false);
 
         });

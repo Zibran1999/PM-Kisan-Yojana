@@ -70,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
     Button cancelBtn, uploadBtn,
             cancelYoajanBtn, uploadYojanaBtn, editAndDeleteBtn, adIdCancelBtn, adIdUploadBtn;
-    Dialog uploadDialog, adYojanaDialog, addQuizDialog, adsUpdateDialog,uploadImagesDialog;
+    Dialog uploadDialog, adYojanaDialog, addQuizDialog, adsUpdateDialog, uploadImagesDialog;
     RadioButton immediateBtn, scheduleBtn;
     RadioGroup radioGroup;
     LinearLayout scheduleLayout;
     TextView dialogTitle, dialogTitle2, adIdTitleTxt;
     TextView setDate, setTime;
-    ImageView selectImage,chooseBannerImage;
-    EditText selectTitle, yojanaData, yojanaLink, bannerIdTxt, interstitialIdTxt, nativeIdTxt, openAppTxt,imageURlTxt;
+    ImageView selectImage, chooseBannerImage;
+    EditText selectTitle, yojanaData, yojanaLink, bannerIdTxt, interstitialIdTxt, nativeIdTxt, openAppTxt, imageURlTxt, appIdTxt;
     AppCompatAutoCompleteTextView appCompatAutoCompleteTextView;
     List<YojanaModel> yojanaModelList = new ArrayList<>();
     List<NewsModel> newsModelList = new ArrayList<>();
@@ -92,13 +92,12 @@ public class MainActivity extends AppCompatActivity {
     String selectTime = "", selectDate = "";
     Map<String, String> map = new HashMap<>();
     Dialog loadingDialog;
-    Button uploadQuizQuestionBtn,uploadBannerImageBtn;
+    Button uploadQuizQuestionBtn, uploadBannerImageBtn;
     TextView question, op1, op2, op3, op4, ans;
     AdsModel adsModel;
     PMAdsModel pmAdsModel;
     ActivityResultLauncher<String> launcher;
     String img, url;
-
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -191,10 +190,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call<ImgModel> call, @NonNull Response<ImgModel> response) {
 
-                if (response.body()!= null){
+                if (response.body() != null) {
 
-                    img= response.body().getImg();
-                    url= response.body().getUrl();
+                    img = response.body().getImg();
+                    url = response.body().getUrl();
                     encodedImage = img;
                     Glide.with(MainActivity.this).load("https://gedgetsworld.in/PM_Kisan_Yojana/Images/" + img).into(chooseBannerImage);
                     imageURlTxt.setText(url);
@@ -249,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     private void updateBannerImage(Map<String, String> map) {
         Call<MessageModel> call = apiInterface.updateImg(map);
         call.enqueue(new Callback<MessageModel>() {
@@ -271,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showUpdatePMAdsDialog() {
         adsUpdateDialog = new Dialog(this);
         adsUpdateDialog.setContentView(R.layout.ad_id_layout);
@@ -285,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
         nativeIdTxt = adsUpdateDialog.findViewById(R.id.native_id);
         adIdTitleTxt = adsUpdateDialog.findViewById(R.id.ad_id_title);
         openAppTxt = adsUpdateDialog.findViewById(R.id.openapp_id);
+        appIdTxt = adsUpdateDialog.findViewById(R.id.app_id);
         adIdUploadBtn = adsUpdateDialog.findViewById(R.id.upload_ids);
         adIdCancelBtn = adsUpdateDialog.findViewById(R.id.cancel_id);
         TextInputLayout textInputLayout = adsUpdateDialog.findViewById(R.id.textInputLayout1);
@@ -309,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
                             interstitialIdTxt.setText(ads.getInterstitial());
                             nativeIdTxt.setText(ads.getNativeADs());
                             openAppTxt.setText(ads.getAppOpen());
+                            appIdTxt.setText(ads.getAppId());
 
                             Log.d("ads", pmAdsModel.getBanner());
 
@@ -331,8 +334,10 @@ public class MainActivity extends AppCompatActivity {
             String interId = interstitialIdTxt.getText().toString().trim();
             String nativeId = nativeIdTxt.getText().toString().trim();
             String appOpen = openAppTxt.getText().toString().trim();
+            String appId = appIdTxt.getText().toString().trim();
             if (bnId.equals(pmAdsModel.getBanner())
                     && interId.equals(pmAdsModel.getInterstitial())
+                    && appId.equals(pmAdsModel.getAppId())
                     && nativeId.equals(pmAdsModel.getNativeADs())
                     && appOpen.equals(pmAdsModel.getAppOpen())) {
 
@@ -345,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
                 map.put("inter_id", interId);
                 map.put("native_id", nativeId);
                 map.put("open_app", appOpen);
+                map.put("app_id", appId);
                 updatePMAdIds(map);
             }
         });
@@ -382,9 +388,11 @@ public class MainActivity extends AppCompatActivity {
         bannerIdTxt = adsUpdateDialog.findViewById(R.id.banner_id);
         interstitialIdTxt = adsUpdateDialog.findViewById(R.id.interstitial_id);
         nativeIdTxt = adsUpdateDialog.findViewById(R.id.native_id);
+        appIdTxt = adsUpdateDialog.findViewById(R.id.app_id);
         adIdTitleTxt = adsUpdateDialog.findViewById(R.id.ad_id_title);
         adIdUploadBtn = adsUpdateDialog.findViewById(R.id.upload_ids);
         adIdCancelBtn = adsUpdateDialog.findViewById(R.id.cancel_id);
+        appIdTxt.setVisibility(View.GONE);
 
         adIdCancelBtn.setOnClickListener(v -> {
             adsUpdateDialog.dismiss();

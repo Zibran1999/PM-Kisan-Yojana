@@ -153,6 +153,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
                     }
                 }
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewOthers);
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
                 pinnedAdapter.updateYojanaList(pinnedModels);
                 othersAdapter.updateYojanaList(models);
 
@@ -165,7 +166,7 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
     @Override
     public void onItemClicked(YojanaModel yojanaModel, int position) {
 
-        AdsViewModel.destroyBanner();
+//        AdsViewModel.destroyBanner();
         CommonMethod.interstitialAds(requireActivity());
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());

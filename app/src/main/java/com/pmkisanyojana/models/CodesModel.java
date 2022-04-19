@@ -1,15 +1,13 @@
 package com.pmkisanyojana.models;
 
-import com.google.gson.annotations.SerializedName;
-
 public class
 CodesModel {
-    String userName,userImage;
-    String id, yojanaName,yojanaAmount;
+    String userName, images;
+    String id, yojanaName, yojanaAmount;
 
-    public CodesModel(String userName, String userImage, String id, String yojanaName, String yojanaAmount) {
+    public CodesModel(String userName, String images, String id, String yojanaName, String yojanaAmount) {
         this.userName = userName;
-        this.userImage = userImage;
+        this.images = images;
         this.id = id;
         this.yojanaName = yojanaName;
         this.yojanaAmount = yojanaAmount;
@@ -19,8 +17,8 @@ CodesModel {
         return userName;
     }
 
-    public String getUserImage() {
-        return userImage;
+    public String getImages() {
+        return images;
     }
 
     public String getId() {

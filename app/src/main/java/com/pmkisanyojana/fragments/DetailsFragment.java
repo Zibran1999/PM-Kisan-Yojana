@@ -132,6 +132,7 @@ public class DetailsFragment extends Fragment {
         english = binding.englishPreview;
         List<PreviewModel> previewModels = new ArrayList<>();
         CommonMethod.getBannerAds(requireActivity(),binding.adViewData);
+        CommonMethod.getBannerAds(requireActivity(),binding.adViewBottom);
 
 
         pageViewModel = new ViewModelProvider(this, new ModelFactory(requireActivity().getApplication(), map)).get(PageViewModel.class);
@@ -232,7 +233,7 @@ public class DetailsFragment extends Fragment {
             @Override
             public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
 
-                AdsViewModel.destroyBanner();
+//                AdsViewModel.destroyBanner();
                 CommonMethod.interstitialAds(requireActivity());
                 WebView.HitTestResult result = view.getHitTestResult();
                 String data = result.getExtra();
