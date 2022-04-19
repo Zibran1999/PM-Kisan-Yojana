@@ -1,12 +1,7 @@
 package com.pmkisanyojana.fragments;
 
-import static androidx.lifecycle.Lifecycle.Event.ON_START;
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.app.Activity;
-import android.app.Application;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,36 +11,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.appopen.AppOpenAd;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ironsource.mediationsdk.IronSource;
-import com.pmkisanyojana.activities.HomeScreenActivity;
 import com.pmkisanyojana.activities.NewsDataActivity;
-import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.NewsAdapter;
 import com.pmkisanyojana.databinding.FragmentNewsBinding;
 import com.pmkisanyojana.models.NewsModel;
-import com.pmkisanyojana.utils.AdsViewModel;
-import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.Prevalent;
-
-import java.util.Date;
-
-import io.paperdb.Paper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -143,7 +120,6 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
     @Override
     public void onItemClicked(NewsModel newsModel, int position) {
-//        AdsViewModel.destroyBanner();
         CommonMethod.interstitialAds(requireActivity());
 
         Intent intent = new Intent(getContext(), NewsDataActivity.class);

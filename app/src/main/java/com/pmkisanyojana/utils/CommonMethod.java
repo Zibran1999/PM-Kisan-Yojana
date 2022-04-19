@@ -14,58 +14,24 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.evernote.android.job.Job;
-import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobRequest;
-import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.ironsource.mediationsdk.IronSource;
 import com.ironsource.mediationsdk.logger.IronSourceError;
 import com.ironsource.mediationsdk.sdk.InterstitialListener;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
-import com.pmkisanyojana.models.ApiInterface;
-import com.pmkisanyojana.models.ApiWebServices;
-import com.pmkisanyojana.models.MessageModel;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-public class CommonMethod extends Job {
-    public static InterstitialAd mInterstitialAd;
-    public static int jobId;
-    ApiInterface apiInterface;
-
-    public static void schedule(String statusId, String statusImg) {
-        int pos;
-        PersistableBundleCompat bundle = new PersistableBundleCompat();
-        bundle.putString(Prevalent.UID, statusId);
-        bundle.putString(Prevalent.STATUS_IMAGE, statusImg);
-        pos = new JobRequest.Builder(Prevalent.JOB_TAG_DELETE_STATUS)
-                .setExact(TimeUnit.HOURS.toMillis(23))
-                .setExtras(bundle)
-                .build()
-                .schedule();
-
-        jobId = pos;
-
-    }
-
+public class CommonMethod {
+    public static String id;
 
     public static void shareApp(Context context) {
         try {
@@ -138,7 +104,7 @@ public class CommonMethod extends Job {
     public static void interstitialAds(Activity context) {
 //        MobileAds.initialize(context);
         String id = Objects.requireNonNull(Paper.book().read(Prevalent.openAppAds)).toString().trim();
-        IronSource.init( context, id);
+        IronSource.init(context, id);
         IronSource.loadInterstitial();
         IronSource.setMetaData("Facebook_IS_CacheFlag", "IMAGE");
         IronSource.showInterstitial();
@@ -182,7 +148,7 @@ public class CommonMethod extends Job {
 
 
     public static void getBannerAds(Context context, RelativeLayout container) {
-        String id = Paper.book().read(Prevalent.bannerAds);
+        id = Paper.book().read(Prevalent.bannerAds);
         MobileAds.initialize(context);
         AdRequest adRequest = new AdRequest.Builder().build();
         AdView adView = new AdView(context);
@@ -194,50 +160,5 @@ public class CommonMethod extends Job {
 
     }
 
-    public static void cancelJob(int jobId) {
-        JobManager.instance().cancelAll();
 
-    }
-
-    @NonNull
-    @Override
-    protected Result onRunJob(@NonNull Params params) {
-
-        String sId = params.getExtras().getString(Prevalent.UID, "");
-        String statusImg = params.getExtras().getString(Prevalent.STATUS_IMAGE, "");
-        Log.d("runJob", sId + " " + statusImg);
-        Map<String, String> map = new HashMap<>();
-        map.put("statusId", sId);
-        map.put("statusImg", "User_Status_Images/" + statusImg);
-        Log.d("jobSchedule", " " + jobId);
-        deleteMyStatus(map);
-        return Result.SUCCESS;
-    }
-
-    private void deleteMyStatus(Map<String, String> map) {
-        apiInterface = ApiWebServices.getApiInterface();
-        Call<MessageModel> call = apiInterface.deleteMyStatus(map);
-        call.enqueue(new Callback<MessageModel>() {
-            @Override
-            public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-
-                assert response.body() != null;
-                if (response.isSuccessful()) {
-
-                    Log.d("deleteStatus", response.body().getMessage());
-
-                } else {
-                    Log.d("StatusError", response.body().getMessage());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<MessageModel> call, @NonNull Throwable t) {
-                Log.d("deleteStatusError", t.getMessage());
-
-
-            }
-        });
-
-    }
 }

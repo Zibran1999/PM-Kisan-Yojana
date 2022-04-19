@@ -1,10 +1,8 @@
 package com.pmkisanyojana.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -56,8 +54,7 @@ import retrofit2.Response;
 
 public class StatusFragment extends Fragment {
 
-    private static final int STORAGE_REQUEST = 200;
-    private static final int CAMERA_REQUEST = 100;
+
     public static String encodedImage;
     public static CircleImageView userImageView;
     static Bitmap bitmap;
@@ -65,7 +62,6 @@ public class StatusFragment extends Fragment {
     Button addYojanaBtn;
     Dialog addYojanaDialog, dialog;
     String[] storagePermission;
-    String[] cameraPermission;
     PageViewModel pageViewModel;
     List<CodesModel> codesModelList = new ArrayList<>();
     RecyclerView recyclerView;
@@ -102,14 +98,12 @@ public class StatusFragment extends Fragment {
         dialog = CommonMethod.getDialog(requireActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         recyclerView.setHasFixedSize(true);
-        CommonMethod.getBannerAds(requireActivity(),binding.adViewTop);
-        CommonMethod.getBannerAds(requireActivity(),binding.adViewBottom);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewTop);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         showYojanaData();
 
 
-        addYojanaBtn.setOnClickListener(v -> {
-            AddYojanaDialog(requireContext());
-        });
+        addYojanaBtn.setOnClickListener(v -> AddYojanaDialog(requireContext()));
         return binding.getRoot();
     }
 
@@ -163,27 +157,27 @@ public class StatusFragment extends Fragment {
 
     private void uploadYojanaData(Context context, String encodedImage, String uName, String yoName, String yoAmount) {
         Map<String, String> map = new HashMap<>();
-        map.put("userName",uName);
-        map.put("yojanaName",yoName);
-        map.put("yojanaAmount",yoAmount);
-        map.put("img",encodedImage);
+        map.put("userName", uName);
+        map.put("yojanaName", yoName);
+        map.put("yojanaAmount", yoAmount);
+        map.put("img", encodedImage);
 
         ApiInterface apiInterface = ApiWebServices.getApiInterface();
-        Call<MessageModel> call = apiInterface.getContestRes(map,"https://gedgetsworld.in/PM_Kisan_Yojana/add_yojana_data.php");
+        Call<MessageModel> call = apiInterface.getContestRes(map, "https://gedgetsworld.in/PM_Kisan_Yojana/add_yojana_data.php");
         call.enqueue(new Callback<MessageModel>() {
             @Override
             public void onResponse(@NonNull Call<MessageModel> call, @NonNull Response<MessageModel> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     showYojanaData();
                     assert response.body() != null;
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                     addYojanaDialog.dismiss();
-                }else {
+                } else {
                     assert response.body() != null;
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-               dialog.dismiss();
+                dialog.dismiss();
             }
 
             @Override
@@ -198,7 +192,7 @@ public class StatusFragment extends Fragment {
         pageViewModel.getContestData().observe(requireActivity(), new Observer<ContestCodeModel>() {
             @Override
             public void onChanged(ContestCodeModel contestCodeModel) {
-                if (!contestCodeModel.getData().isEmpty()){
+                if (!contestCodeModel.getData().isEmpty()) {
                     codesModelList.clear();
                     codesModelList.addAll(contestCodeModel.getData());
                     Collections.reverse(codesModelList);
@@ -211,47 +205,6 @@ public class StatusFragment extends Fragment {
         });
     }
 
-    private void showImagePicDialog() {
-        String[] options = {"Camera", "Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
-        builder.setTitle("Pick Image From");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                if (!checkCameraPermission()) {
-                    requestCameraPermission();
-                } else {
-                    pickFromGallery();
-                }
-            } else if (which == 1) {
-                if (!checkStoragePermission()) {
-                    requestStoragePermission();
-                } else {
-                    pickFromGallery();
-                }
-            }
-        });
-        builder.create().show();
-    }
-
-    private Boolean checkCameraPermission() {
-        boolean result = ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    // Requesting camera permission
-    private void requestCameraPermission() {
-        requestPermissions(cameraPermission, CAMERA_REQUEST);
-    }
-
-    private Boolean checkStoragePermission() {
-        return ContextCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-    }
-
-    // Requesting  gallery permission
-    private void requestStoragePermission() {
-        requestPermissions(storagePermission, STORAGE_REQUEST);
-    }
 
     private void pickFromGallery() {
         CropImage.activity().start(requireActivity());

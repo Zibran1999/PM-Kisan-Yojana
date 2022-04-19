@@ -8,7 +8,6 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.R;
@@ -58,6 +57,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
     public void onBackPressed() {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
         builder.setTitle(R.string.app_name)
+                .setCancelable(false)
                 .setIcon(R.mipmap.ic_launcher)
                 .setMessage("Do You Really Want To Exit?\nAlso Rate Us 5 Star.")
                 .setNeutralButton("CANCEL", (dialog, which) -> {
@@ -76,6 +76,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
                 });
         builder.show();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -85,6 +86,7 @@ public class WelcomeScreenActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        binding.lottieFlower.setVisibility(View.GONE);
         IronSource.onPause(this);
     }
 

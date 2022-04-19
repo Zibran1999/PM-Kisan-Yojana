@@ -1,7 +1,5 @@
 package com.pmkisanyojana.fragments;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -22,10 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.R;
@@ -35,17 +29,12 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentDetailsBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
-import com.pmkisanyojana.utils.AdsViewModel;
-import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.paperdb.Paper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +47,6 @@ public class DetailsFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     WebView webView;
-    int count = 1;
     String id;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
@@ -66,7 +54,6 @@ public class DetailsFragment extends Fragment {
     FragmentDetailsBinding binding;
     Dialog dialog;
     LottieAnimationView lottieAnimationView;
-    int pos;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -192,6 +179,8 @@ public class DetailsFragment extends Fragment {
                     switch (checkedId) {
                         case R.id.hindiPreview:
                             CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
+                            CommonMethod.getBannerAds(requireActivity(),binding.adViewBottom);
+
                             english.setBackgroundColor(0);
                             english.setTextColor(Color.BLACK);
                             hindi.setBackgroundColor(Color.parseColor("#009637"));
@@ -201,6 +190,8 @@ public class DetailsFragment extends Fragment {
                             break;
                         case R.id.englishPreview:
                             CommonMethod.getBannerAds(requireActivity(), binding.adViewData);
+                            CommonMethod.getBannerAds(requireActivity(),binding.adViewBottom);
+
                             english.setBackgroundColor(Color.parseColor("#009637"));
                             english.setTextColor(Color.WHITE);
                             hindi.setBackgroundColor(0);
@@ -233,7 +224,6 @@ public class DetailsFragment extends Fragment {
             @Override
             public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
 
-//                AdsViewModel.destroyBanner();
                 CommonMethod.interstitialAds(requireActivity());
                 WebView.HitTestResult result = view.getHitTestResult();
                 String data = result.getExtra();

@@ -4,7 +4,6 @@ package com.pmkisanyojana.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,13 +83,7 @@ public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> 
             yojanaAmount = itemView.findViewById(R.id.yojana_amount_tv);
             profileImg = itemView.findViewById(R.id.profileImg);
             shareBtn = itemView.findViewById(R.id.share_code_btn);
-            shareBtn.setOnClickListener(v -> {
-//                ClipboardManager clipboardManager = (ClipboardManager) itemView.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-//                ClipData clipData = ClipData.newPlainText("text", contestCode.getText());
-//                clipboardManager.setPrimaryClip(clipData);
-//                Toast.makeText(itemView.getContext(), "Copied to clipboard", Toast.LENGTH_SHORT).show();
-                shareApp();
-            });
+            shareBtn.setOnClickListener(v -> shareApp());
 
         }
 
@@ -103,7 +96,7 @@ public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> 
                 shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
-                ((Activity) itemView.getContext()).startActivity(Intent.createChooser(shareIntent, "choose one"));
+                itemView.getContext().startActivity(Intent.createChooser(shareIntent, "choose one"));
             } catch (Exception e) {
                 e.printStackTrace();
             }

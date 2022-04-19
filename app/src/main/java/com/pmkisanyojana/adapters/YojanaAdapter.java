@@ -2,7 +2,6 @@ package com.pmkisanyojana.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +28,7 @@ import com.pmkisanyojana.utils.Prevalent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import io.paperdb.Paper;
 
@@ -54,6 +53,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
         return ITEM_VIEW;
     }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -65,13 +65,14 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return new AdViewHolder(view);
         } else return null;
     }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder.getItemViewType() == ITEM_VIEW) {
             int pos = position - Math.round(position / ITEM_FEED_COUNT);
 
-            ((ItemViewHolder)holder).yojanaTitle.setText(yojanaModelList.get(pos).getTitle());
-            Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModelList.get(pos).getImage()).into(((ItemViewHolder)holder).yojanaImage);
+            ((ItemViewHolder) holder).yojanaTitle.setText(yojanaModelList.get(pos).getTitle());
+            Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Kisan_Yojana_Images/" + yojanaModelList.get(pos).getImage()).into(((ItemViewHolder) holder).yojanaImage);
             holder.itemView.setOnClickListener(v -> yojanaInterface.onItemClicked(yojanaModelList.get(pos), pos));
 
 
@@ -112,7 +113,7 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public  class AdViewHolder extends RecyclerView.ViewHolder {
+    public class AdViewHolder extends RecyclerView.ViewHolder {
         AdLayoutBinding binding;
 
         public AdViewHolder(@NonNull View itemAdView2) {
@@ -123,15 +124,15 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
 
         private void bindAdData() {
-            AdLoader.Builder builder = new AdLoader.Builder(context, Paper.book().read(Prevalent.nativeAds))
+            AdLoader.Builder builder = new AdLoader.Builder(context, Objects.requireNonNull(Paper.book().read(Prevalent.nativeAds)))
                     .forNativeAd(nativeAd -> {
-                        NativeAdView nativeAdView = (NativeAdView) context.getLayoutInflater().inflate(R.layout.native_ad_layout, null);
+                        @SuppressLint("InflateParams") NativeAdView nativeAdView = (NativeAdView) context.getLayoutInflater().inflate(R.layout.native_ad_layout, null);
                         populateNativeADView(nativeAd, nativeAdView);
                         binding.adLayout.removeAllViews();
                         binding.adLayout.addView(nativeAdView);
                     });
 
-            adLoader= builder.withAdListener(new AdListener() {
+            adLoader = builder.withAdListener(new AdListener() {
                 @Override
                 public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                     super.onAdFailedToLoad(loadAdError);
@@ -158,58 +159,58 @@ public class YojanaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             adView.setAdvertiserView(adView.findViewById(R.id.ad_advertiser));
 
             // The headline and mediaContent are guaranteed to be in every UnifiedNativeAd.
-            ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
+            ((TextView) Objects.requireNonNull(adView.getHeadlineView())).setText(nativeAd.getHeadline());
 //            adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
 
             // These assets aren't guaranteed to be in every UnifiedNativeAd, so it's important to
             // check before trying to display them.
             if (nativeAd.getBody() == null) {
-                adView.getBodyView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getBodyView()).setVisibility(View.INVISIBLE);
             } else {
-                adView.getBodyView().setVisibility(View.VISIBLE);
+                Objects.requireNonNull(adView.getBodyView()).setVisibility(View.VISIBLE);
                 ((TextView) adView.getBodyView()).setText(nativeAd.getBody());
             }
 
             if (nativeAd.getCallToAction() == null) {
-                adView.getCallToActionView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getCallToActionView()).setVisibility(View.INVISIBLE);
             } else {
-                adView.getCallToActionView().setVisibility(View.VISIBLE);
+                Objects.requireNonNull(adView.getCallToActionView()).setVisibility(View.VISIBLE);
                 ((Button) adView.getCallToActionView()).setText(nativeAd.getCallToAction());
             }
 
             if (nativeAd.getIcon() == null) {
-                adView.getIconView().setVisibility(View.GONE);
+                Objects.requireNonNull(adView.getIconView()).setVisibility(View.GONE);
             } else {
-                ((ImageView) adView.getIconView()).setImageDrawable(
+                ((ImageView) Objects.requireNonNull(adView.getIconView())).setImageDrawable(
                         nativeAd.getIcon().getDrawable());
                 adView.getIconView().setVisibility(View.VISIBLE);
             }
 
             if (nativeAd.getPrice() == null) {
-                adView.getPriceView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getPriceView()).setVisibility(View.INVISIBLE);
             } else {
-                adView.getPriceView().setVisibility(View.VISIBLE);
+                Objects.requireNonNull(adView.getPriceView()).setVisibility(View.VISIBLE);
                 ((TextView) adView.getPriceView()).setText(nativeAd.getPrice());
             }
 
             if (nativeAd.getStore() == null) {
-                adView.getStoreView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getStoreView()).setVisibility(View.INVISIBLE);
             } else {
-                adView.getStoreView().setVisibility(View.VISIBLE);
+                Objects.requireNonNull(adView.getStoreView()).setVisibility(View.VISIBLE);
                 ((TextView) adView.getStoreView()).setText(nativeAd.getStore());
             }
 
             if (nativeAd.getStarRating() == null) {
-                adView.getStarRatingView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getStarRatingView()).setVisibility(View.INVISIBLE);
             } else {
-                ((RatingBar) adView.getStarRatingView()).setRating(nativeAd.getStarRating().floatValue());
+                ((RatingBar) Objects.requireNonNull(adView.getStarRatingView())).setRating(nativeAd.getStarRating().floatValue());
                 adView.getStarRatingView().setVisibility(View.VISIBLE);
             }
 
             if (nativeAd.getAdvertiser() == null) {
-                adView.getAdvertiserView().setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(adView.getAdvertiserView()).setVisibility(View.INVISIBLE);
             } else {
-                ((TextView) adView.getAdvertiserView()).setText(nativeAd.getAdvertiser());
+                ((TextView) Objects.requireNonNull(adView.getAdvertiserView())).setText(nativeAd.getAdvertiser());
                 adView.getAdvertiserView().setVisibility(View.VISIBLE);
             }
 

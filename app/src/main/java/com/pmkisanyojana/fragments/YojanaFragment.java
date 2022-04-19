@@ -21,7 +21,6 @@ import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.adapters.YojanaAdapter;
 import com.pmkisanyojana.databinding.FragmentYojanaBinding;
 import com.pmkisanyojana.models.YojanaModel;
-import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
@@ -146,7 +145,6 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
     @Override
     public void onItemClicked(YojanaModel yojanaModel, int position) {
 
-        AdsViewModel.destroyBanner();
         CommonMethod.interstitialAds(requireActivity());
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(requireActivity());
         Bundle bundle = new Bundle();

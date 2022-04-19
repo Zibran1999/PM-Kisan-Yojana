@@ -19,7 +19,6 @@ import java.util.List;
  * one of the sections/tabs/pages.
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
-    FirebaseAnalytics mFirebaseAnalytics;
 
     List<Fragment> fragmentList = new ArrayList<>();
     List<String> titleList = new ArrayList<>();
@@ -31,15 +30,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-//        mFirebaseAnalytics = FirebaseAnalytics.getInstance();
-
-//        Bundle bundle = new Bundle();
-//        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(position));
-//        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, titleList.get(position));
-//        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "image");
-//        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         return fragmentList.get(position);
     }
@@ -58,7 +48,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 3 total pages.
+
         return fragmentList.size();
     }
 }

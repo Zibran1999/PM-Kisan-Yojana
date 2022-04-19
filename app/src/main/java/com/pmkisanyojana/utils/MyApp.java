@@ -11,14 +11,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.evernote.android.job.JobManager;
 import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
 import com.ironsource.mediationsdk.IronSource;
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
 import com.pmkisanyojana.activities.MainActivity;
-import com.pmkisanyojana.activities.WelcomeScreenActivity;
 import com.pmkisanyojana.models.AdsModel;
 import com.pmkisanyojana.models.AdsModelList;
 import com.pmkisanyojana.models.ApiInterface;
@@ -35,7 +33,6 @@ public class MyApp extends Application {
 
     private static final String ONESIGNAL_APP_ID = "9a77bdda-945f-4f86-bf6a-5c564559c350";
     public static MyApp mInstance;
-    private static AppOpenManager appOpenManager;
     ApiInterface apiInterface;
 
 
@@ -59,19 +56,10 @@ public class MyApp extends Application {
         OneSignal.initWithContext(this);
         OneSignal.setNotificationOpenedHandler(new ExampleNotificationOpenedHandler());
         OneSignal.setAppId(ONESIGNAL_APP_ID);
-        JobManager.create(this).addJobCreator(new FireJobCreator());
 
 
     }
 
-    public void intent() {
-        if (!AppOpenManager.isIsShowingAd) {
-            Intent intent = new Intent(getApplicationContext(), WelcomeScreenActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            AppOpenManager.isIsShowingAd = false;
-        }
-    }
     private void fetchAds() {
 
         apiInterface = ApiWebServices.getApiInterface();
@@ -82,16 +70,12 @@ public class MyApp extends Application {
                 if (response.isSuccessful()) {
                     if (Objects.requireNonNull(response.body()).getData() != null) {
                         for (AdsModel ads : response.body().getData()) {
-
-                            Log.d(TAG,ads.getId()+"\n"+ads.getBanner()+"\n"+ads.getInterstitial()+"\n"+ads.getAppOpen()+"\n"+ads.getNativeADs()+"\n"+ads.getAppId());
                             Paper.book().write(Prevalent.bannerAds, ads.getBanner());
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
                             Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
                             Paper.book().write(Prevalent.appId, ads.getAppId());
                             MobileAds.initialize(mInstance);
-//                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.interstitialAds), mInstance);
-//                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
 
                             try {
                                 ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
@@ -120,7 +104,6 @@ public class MyApp extends Application {
             }
         });
     }
-
 
 
     private class ExampleNotificationOpenedHandler implements OneSignal.OSNotificationOpenedHandler {

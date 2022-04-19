@@ -27,8 +27,6 @@ import com.google.android.play.core.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.databinding.ActivityMainBinding;
-import com.pmkisanyojana.utils.AppOpenManager;
-import com.pmkisanyojana.utils.MyApp;
 import com.pmkisanyojana.utils.MyReceiver;
 
 
@@ -91,12 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         if (count == 2) {
-                      new Handler().postDelayed(() -> {
-                          startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
-                          finish();
-                      }, 2000);
+            new Handler().postDelayed(() -> {
+                startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+                finish();
+            }, 2000);
 
-                  }
+        }
     }
 
 
@@ -137,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE) {
             Toast.makeText(MainActivity.this, "Downloading Started", Toast.LENGTH_SHORT).show();
             if (resultCode != RESULT_OK) {
-                Log.d("DDDDD", "Downloading Failed" + resultCode);
+                Log.d("TAG", "Downloading Failed" + resultCode);
             }
         }
     }

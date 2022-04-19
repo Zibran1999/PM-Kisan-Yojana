@@ -27,7 +27,7 @@ import java.util.Map;
 public class NewsDataActivity extends AppCompatActivity {
     ImageView newsImg, backIcon;
     TextView newsTitle, newsDesc;
-    String id, img, desc, title;
+    String id, img, title;
     ActivityNewsDataBinding binding;
     PageViewModel pageViewModel;
     Map<String, String> map = new HashMap<>();
@@ -69,9 +69,6 @@ public class NewsDataActivity extends AppCompatActivity {
                 newsTitle.setText(title);
                 CommonMethod.getBannerAds(this, binding.adViewNews2);
                 CommonMethod.getBannerAds(this, binding.adViewNews);
-//                AdsViewModel adsViewModel = new AdsViewModel(this,binding.adViewNews);
-//                getLifecycle().addObserver(adsViewModel);
-
                 for (PreviewModel m : previewModelList.getData()) {
                     if (m.getPreviewId().equals(id)) {
                         String replaceString = m.getDesc().replaceAll("<.*?>", "");

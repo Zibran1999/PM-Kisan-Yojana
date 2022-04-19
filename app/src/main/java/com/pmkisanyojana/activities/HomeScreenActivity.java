@@ -12,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -28,42 +27,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
-import com.bumptech.glide.Glide;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
-import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.activities.ui.main.SectionsPagerAdapter;
 import com.pmkisanyojana.databinding.ActivityHomeScreenBinding;
 import com.pmkisanyojana.fragments.NewsFragment;
 import com.pmkisanyojana.fragments.OthersFragment;
 import com.pmkisanyojana.fragments.YojanaFragment;
-import com.pmkisanyojana.models.ModelFactory;
-import com.pmkisanyojana.models.ProfileModel;
-import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
 import com.pmkisanyojana.utils.Prevalent;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
     private static final float END_SCALE = 0.7f;
     TextView versionCode;
-    CircleImageView userProfileImg;
     ActivityHomeScreenBinding binding;
     int count = 1;
     ImageView navMenu;
@@ -72,13 +60,9 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     ConstraintLayout categoryContainer;
     SectionsPagerAdapter sectionsPagerAdapter;
     ConstraintLayout userProfileLayout;
-    TextView txtUserName;
-    ImageView headerImage, editImg;
+    ImageView headerImage;
     ViewPager viewPager;
-    String id, userImage;
-    PageViewModel pageViewModel;
-
-    Map<String, String> map = new HashMap<>();
+    String id;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -122,8 +106,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
-//            AdsViewModel adsViewModel = new AdsViewModel(this, binding.adView);
-//            getLifecycle().addObserver(adsViewModel);
             navigationDrawer();
         }
     }
@@ -152,13 +134,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         navigationView = binding.navigation;
         navMenu = binding.navMenu;
         drawerLayout = binding.drawerLayout;
-        Paper.init(this);
-        id = Paper.book().read(Prevalent.userId);
-
-        if (id != null) {
-            map.put("id", id);
-            pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication(), map)).get(PageViewModel.class);
-        }
 
         binding.lottieWhatsapp.setOnClickListener(view -> {
             try {
@@ -194,14 +169,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         }
     }
 
-    @SuppressLint("QueryPermissionsNeeded")
-    public void openWebPage(String url) {
-        Uri webpage = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
-    }
 
     public void navigationDrawer() {
         navigationView = findViewById(R.id.navigation);
@@ -210,34 +177,19 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
                 this, drawerLayout, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
 
-
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         navigationView.setNavigationItemSelectedListener(HomeScreenActivity.this);
         navigationView.setCheckedItem(R.id.nav_home);
         categoryContainer = findViewById(R.id.container_lay);
-        userProfileImg = navigationView.findViewById(R.id.user_profile_img);
-        txtUserName = navigationView.findViewById(R.id.txt_user_name);
         headerImage = navigationView.findViewById(R.id.header_image);
         navigationView.setCheckedItem(R.id.nav_home);
 
-        userProfileLayout = navigationView.findViewById(R.id.user_profile_layout);
-        editImg = navigationView.findViewById(R.id.edit_img);
 
-
-        if (id != null) {
-            setImage(userProfileImg, txtUserName, headerImage, userProfileLayout, editImg);
-            userProfileLayout.setVisibility(View.VISIBLE);
-            headerImage.setVisibility(View.GONE);
-        } else {
-            userProfileLayout.setVisibility(View.GONE);
-            headerImage.setVisibility(View.VISIBLE);
-        }
         navMenu.setOnClickListener(v -> {
 
             id = Paper.book().read(Prevalent.userId);
             if (id != null) {
-                setImage(userProfileImg, txtUserName, headerImage, userProfileLayout, editImg);
                 userProfileLayout.setVisibility(View.VISIBLE);
                 headerImage.setVisibility(View.GONE);
             } else {
@@ -251,34 +203,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         animateNavigationDrawer();
     }
 
-    private void setImage(CircleImageView userProfileImg, TextView uname, ImageView headerImage, ConstraintLayout userProfileLayout, ImageView editImg) {
-        pageViewModel = new ViewModelProvider(this, new ModelFactory(this.getApplication()
-                , map)).get(PageViewModel.class);
-        pageViewModel.getUserData().observe(this, profileModelList -> {
-            if (!profileModelList.getData().isEmpty()) {
-                for (ProfileModel pm : profileModelList.getData()) {
-                    uname.setText(pm.getUserName().trim());
-                    userImage = pm.getUserImage();
-                    Glide.with(this).load(
-                            "https://gedgetsworld.in/PM_Kisan_Yojana/User_Profile_Images/"
-                                    + userImage).into(userProfileImg);
-
-                }
-                userProfileLayout.setVisibility(View.VISIBLE);
-                headerImage.setVisibility(View.GONE);
-            }
-        });
-        userProfileImg.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeScreenActivity.this, UpdateProfile.class);
-            intent.putExtra("img", userImage);
-            startActivity(intent);
-        });
-        editImg.setOnClickListener(v -> {
-            Intent intent = new Intent(HomeScreenActivity.this, UpdateProfile.class);
-            intent.putExtra("img", userImage);
-            startActivity(intent);
-        });
-    }
 
     private void animateNavigationDrawer() {
         drawerLayout.setScrimColor(Color.parseColor("#DEE4EA"));
@@ -379,10 +303,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         nav_contact.setEnabled(true);
     }
 
-    @Override
-    public void onBackPressed() {
-      super.onBackPressed();
-    }
 
     @Override
     protected void onRestart() {
@@ -402,5 +322,12 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         IronSource.onPause(this);
         super.onPause();
         unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(getApplicationContext(), WelcomeScreenActivity.class));
+        finish();
     }
 }

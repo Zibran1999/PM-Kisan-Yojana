@@ -17,10 +17,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.MobileAds;
 import com.ironsource.mediationsdk.IronSource;
 import com.pmkisanyojana.databinding.ActivityWebViewBinding;
-import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 
@@ -79,7 +77,7 @@ public class WebViewActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d("TAG", "Processing webView url click...");
                 String googleDocs = "https://docs.google.com/viewer?url=";
-                Log.d("url",url);
+                Log.d("url", url);
                 if (URLUtil.isFileUrl(url)) {
                     CommonMethod.interstitialAds(WebViewActivity.this);
                     view.loadUrl(googleDocs + url);
@@ -104,10 +102,6 @@ public class WebViewActivity extends AppCompatActivity {
 
                 CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView2);
                 CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView);
-//                AdsViewModel adsViewModel = new AdsViewModel(WebViewActivity.this,binding.adViewWebView);
-//                getLifecycle().addObserver(adsViewModel);
-
-
                 super.onPageFinished(view, url);
             }
         });
@@ -119,7 +113,6 @@ public class WebViewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AdsViewModel.destroyBanner();
         if (webView.canGoBack()) {
             webView.goBack();
         } else {

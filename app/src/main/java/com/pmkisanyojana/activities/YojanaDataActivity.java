@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,7 +24,6 @@ import com.pmkisanyojana.databinding.ActivityYojanaDataBinding;
 import com.pmkisanyojana.fragments.DetailsFragment;
 import com.pmkisanyojana.fragments.QuizFragment;
 import com.pmkisanyojana.fragments.StatusFragment;
-import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -37,12 +35,12 @@ public class YojanaDataActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 100;
     private static final int STORAGE_REQUEST = 200;
     public static Uri uri;
+    public static int count = 1;
+    public static int pos = 0;
     ActivityYojanaDataBinding binding;
     YojanaDataActivity activity;
     String[] cameraPermission;
-    public  static int count=1;
     String[] storagePermission;
-    public static int pos =0;
     FirebaseAnalytics mFirebaseAnalytics;
 
 
@@ -53,7 +51,7 @@ public class YojanaDataActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         activity = this;
         CommonMethod.interstitialAds(this);
-        pos= getIntent().getIntExtra("pos",0);
+        pos = getIntent().getIntExtra("pos", 0);
 
         initViews();
 
@@ -73,7 +71,7 @@ public class YojanaDataActivity extends AppCompatActivity {
                 if (position == 1) {
                     mFirebaseAnalytics = FirebaseAnalytics.getInstance(YojanaDataActivity.this);
                     Bundle bundle = new Bundle();
-                  //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
+                    //  bundle.putString(FirebaseAnalytics.Param.ITEM_ID, yojanaModel.getId());
                     bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Status Stories");
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Status Fragment");
                     mFirebaseAnalytics.logEvent("Status", bundle);
@@ -99,8 +97,6 @@ public class YojanaDataActivity extends AppCompatActivity {
     private void initViews() {
         setUpViewPager(binding.viewPager);
         binding.tabs.setupWithViewPager(binding.viewPager);
-//        AdsViewModel adsViewModel = new AdsViewModel(this,binding.adView);
-//        getLifecycle().addObserver(adsViewModel);
         binding.backIcon.setOnClickListener(v -> onBackPressed());
 
     }
@@ -124,8 +120,8 @@ public class YojanaDataActivity extends AppCompatActivity {
             case CAMERA_REQUEST: {
                 if (grantResults.length > 0) {
                     boolean camera_accepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageaccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if (camera_accepted && writeStorageaccepted) {
+                    boolean writeStomachache = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (camera_accepted && writeStomachache) {
                         pickFromGallery();
                     } else {
                         Toast.makeText(this, "Please Enable Camera and Storage Permissions", Toast.LENGTH_LONG).show();
@@ -135,8 +131,8 @@ public class YojanaDataActivity extends AppCompatActivity {
             break;
             case STORAGE_REQUEST: {
                 if (grantResults.length > 0) {
-                    boolean writeStorageaccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (writeStorageaccepted) {
+                    boolean writeStomachache = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (writeStomachache) {
                         pickFromGallery();
                     } else {
                         Toast.makeText(this, "Please Enable Storage Permissions", Toast.LENGTH_LONG).show();
@@ -166,6 +162,22 @@ public class YojanaDataActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IronSource.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IronSource.onPause(this);
+    }
 
     static class ViewPagerAdapter extends FragmentPagerAdapter {
 
@@ -197,24 +209,5 @@ public class YojanaDataActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return stringList.get(position);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        AdsViewModel.destroyBanner();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        IronSource.onResume(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        IronSource.onPause(this);
     }
 }

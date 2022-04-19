@@ -24,9 +24,6 @@
         tools:targetApi="n">
 
         <activity
-            android:name=".activities.ShowStatusActivity"
-            android:exported="false" />
-        <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
@@ -49,13 +46,7 @@
             android:name=".utils.MyReceiver"
             android:enabled="true"
             android:exported="false" />
-        <service
-            android:name="com.evernote.android.job.gcm.PlatformGcmService"
-            android:enabled="true"
-            tools:replace="android:enabled"/>
-        <activity
-            android:name=".activities.UpdateProfile"
-            android:exported="false" />
+
         <activity
             android:name=".activities.PrivacyPolicyActivity"
             android:exported="false" />

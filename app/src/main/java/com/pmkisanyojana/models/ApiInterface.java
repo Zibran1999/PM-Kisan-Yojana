@@ -25,42 +25,19 @@ public interface ApiInterface {
     @POST("fetch_quiz_questions.php")
     Call<QuizModelList> fetchQuizQuestions();
 
-    @FormUrlEncoded
-    @POST("fetch_my_status_api.php")
-    Call<MyStatusModelList> fetchMyStatus(@FieldMap Map<String, String> map);
-
-    @POST("fetch_status.php")
-    Call<StatusModelList> fetchStatus();
-
-    @FormUrlEncoded
-    @POST("fetch_status_views.php")
-    Call<StatusViewModelList> fetchStatusViews(@FieldMap Map<String, String> map);
 
 
     @FormUrlEncoded
     @POST("fetch_preview_data.php")
     Call<PreviewModelList> getPreview(@FieldMap Map<String, String> map);
 
-    @FormUrlEncoded
-    @POST("upload_profile_api.php")
-    Call<MessageModel> uploadProfile(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
     @POST("fetch_user_profile_api.php")
     Call<ProfileModelList> getProfileData(@FieldMap Map<String, String> map);
 
 
-    @FormUrlEncoded
-    @POST("update_profile.php")
-    Call<MessageModel> updateProfile(@FieldMap Map<String, String> map);
 
-    @FormUrlEncoded
-    @POST("upload_status_api.php")
-    Call<MessageModel> uploadStatus(@FieldMap Map<String, String> map);
-
-    @FormUrlEncoded
-    @POST("statusSeenBy.php")
-    Call<MessageModel> uploadSeenBy(@FieldMap Map<String, String> map);
 
     @FormUrlEncoded
     @POST("deleteMyStatus.php")
@@ -69,11 +46,6 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("pm_kisan_ads_id_fetch.php")
     Call<AdsModelList> fetchAds(@Field("id") String id);
-
-
-    @POST("fetchImg.php")
-    Call<ImgModel> fetchImg();
-
     @FormUrlEncoded
     @POST()
     Call<MessageModel> getContestRes(@FieldMap Map<String, String> map, @Url String url);

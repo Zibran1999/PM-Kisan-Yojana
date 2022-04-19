@@ -1,12 +1,9 @@
 package com.pmkisanyojana.fragments;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.ironsource.mediationsdk.IronSource;
@@ -26,7 +21,6 @@ import com.pmkisanyojana.R;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.FragmentQuizBinding;
 import com.pmkisanyojana.models.QuizModel;
-import com.pmkisanyojana.utils.AdsViewModel;
 import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
@@ -112,7 +106,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
         CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         pageViewModel = new ViewModelProvider(requireActivity()).get(PageViewModel.class);
-        pageViewModel.getquizQuestions().observe(requireActivity(), quizModelList1 -> {
+        pageViewModel.getQuizQuestions().observe(requireActivity(), quizModelList1 -> {
             quizModelList.clear();
             if (!quizModelList1.getData().isEmpty()) {
                 quiz.setVisibility(View.VISIBLE);
