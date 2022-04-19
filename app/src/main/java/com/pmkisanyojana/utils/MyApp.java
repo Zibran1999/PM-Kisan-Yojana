@@ -1,7 +1,12 @@
 package com.pmkisanyojana.utils;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Application;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -77,13 +82,30 @@ public class MyApp extends Application {
                 if (response.isSuccessful()) {
                     if (Objects.requireNonNull(response.body()).getData() != null) {
                         for (AdsModel ads : response.body().getData()) {
+
+                            Log.d(TAG,ads.getId()+"\n"+ads.getBanner()+"\n"+ads.getInterstitial()+"\n"+ads.getAppOpen()+"\n"+ads.getNativeADs()+"\n"+ads.getAppId());
                             Paper.book().write(Prevalent.bannerAds, ads.getBanner());
                             Paper.book().write(Prevalent.interstitialAds, ads.getInterstitial());
                             Paper.book().write(Prevalent.nativeAds, ads.getNativeADs());
                             Paper.book().write(Prevalent.openAppAds, ads.getAppOpen());
+                            Paper.book().write(Prevalent.appId, ads.getAppId());
                             MobileAds.initialize(mInstance);
-                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.interstitialAds), mInstance);
+//                            appOpenManager = new AppOpenManager(mInstance, Paper.book().read(Prevalent.interstitialAds), mInstance);
 //                            Log.d("is showing", String.valueOf(AppOpenManager.isIsShowingAd));
+
+                            try {
+                                ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+                                Bundle bundle = ai.metaData;
+                                String myApiKey = bundle.getString("com.google.android.gms.ads.APPLICATION_ID");
+                                Log.d(TAG, "Name Found: " + myApiKey);
+                                ai.metaData.putString("com.google.android.gms.ads.APPLICATION_ID", Paper.book().read(Prevalent.appId));//you can replace your key APPLICATION_ID here
+                                String ApiKey = bundle.getString("com.google.android.gms.ads.APPLICATION_ID");
+                                Log.d(TAG, "ReNamed Found: " + ApiKey);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                Log.e(TAG, "Failed to load meta-data, NameNotFound: " + e.getMessage());
+                            } catch (NullPointerException e) {
+                                Log.e(TAG, "Failed to load meta-data, NullPointer: " + e.getMessage());
+                            }
 
                         }
                     }

@@ -77,8 +77,9 @@ public class NewsDataActivity extends AppCompatActivity {
                 Glide.with(this).load("https://gedgetsworld.in/PM_Kisan_Yojana/News_Images/" + img).into(newsImg);
                 newsTitle.setText(title);
                 CommonMethod.getBannerAds(this, binding.adViewNews2);
-                AdsViewModel adsViewModel = new AdsViewModel(this,binding.adViewNews);
-                getLifecycle().addObserver(adsViewModel);
+                CommonMethod.getBannerAds(this, binding.adViewNews);
+//                AdsViewModel adsViewModel = new AdsViewModel(this,binding.adViewNews);
+//                getLifecycle().addObserver(adsViewModel);
 
                 for (PreviewModel m : previewModelList.getData()) {
                     if (m.getPreviewId().equals(id)) {

@@ -110,6 +110,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
         quiz = binding.quiz;
         score = binding.score;
         CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         pageViewModel = new ViewModelProvider(requireActivity()).get(PageViewModel.class);
         pageViewModel.getquizQuestions().observe(requireActivity(), quizModelList1 -> {
             quizModelList.clear();
@@ -144,8 +145,10 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
             op3.setText(quizModelList.get(currentPos).getOp3());
             op4.setText(quizModelList.get(currentPos).getOp4());
 
+            if (questionAttemted%2==0){
+                CommonMethod.interstitialAds(requireActivity());
+            }
         } else {
-            CommonMethod.interstitialAds(requireActivity());
             quiz.setVisibility(View.GONE);
             showScore();
         }
@@ -305,6 +308,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
 
     private void resetButtonColor() {
         CommonMethod.getBannerAds(requireActivity(), binding.adViewQuiz);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
 
         op1.setClickable(true);
         op2.setClickable(true);

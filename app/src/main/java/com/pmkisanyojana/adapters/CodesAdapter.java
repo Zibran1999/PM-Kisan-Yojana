@@ -1,6 +1,7 @@
 package com.pmkisanyojana.adapters;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,8 +19,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.pmkisanyojana.BuildConfig;
 import com.pmkisanyojana.R;
 import com.pmkisanyojana.models.CodesModel;
+import com.pmkisanyojana.utils.CommonMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,7 @@ public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> 
         return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.codes_layout, parent, false));
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
@@ -47,11 +51,11 @@ public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> 
         holder.userName.setText(codesModelList.get(position).getUserName());
         holder.yojanaName.setText(codesModelList.get(position).getYojanaName());
         holder.yojanaAmount.setText(" ₹ " + codesModelList.get(position).getYojanaAmount());
-        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Contest_Images/" + codesModelList.get(position).getUserImage()).into(holder.profileImg);
-        holder.showFullProfileImage(codesModelList.get(position).getUserImage());
+        Glide.with(context).load("https://gedgetsworld.in/PM_Kisan_Yojana/Contest_Images/" + codesModelList.get(position).getImages()).into(holder.profileImg);
+        holder.showFullProfileImage(codesModelList.get(position).getImages());
 
         holder.profileImg.setOnClickListener(v -> {
-            //  MyApp.showInterstitialAd((Activity) context);
+            CommonMethod.interstitialAds(context);
             holder.dialog.show();
         });
     }
@@ -96,7 +100,7 @@ public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> 
                 shareIntent.setType("text/plain");
                 shareIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
                 String shareMessage = "\nLet me recommend you this application\n\n";
-//                shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
+                shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
                 shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
                 ((Activity) itemView.getContext()).startActivity(Intent.createChooser(shareIntent, "choose one"));

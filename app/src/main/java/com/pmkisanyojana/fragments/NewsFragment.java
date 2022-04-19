@@ -134,6 +134,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
                 newsAdapter.updateNewsList(newsModelList.getData());
                 dialog.dismiss();
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewNews);
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
             }
 
         });
@@ -142,7 +143,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
 
     @Override
     public void onItemClicked(NewsModel newsModel, int position) {
-        AdsViewModel.destroyBanner();
+//        AdsViewModel.destroyBanner();
         CommonMethod.interstitialAds(requireActivity());
 
         Intent intent = new Intent(getContext(), NewsDataActivity.class);

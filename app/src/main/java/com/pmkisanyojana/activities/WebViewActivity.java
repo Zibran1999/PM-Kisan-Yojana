@@ -102,7 +102,8 @@ public class WebViewActivity extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 dialog.dismiss();
 
-//                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView2);
+                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView2);
+                CommonMethod.getBannerAds(WebViewActivity.this, binding.adViewWebView);
 //                AdsViewModel adsViewModel = new AdsViewModel(WebViewActivity.this,binding.adViewWebView);
 //                getLifecycle().addObserver(adsViewModel);
 

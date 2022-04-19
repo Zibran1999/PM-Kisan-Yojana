@@ -63,7 +63,7 @@ public class StatusFragment extends Fragment {
     static Bitmap bitmap;
     FragmentStatusBinding binding;
     Button addYojanaBtn;
-    Dialog addYojanaDialog;
+    Dialog addYojanaDialog, dialog;
     String[] storagePermission;
     String[] cameraPermission;
     PageViewModel pageViewModel;
@@ -99,8 +99,11 @@ public class StatusFragment extends Fragment {
         binding = FragmentStatusBinding.inflate(inflater, container, false);
         addYojanaBtn = binding.addYojanaBtn;
         recyclerView = binding.yojanaContestRecyclerView;
+        dialog = CommonMethod.getDialog(requireActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         recyclerView.setHasFixedSize(true);
+        CommonMethod.getBannerAds(requireActivity(),binding.adViewTop);
+        CommonMethod.getBannerAds(requireActivity(),binding.adViewBottom);
         showYojanaData();
 
 
@@ -129,7 +132,7 @@ public class StatusFragment extends Fragment {
 
         userImageView = addYojanaDialog.findViewById(R.id.profileImg);
         storagePermission = new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        userImageView.setOnClickListener(v -> showImagePicDialog());
+        userImageView.setOnClickListener(v -> pickFromGallery());
         cancelBtn.setOnClickListener(v -> {
             addYojanaDialog.dismiss();
         });
@@ -149,6 +152,7 @@ public class StatusFragment extends Fragment {
             } else if (TextUtils.isEmpty(yoAmount)) {
                 yojanaAmount.setError("Field are required");
             } else {
+                dialog.show();
                 uploadYojanaData(context, encodedImage, uName, yoName, yoAmount);
             }
 
@@ -164,8 +168,6 @@ public class StatusFragment extends Fragment {
         map.put("yojanaAmount",yoAmount);
         map.put("img",encodedImage);
 
-        CommonMethod.getDialog(context).show();
-
         ApiInterface apiInterface = ApiWebServices.getApiInterface();
         Call<MessageModel> call = apiInterface.getContestRes(map,"https://gedgetsworld.in/PM_Kisan_Yojana/add_yojana_data.php");
         call.enqueue(new Callback<MessageModel>() {
@@ -175,12 +177,13 @@ public class StatusFragment extends Fragment {
                     showYojanaData();
                     assert response.body() != null;
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                    CommonMethod.getDialog(context).dismiss();
+                    dialog.dismiss();
+                    addYojanaDialog.dismiss();
                 }else {
                     assert response.body() != null;
                     Toast.makeText(context, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                CommonMethod.getDialog(context).dismiss();
+               dialog.dismiss();
             }
 
             @Override

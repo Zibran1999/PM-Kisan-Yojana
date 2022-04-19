@@ -122,8 +122,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             viewPager.setAdapter(sectionsPagerAdapter);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
-            AdsViewModel adsViewModel = new AdsViewModel(this, binding.adView);
-            getLifecycle().addObserver(adsViewModel);
+//            AdsViewModel adsViewModel = new AdsViewModel(this, binding.adView);
+//            getLifecycle().addObserver(adsViewModel);
             navigationDrawer();
         }
     }
