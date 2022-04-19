@@ -102,7 +102,6 @@ public class MyApp extends Application {
 
 
     private class ExampleNotificationOpenedHandler implements OneSignal.OSNotificationOpenedHandler {
-
         @Override
         public void notificationOpened(OSNotificationOpenedResult result) {
             Intent intent = new Intent(MyApp.this, MainActivity.class);

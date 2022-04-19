@@ -1,185 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/status_fragment"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.StatusFragment">
 
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/create_ac_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="gone"
-        app:cardCornerRadius="25dp"
-        app:cardElevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adView_status">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:gravity="center"
-            android:text="Create your Account"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:drawableEndCompat="@drawable/plus" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <RelativeLayout
-        android:id="@+id/adView_status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:gravity="center"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/upload_status_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adView_status">
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_status_img"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:src="@mipmap/ic_launcher"
-            android:visibility="visible"
-            app:civ_border_color="#E8E8E8"
-            app:civ_border_width="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.devlomi.circularstatusview.CircularStatusView
-            android:id="@+id/circular_status_view"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:layout_centerInParent="true"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/user_status_img"
-            app:layout_constraintEnd_toEndOf="@+id/user_status_img"
-            app:layout_constraintStart_toStartOf="@+id/user_status_img"
-            app:layout_constraintTop_toTopOf="@+id/user_status_img"
-            app:portion_spacing="5dp"
-            tools:ignore="MissingConstraints" />
-
-
-        <TextView
-            android:id="@+id/txt_status_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="My Status"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
-            app:layout_constraintStart_toEndOf="@+id/user_status_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txt_click_to_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="5dp"
-            android:padding="10dp"
-            android:text="Click to add today's image"
-            app:layout_constraintEnd_toStartOf="@+id/imageView4"
-            app:layout_constraintStart_toEndOf="@+id/user_status_img"
-            app:layout_constraintTop_toBottomOf="@+id/txt_status_title" />
-
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:src="@drawable/plus"
-            app:layout_constraintBottom_toBottomOf="@+id/user_status_img"
-            app:layout_constraintEnd_toEndOf="@+id/user_status_img" />
-
-        <LinearLayout
-            android:id="@+id/imageView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15sp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/upload_status_layout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/menu_click"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/ic_baseline_more_vert_24"
-                app:tint="@color/black" />
-
-        </LinearLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/recentUpdateLayout"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/upload_status_layout">
+        app:layout_constraintTop_toTopOf="parent">
 
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:text="Recent Updates"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerview"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            android:layout_height="match_parent">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/add_yojana_btn"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_margin="8dp"
+                android:textSize="18sp"
+                android:text="Add Your Yojana"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/yojana_contest_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/add_yojana_btn" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
