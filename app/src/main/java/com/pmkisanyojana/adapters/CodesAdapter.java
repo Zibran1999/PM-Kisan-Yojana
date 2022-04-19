@@ -31,9 +31,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CodesAdapter extends RecyclerView.Adapter<CodesAdapter.ViewHolder> {
     List<CodesModel> codesModelList = new ArrayList<>();
-    Context context;
+    Activity context;
 
-    public CodesAdapter(Context context) {
+    public CodesAdapter(Activity context) {
         this.context = context;
     }
 

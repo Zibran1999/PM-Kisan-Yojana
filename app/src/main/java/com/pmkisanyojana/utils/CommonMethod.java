@@ -23,10 +23,8 @@ import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.ironsource.mediationsdk.IronSource;
 import com.ironsource.mediationsdk.logger.IronSourceError;
 import com.ironsource.mediationsdk.sdk.InterstitialListener;
@@ -40,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.paperdb.Paper;
@@ -63,7 +62,7 @@ public class CommonMethod extends Job {
                 .build()
                 .schedule();
 
-        jobId =pos;
+        jobId = pos;
 
     }
 
@@ -136,10 +135,10 @@ public class CommonMethod extends Job {
         return loadingDialog;
     }
 
-    public static void interstitialAds(Context context) {
+    public static void interstitialAds(Activity context) {
 //        MobileAds.initialize(context);
-        String id = Paper.book().read(Prevalent.openAppAds);
-        IronSource.init((Activity) context, id.trim());
+        String id = Objects.requireNonNull(Paper.book().read(Prevalent.openAppAds)).toString().trim();
+        IronSource.init( context, id);
         IronSource.loadInterstitial();
         IronSource.setMetaData("Facebook_IS_CacheFlag", "IMAGE");
         IronSource.showInterstitial();
@@ -152,7 +151,7 @@ public class CommonMethod extends Job {
 
             @Override
             public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
-
+                Log.d("ContentValue", ironSourceError.getErrorMessage());
             }
 
             @Override
@@ -194,6 +193,7 @@ public class CommonMethod extends Job {
         container.setVisibility(View.VISIBLE);
 
     }
+
     public static void cancelJob(int jobId) {
         JobManager.instance().cancelAll();
 
@@ -205,11 +205,11 @@ public class CommonMethod extends Job {
 
         String sId = params.getExtras().getString(Prevalent.UID, "");
         String statusImg = params.getExtras().getString(Prevalent.STATUS_IMAGE, "");
-        Log.d("runJob",sId+" "+statusImg);
+        Log.d("runJob", sId + " " + statusImg);
         Map<String, String> map = new HashMap<>();
         map.put("statusId", sId);
         map.put("statusImg", "User_Status_Images/" + statusImg);
-        Log.d("jobSchedule"," "+jobId);
+        Log.d("jobSchedule", " " + jobId);
         deleteMyStatus(map);
         return Result.SUCCESS;
     }

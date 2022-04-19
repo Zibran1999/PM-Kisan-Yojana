@@ -1,12 +1,9 @@
 package com.pmkisanyojana.activities;
 
-import static com.pmkisanyojana.utils.CommonMethod.mInterstitialAd;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,20 +15,14 @@ import androidx.lifecycle.ViewModelProvider;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.pmkisanyojana.activities.ui.main.PageViewModel;
 import com.pmkisanyojana.databinding.ActivityNewsDataBinding;
 import com.pmkisanyojana.models.ModelFactory;
 import com.pmkisanyojana.models.PreviewModel;
-import com.pmkisanyojana.utils.AdsViewModel;
-import com.pmkisanyojana.utils.AppOpenManager;
 import com.pmkisanyojana.utils.CommonMethod;
-import com.pmkisanyojana.utils.Prevalent;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import io.paperdb.Paper;
 
 public class NewsDataActivity extends AppCompatActivity {
     ImageView newsImg, backIcon;
@@ -87,7 +78,6 @@ public class NewsDataActivity extends AppCompatActivity {
 
                         newsDesc.setText(replaceString);
                         newsDesc.setVisibility(View.VISIBLE);
-
 
 
                     }

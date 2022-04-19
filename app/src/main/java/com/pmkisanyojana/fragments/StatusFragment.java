@@ -202,7 +202,7 @@ public class StatusFragment extends Fragment {
                     codesModelList.clear();
                     codesModelList.addAll(contestCodeModel.getData());
                     Collections.reverse(codesModelList);
-                    CodesAdapter codesAdapter = new CodesAdapter(getContext());
+                    CodesAdapter codesAdapter = new CodesAdapter(requireActivity());
                     recyclerView.setAdapter(codesAdapter);
                     codesAdapter.updateCodeModelList(codesModelList);
 

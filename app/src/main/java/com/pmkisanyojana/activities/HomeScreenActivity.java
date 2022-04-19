@@ -381,25 +381,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
 
     @Override
     public void onBackPressed() {
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-        builder.setTitle(R.string.app_name)
-                .setIcon(R.mipmap.ic_launcher)
-                .setMessage("Do You Really Want To Exit?\nAlso Rate Us 5 Star.")
-                .setNeutralButton("CANCEL", (dialog, which) -> {
-                });
-
-
-        builder.setNegativeButton("RATE APP", (dialog, which) -> CommonMethod.rateApp(getApplicationContext()))
-                .setPositiveButton("OK!!", (dialog, which) -> {
-                    Intent intent = new Intent(Intent.ACTION_MAIN);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                    startActivity(intent);
-                    moveTaskToBack(true);
-                    System.exit(0);
-
-                });
-        builder.show();
+      super.onBackPressed();
     }
 
     @Override

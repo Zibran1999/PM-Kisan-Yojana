@@ -12,7 +12,7 @@ public class Prevalent {
     public static final String interstitialAds = "inter";
     public static final String nativeAds = "native";
     public static final String openAppAds = "open";
-    public static final String appId = "open";
+    public static final String appId = "appId";
 
 
 }
