@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,6 +142,7 @@ public class QuizFragment extends Fragment implements View.OnClickListener {
 
             if (questionAttemted%2==0){
                 CommonMethod.interstitialAds(requireActivity());
+                Log.d("ContentValue",String.valueOf(questionAttemted));
             }
         } else {
             quiz.setVisibility(View.GONE);

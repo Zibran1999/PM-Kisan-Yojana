@@ -6,12 +6,15 @@ import com.google.gson.GsonBuilder;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiWebServices {
+public class ApiWebServices { 
 
+    static Gson gson = new GsonBuilder()
+            .setLenient()
+            .create();
     private static final String base_url = "https://gedgetsworld.in/PM_Kisan_Yojana/";
     public static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(base_url)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build();
 
     public static ApiInterface getApiInterface() {

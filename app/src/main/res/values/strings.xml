@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PM Kisan Yojana</string>
+    <string name="app_name">Kisan Yojana</string>
     <string name="title_activity_home_screen">HomeScreenActivity</string>
     <string name="tab_text_1">Yojana</string>
     <string name="tab_text_2">News</string>
@@ -15,6 +15,7 @@
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
     <string name="camera_tip">Tap to Take a Photo,Hold to Record Video</string>
+
 
     <!--Test ads ids-->
     <!--        <string name="banner_id">ca-app-pub-3940256099942544/6300978111</string>-->
@@ -44,6 +45,8 @@
     <string name="user_name">your name</string>
     <string name="yojana_name">Yojana name</string>
     <string name="yojana_amount">Yojana Amount</string>
+    <string name="kisan_yojana">किसान योजना</string>
+
     <!--        /22569351198/chakdo_com.pmkisanyojana_banner-->
 
 <!--        /22569351198/chakdo_com.pmkisanyojana_interstitial-->

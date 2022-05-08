@@ -87,7 +87,8 @@ public class OthersFragment extends Fragment implements YojanaAdapter.YojanaInte
 
         homeRV = binding.HomeRV;
         pinnedRv = binding.pinnedRV;
-
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewOthers);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         LinearLayoutManager layoutManager = new LinearLayoutManager(root.getContext());
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);

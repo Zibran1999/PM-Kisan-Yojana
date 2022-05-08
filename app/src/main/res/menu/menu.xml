@@ -38,6 +38,7 @@
             android:title="@string/privacy_policy"
             tools:targetApi="o" />
 
+
     </group>
 
 </menu>

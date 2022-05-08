@@ -50,7 +50,6 @@ public class YojanaDataActivity extends AppCompatActivity {
         binding = ActivityYojanaDataBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         activity = this;
-        CommonMethod.interstitialAds(this);
         pos = getIntent().getIntExtra("pos", 0);
 
         initViews();
@@ -107,7 +106,7 @@ public class YojanaDataActivity extends AppCompatActivity {
         adapter.addFragment(new StatusFragment(), "Status");
         adapter.addFragment(new QuizFragment(), "Quiz");
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(1);
+        viewPager.setOffscreenPageLimit(3);
     }
 
 

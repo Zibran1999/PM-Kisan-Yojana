@@ -92,6 +92,8 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         homeRV.setLayoutManager(layoutManager);
         dialog.show();
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewNews);
+        CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
         setNewsData(requireActivity());
         binding.swipeRefresh.setOnRefreshListener(() -> {
             setNewsData(requireActivity());
@@ -100,6 +102,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
         });
         return binding.getRoot();
     }
+
 
     private void setNewsData(Activity context) {
         newsAdapter = new NewsAdapter(context, this);
@@ -112,6 +115,7 @@ public class NewsFragment extends Fragment implements NewsAdapter.NewsInterface 
                 dialog.dismiss();
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewNews);
                 CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
+
             }
 
         });

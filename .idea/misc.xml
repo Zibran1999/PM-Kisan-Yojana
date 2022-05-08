@@ -18,7 +18,7 @@
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_show_status.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_update_profile.xml" value="0.1" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_web_view.xml" value="0.19895833333333332" />
-        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_welcome_screen.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_welcome_screen.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/activity_yojana_data.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/ad_layout.xml" value="0.1" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/add_contest_layout.xml" value="0.22722620266120777" />
@@ -26,6 +26,7 @@
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.21" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/codes_layout.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/create_profile_layout.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/disclaimer_layout.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_details.xml" value="0.12" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_home_screen.xml" value="0.1" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_my_status.xml" value="0.19895833333333332" />
@@ -34,7 +35,7 @@
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_quiz.xml" value="0.18" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_status.xml" value="0.22" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/fragment_yojana.xml" value="0.19895833333333332" />
-        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/header.xml" value="0.19895833333333332" />
+        <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/header.xml" value="0.2" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/loading.xml" value="0.19895833333333332" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/native_ad_layout.xml" value="0.1" />
         <entry key="..\:/ANDROID PROJECTS/PM-Kisan-Yojana/app/src/main/res/layout/show_full_image.xml" value="0.19895833333333332" />

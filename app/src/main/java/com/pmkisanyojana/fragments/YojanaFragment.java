@@ -99,8 +99,6 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
         setYojanaData(requireActivity());
         binding.swipeRefresh.setOnRefreshListener(() -> {
             setYojanaData(requireActivity());
-            CommonMethod.getBannerAds(requireActivity(), binding.adViewYojana);
-            CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
             binding.swipeRefresh.setRefreshing(false);
 
         });
@@ -132,7 +130,8 @@ public class YojanaFragment extends Fragment implements YojanaAdapter.YojanaInte
                 }
                 adapter.updateYojanaList(yojanaModels);
                 yojanaAdapter.updateYojanaList(models);
-
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewYojana);
+                CommonMethod.getBannerAds(requireActivity(), binding.adViewBottom);
             }
         });
 

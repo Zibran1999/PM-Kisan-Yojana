@@ -42,11 +42,8 @@ import com.pmkisanyojana.fragments.OthersFragment;
 import com.pmkisanyojana.fragments.YojanaFragment;
 import com.pmkisanyojana.utils.CommonMethod;
 import com.pmkisanyojana.utils.MyReceiver;
-import com.pmkisanyojana.utils.Prevalent;
 
 import java.io.UnsupportedEncodingException;
-
-import io.paperdb.Paper;
 
 public class HomeScreenActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String BroadCastStringForAction = "checkingInternet";
@@ -59,10 +56,8 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
     NavigationView navigationView;
     ConstraintLayout categoryContainer;
     SectionsPagerAdapter sectionsPagerAdapter;
-    ConstraintLayout userProfileLayout;
     ImageView headerImage;
     ViewPager viewPager;
-    String id;
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
@@ -104,6 +99,7 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
         enableNavItems();
         if (count == 2) {
             viewPager.setAdapter(sectionsPagerAdapter);
+            viewPager.setOffscreenPageLimit(3);
             TabLayout tabs = binding.tabs;
             tabs.setupWithViewPager(viewPager);
             navigationDrawer();
@@ -188,14 +184,6 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
 
         navMenu.setOnClickListener(v -> {
 
-            id = Paper.book().read(Prevalent.userId);
-            if (id != null) {
-                userProfileLayout.setVisibility(View.VISIBLE);
-                headerImage.setVisibility(View.GONE);
-            } else {
-                userProfileLayout.setVisibility(View.GONE);
-                headerImage.setVisibility(View.VISIBLE);
-            }
             if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
             } else drawerLayout.openDrawer(GravityCompat.START);
@@ -262,10 +250,12 @@ public class HomeScreenActivity extends AppCompatActivity implements NavigationV
             case R.id.nav_share:
                 shareApp(this);
                 break;
+
             default:
         }
         return true;
     }
+
 
     public void disableNavItems() {
         Menu navMenu = navigationView.getMenu();
